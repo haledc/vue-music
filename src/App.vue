@@ -1,32 +1,27 @@
 <template>
-  <div id="app" @touchmove.prevent>
-    <!--头部-->
-    <m-header/>
-    <!--导航栏-->
-    <tab/>
-    <!--路由-->
-    <keep-alive>
-      <router-view/>
-    </keep-alive>
-    <!--播放器-->
-    <player/>
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view />
   </div>
 </template>
+<style lang="stylus">
+#app
+  font-family: 'Avenir', Helvetica, Arial, sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  text-align: center
+  color: #2c3e50
 
-<script type="text/ecmascript-6">
-  import MHeader from 'components/m-header/m-header'
-  import Tab from 'components/tab/tab'
-  import Player from 'components/player/player'
+#nav
+  padding: 30px
 
-  export default {
-    components: {
-      MHeader,
-      Tab,
-      Player
-    }
-  }
-</script>
+  a
+    font-weight: bold
+    color: #2c3e50
 
-<style scoped lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-
+    &.router-link-exact-active
+      color: #42b983
 </style>

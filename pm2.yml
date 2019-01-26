@@ -1,7 +1,0 @@
-apps:
-  - script: prod.server.js
-    name: music
-    env_production:
-      NODE_ENV: development
-      HOST: localhost
-      PORT: 9095
