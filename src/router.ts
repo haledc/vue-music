@@ -15,7 +15,14 @@ export default new Router({
     {
       path: '/recommend',
       name: 'recommend',
-      component: Recommend
+      component: Recommend,
+      children: [
+        {
+          path: ':id',
+          component: () =>
+            import(/* webpackChunkName: "disc" */ './views/Disc.vue')
+        }
+      ]
     },
     {
       path: '/singer',
