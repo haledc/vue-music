@@ -13,26 +13,63 @@ const DIRECTION_V = 'vertical'
 
 @Component
 export default class Scroll extends Vue {
-  @Prop({ default: 1 }) probeType!: number
-  @Prop({ default: true }) click!: boolean
-  @Prop({ default: null }) data!: string[]
-  @Prop({ default: false }) listenScroll!: boolean
-  @Prop({ default: false }) pullup!: boolean
-  @Prop({ default: false }) beforeScroll!: boolean
-  @Prop({ default: 20 }) refreshDelay!: number
-  @Prop({ default: DIRECTION_V }) direction!: string
+  @Prop({ default: 1 })
+  public probeType!: number
+  @Prop({ default: true })
+  public click!: boolean
+  @Prop({ default: null })
+  public data!: string[]
+  @Prop({ default: false })
+  public listenScroll!: boolean
+  @Prop({ default: false })
+  public pullup!: boolean
+  @Prop({ default: false })
+  public beforeScroll!: boolean
+  @Prop({ default: 20 })
+  public refreshDelay!: number
+  @Prop({ default: DIRECTION_V })
+  public direction!: string
 
-  scroll: any
-  $refs: any
+  public scroll: any
+  public $refs: any
 
-  mounted() {
+  public mounted() {
     setTimeout(() => {
-      this._initScroll()
+      this.initScroll()
     }, 20)
   }
 
-  _initScroll() {
-    if (!this.$refs.wrapper) return
+  public enable() {
+    this.scroll && this.scroll.enable()
+  }
+
+  public disable() {
+    this.scroll && this.scroll.disable()
+  }
+
+  public refresh() {
+    this.scroll && this.scroll.refresh()
+  }
+
+  public scrollTo() {
+    this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+  }
+
+  public scrollToElement() {
+    this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+  }
+
+  @Watch('data')
+  public onDataChange() {
+    setTimeout(() => {
+      this.refresh()
+    }, this.refreshDelay)
+  }
+
+  private initScroll() {
+    if (!this.$refs.wrapper) {
+      return
+    }
 
     this.scroll = new BScroll(this.$refs.wrapper, {
       probeType: this.probeType,
@@ -60,33 +97,6 @@ export default class Scroll extends Vue {
         this.$emit('beforeScroll')
       })
     }
-  }
-
-  enable() {
-    this.scroll && this.scroll.enable()
-  }
-
-  disable() {
-    this.scroll && this.scroll.disable()
-  }
-
-  refresh() {
-    this.scroll && this.scroll.refresh()
-  }
-
-  scrollTo() {
-    this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
-  }
-
-  scrollToElement() {
-    this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
-  }
-
-  @Watch('data')
-  onDataChange() {
-    setTimeout(() => {
-      this.refresh()
-    }, this.refreshDelay)
   }
 }
 </script>

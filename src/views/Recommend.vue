@@ -1,5 +1,8 @@
 <template>
-  <div class="recommend">
+  <div
+    class="recommend"
+    ref="recommend"
+  >
     <Scroll
       ref="scroll"
       class="recommend-content"
@@ -75,7 +78,8 @@ import Scroll from '@/components/Scroll.vue'
 import Slider from '@/components/Slider.vue'
 import { getSliderList, getDiscList } from '@/assets/api/recommend'
 import { ERR_OK } from '@/assets/api/config'
-import { Action } from 'vuex-class'
+import { Mutation } from 'vuex-class'
+import * as types from '@/store/mutation-types'
 import { AxiosResponse } from 'axios'
 
 @Component({
@@ -86,24 +90,38 @@ import { AxiosResponse } from 'axios'
   }
 })
 export default class Recommend extends Vue {
-  discList = []
-  sliderList = []
-  checkLoaded: boolean = false
-  $refs: any
+  public discList = []
+  public sliderList = []
+  public checkLoaded: boolean = false
+  public $refs: any
 
-  @Action setDisc!: (item: any) => void
+  @Mutation(types.SET_DISC) 
+  public setDisc!: (item: any) => void
 
-  created() {
-    this._getSliderList()
-    this._getDiscList()
+  public created() {
+    this.getSliderList()
+    this.getDiscList()
   }
 
-  selectDisc(item: any) {
+  public loadImage() {
+    if (!this.checkLoaded) {
+      this.$refs.scroll.refresh()
+      this.checkLoaded = true
+    }
+  }
+
+  public handlePlaylist(playlist: any[]) {
+    const bottom = playlist.length > 0 ? '60px' : ''
+    this.$refs.recommend.style.bottom = bottom
+    this.$refs.scroll.refresh()
+  }
+
+  public selectDisc(item: any) {
     this.$router.push(`/recommend/${item.dissid}`)
     this.setDisc(item)
   }
 
-  _getSliderList() {
+  private getSliderList() {
     getSliderList().then((res: any) => {
       if (res.code === ERR_OK) {
         this.sliderList = res.data.slider
@@ -111,19 +129,12 @@ export default class Recommend extends Vue {
     })
   }
 
-  _getDiscList() {
+  private getDiscList() {
     getDiscList().then(res => {
       if (res.code === ERR_OK) {
         this.discList = res.data.list
       }
     })
-  }
-
-  loadImage() {
-    if (!this.checkLoaded) {
-      this.$refs.scroll.refresh()
-      this.checkLoaded = true
-    }
   }
 }
 </script>

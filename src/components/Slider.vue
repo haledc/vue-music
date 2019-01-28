@@ -22,40 +22,45 @@ import BScroll from 'better-scroll'
 
 @Component
 export default class Slider extends Vue {
-  @Prop({ default: true }) loop!: boolean
-  @Prop({ default: true }) autoPlay!: boolean
-  @Prop({ default: 2000 }) interval!: number
+  @Prop({ default: true })
+  public loop!: boolean
+  @Prop({ default: true })
+  public autoPlay!: boolean
+  @Prop({ default: 2000 })
+  public interval!: number
 
-  dots: any[] = []
-  currentPageIndex: number = 0
-  slider: any
-  resizeTimer: any
-  timer: any
-  children: any // ?
-  $refs: any
+  public dots: any[] = []
+  public currentPageIndex: number = 0
+  public slider: any
+  public resizeTimer: any
+  public timer: any
+  public children: any // ?
+  public $refs: any
 
-  mounted() {
+  public mounted() {
     setTimeout(() => {
-      this._setSliderWidth()
-      this._initDots()
-      this._initSlider()
+      this.setSliderWidth()
+      this.initDots()
+      this.initSlider()
 
       if (this.autoPlay) {
-        this._play()
+        this.play()
       }
     }, 20)
 
     window.addEventListener('resize', () => {
-      if (!this.slider || !this.slider.enabled) return
+      if (!this.slider || !this.slider.enabled) {
+        return
+      }
 
       clearTimeout(this.resizeTimer)
 
       this.resizeTimer = setTimeout(() => {
         if (this.slider.isInTransition) {
-          this._getCurrentPageIndex()
+          this.getCurrentPageIndex()
         } else {
           if (this.autoPlay) {
-            this._play()
+            this.play()
           }
         }
         this.slider.refresh()
@@ -63,40 +68,41 @@ export default class Slider extends Vue {
     })
   }
 
-  activated() {
-    if (!this.slider) return
+  public activated() {
+    if (!this.slider) {
+      return
+    }
     this.slider.enable()
     const pageIndex = this.slider.getCurrentPage().pageX
     this.slider.goToPage(pageIndex, 0, 0)
     this.currentPageIndex = pageIndex
     if (this.autoPlay) {
-      this._play()
+      this.play()
     }
   }
 
-  deactivated() {
+  public deactivated() {
     this.slider.disable()
     clearTimeout(this.timer)
   }
 
-  beforeDestroy() {
+  public beforeDestroy() {
     this.slider.disable()
     clearTimeout(this.timer)
   }
 
-  refresh() {
+  public refresh() {
     if (!this.slider) {
-      this._setSliderWidth(true)
+      this.setSliderWidth(true)
       this.slider.refresh()
     }
   }
 
-  _setSliderWidth(isResize: boolean = false) {
+  private setSliderWidth(isResize: boolean = false) {
     this.children = this.$refs.sliderGroup.children
     let width = 0
-    let sliderWidth = this.$refs.slider.clientWidth
-    for (let i = 0; i < this.children.length; i++) {
-      let child = this.children[i]
+    const sliderWidth = this.$refs.slider.clientWidth
+    for (const child of this.children) {
       addClass(child, 'slider-item')
       child.style.width = sliderWidth + 'px'
       width += sliderWidth
@@ -109,11 +115,11 @@ export default class Slider extends Vue {
     this.$refs.sliderGroup.style.width = width + 'px'
   }
 
-  _initDots() {
+  private initDots() {
     this.dots = new Array(this.children.length)
   }
 
-  _initSlider() {
+  private initSlider() {
     this.slider = new BScroll(this.$refs.slider, {
       scrollX: true,
       scrollY: false,
@@ -125,11 +131,11 @@ export default class Slider extends Vue {
       }
     })
 
-    this.slider.on('scrollEnd', this._getCurrentPageIndex)
+    this.slider.on('scrollEnd', this.getCurrentPageIndex)
 
     this.slider.on('touchEnd', () => {
       if (this.autoPlay) {
-        this._play()
+        this.play()
       }
     })
 
@@ -140,18 +146,18 @@ export default class Slider extends Vue {
     })
   }
 
-  _play() {
+  private play() {
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.slider.next()
     }, this.interval)
   }
 
-  _getCurrentPageIndex() {
+  private getCurrentPageIndex() {
     const pageIndex = this.slider.getCurrentPage().pageX
     this.currentPageIndex = pageIndex
     if (this.autoPlay) {
-      this._play()
+      this.play()
     }
   }
 }
