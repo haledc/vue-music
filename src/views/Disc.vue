@@ -1,0 +1,75 @@
+<template>
+  <transition name="slide">
+    <MusicList
+      :title="title"
+      :bg-image="bgImage"
+      :songs="songs"
+    ></MusicList>
+  </transition>
+</template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import MusicList from '@/components/MusicList.vue'
+import { Getter } from 'vuex-class'
+import { getSongList } from '@/assets/api/recommend'
+import { ERR_OK } from '@/assets/api/config'
+import { createSong, isValidMusic, processSongUrl } from '@/assets/utils/song'
+
+@Component({
+  components: {
+    MusicList
+  }
+})
+export default class Disc extends Vue {
+  @Getter 
+  public disc: any
+
+  public songs: any[] = []
+
+  public created() {
+    this.getSongList()
+  }
+
+  get title() {
+    return this.disc.dissname
+  }
+
+  get bgImage() {
+    return this.disc.imgurl
+  }
+
+  private getSongList() {
+    if (!this.disc.dissid) {
+      this.$router.push('/recommend')
+      return
+    }
+
+    getSongList(this.disc.dissid).then(res => {
+      if (res.code === ERR_OK) {
+        processSongUrl(this.normalizeSongs(res.cdlist[0].songlist)).then(
+          songs => (this.songs = songs)
+        )
+      }
+    })
+  }
+
+  private normalizeSongs(list: any) {
+    const ret: any = []
+    list.forEach((musicData: any) => {
+      if (isValidMusic(musicData)) {
+        ret.push(createSong(musicData))
+      }
+    })
+    return ret
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.slide-enter-active, .slide-leave-active
+  transition: all 0.3s
+
+.slide-enter, .slide-leave-to
+  transform: translate3d(100%, 0, 0)
+</style>
