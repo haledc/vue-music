@@ -3,17 +3,17 @@ import { ERR_OK } from '../api/config'
 import { Base64 } from 'js-base64'
 
 export default class Song {
-  id: string
-  mid: string
-  singer: object
-  name: string
-  album: string
-  duration: number
-  image: string
-  filename: string
-  url: string
+  public id: string
+  public mid: string
+  public singer: object
+  public name: string
+  public album: string
+  public duration: number
+  public image: string
+  public filename: string
+  public url: string
 
-  lyric: string = ''
+  public lyric: string = ''
 
   constructor({ id, mid, singer, name, album, duration, image, url }: any) {
     this.id = id
@@ -27,7 +27,7 @@ export default class Song {
     this.url = url
   }
 
-  getLyric() {
+  public getLyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }

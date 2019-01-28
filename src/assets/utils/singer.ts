@@ -1,7 +1,7 @@
 export default class Singer {
-  id: string
-  name: string
-  avatar: string
+  public id: string
+  public name: string
+  public avatar: string
   constructor({ id, name }: any) {
     this.id = id
     this.name = name
