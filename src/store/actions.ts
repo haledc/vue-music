@@ -30,7 +30,7 @@ export const selectAndPlay = ({ commit, state }: any, { list, index }: any) => {
 
   // 如果为随机播放模式则打乱列表
   if (state.mode === playMode.random) {
-    let randomList = shuffle(list)
+    const randomList = shuffle(list)
     commit(types.SET_PLAYLIST, randomList)
     // 找到当前歌曲在打乱列表的索引
     index = findIndex(randomList, list[index])
@@ -55,7 +55,7 @@ export const randomPlay = ({ commit }: any, { list }: any) => {
   // 设置顺序播放列表
   commit(types.SET_SEQUENCE_LIST, list)
   // 打乱顺序播放列表
-  let randomList = shuffle(list)
+  const randomList = shuffle(list)
   // 设置播放列表为打乱后的列表
   commit(types.SET_PLAYLIST, randomList)
 
@@ -70,16 +70,16 @@ export const randomPlay = ({ commit }: any, { list }: any) => {
  * @param { commit, state }
  * @param song
  */
-export const insertSong = function({ commit, state }: any, song: any) {
+export const insertSong = ({ commit, state }: any, song: any) => {
   // 引用类型不能直接去修改vuex的数据，需要使用slice拷贝 ★
-  let playlist = state.playlist.slice()
-  let sequenceList = state.sequenceList.slice()
+  const playlist = state.playlist.slice()
+  const sequenceList = state.sequenceList.slice()
   // 值类型不需要slice
   let currentIndex = state.currentIndex
   // 记录当前歌曲
-  let currentSong = playlist[currentIndex]
+  const currentSong = playlist[currentIndex]
   // 查找当前列表中是否有待插入的歌曲并返回其索引，【需要在插入前查找】
-  let fpIndex = findIndex(playlist, song)
+  const fpIndex = findIndex(playlist, song)
   // 因为插入的歌曲都是在当前歌曲的下一位，所以序号+1
   currentIndex++
   // 插入这首歌到当前索引歌曲的下一位
@@ -101,9 +101,9 @@ export const insertSong = function({ commit, state }: any, song: any) {
 
   // 插入的歌曲在sequenceList的索引， 当前歌曲的下一位（+1），后面逻辑和在playlist一样
   // 并且不用操作currentIndex，只有在playlist中需要操作
-  let currentSIndex = findIndex(sequenceList, currentSong) + 1
+  const currentSIndex = findIndex(sequenceList, currentSong) + 1
 
-  let fsIndex = findIndex(sequenceList, song)
+  const fsIndex = findIndex(sequenceList, song)
 
   sequenceList.splice(currentSIndex, 0, song)
 
@@ -126,7 +126,7 @@ export const insertSong = function({ commit, state }: any, song: any) {
  * @param { commit }
  * @param query
  */
-export const saveSearchHistory = function({ commit }: any, query: string) {
+export const saveSearchHistory = ({ commit }: any, query: string) => {
   commit(types.SET_SEARCH_HISTORY, saveSearch(query))
 }
 
@@ -135,7 +135,7 @@ export const saveSearchHistory = function({ commit }: any, query: string) {
  * @param { commit }
  * @param query
  */
-export const deleteSearchHistory = function({ commit }: any, query: string) {
+export const deleteSearchHistory = ({ commit }: any, query: string) => {
   commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
 }
 
@@ -143,7 +143,7 @@ export const deleteSearchHistory = function({ commit }: any, query: string) {
  * 清空搜索历史
  * @param { commit }
  */
-export const clearSearchHistory = function({ commit }: any) {
+export const clearSearchHistory = ({ commit }: any) => {
   commit(types.SET_SEARCH_HISTORY, clearSearch())
 }
 
@@ -152,14 +152,14 @@ export const clearSearchHistory = function({ commit }: any) {
  * @param { commit, state }
  * @param song
  */
-export const deleteSong = function({ commit, state }: any, song: any) {
-  let playlist = state.playlist.slice()
-  let sequenceList = state.sequenceList.slice()
+export const deleteSong = ({ commit, state }: any, song: any) => {
+  const playlist = state.playlist.slice()
+  const sequenceList = state.sequenceList.slice()
   let currentIndex = state.currentIndex
   // 找到该歌曲的索引，并且删除
-  let pIndex = findIndex(playlist, song)
+  const pIndex = findIndex(playlist, song)
   playlist.splice(pIndex, 1)
-  let sIndex = findIndex(sequenceList, song)
+  const sIndex = findIndex(sequenceList, song)
   sequenceList.splice(sIndex, 1)
   // 如果索引在当前歌曲之前 || 播放的是最后一首歌时，当前歌曲的索引-1
   if (currentIndex > pIndex || currentIndex === playlist.length) {
@@ -178,7 +178,7 @@ export const deleteSong = function({ commit, state }: any, song: any) {
  * 清空歌曲列表，重置为初始值
  * @param { commit }
  */
-export const deleteSongList = function({ commit }: any) {
+export const deleteSongList = ({ commit }: any) => {
   // 当前索引设置为-1
   commit(types.SET_CURRENT_INDEX, -1)
   // 播放列表设置为空数组
@@ -194,7 +194,7 @@ export const deleteSongList = function({ commit }: any) {
  * @param { commit }
  * @param song
  */
-export const savePlayHistory = function({ commit }: any, song: any) {
+export const savePlayHistory = ({ commit }: any, song: any) => {
   commit(types.SET_PLAY_HISTORY, savePlay(song))
 }
 
@@ -203,7 +203,7 @@ export const savePlayHistory = function({ commit }: any, song: any) {
  * @param { commit }
  * @param song
  */
-export const saveFavoriteList = function({ commit }: any, song: any) {
+export const saveFavoriteList = ({ commit }: any, song: any) => {
   commit(types.SET_FAVORITE_LIST, saveFavorite(song))
 }
 
@@ -212,10 +212,6 @@ export const saveFavoriteList = function({ commit }: any, song: any) {
  * @param { commit }
  * @param song
  */
-export const deleteFavoriteList = function({ commit }: any, song: any) {
+export const deleteFavoriteList = ({ commit }: any, song: any) => {
   commit(types.SET_FAVORITE_LIST, deleteFavorite(song))
-}
-
-export const setDisc = function({ commit }: any, disc: any) {
-  commit(types.SET_DISC, disc)
 }
