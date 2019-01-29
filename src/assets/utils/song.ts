@@ -97,7 +97,7 @@ export function processSongUrl(songs: any[]) {
 export function normalizeSongs(list: any) {
   const ret: any = []
   list.forEach((item: any) => {
-    item = item.musicData ? item.musicData : item
+    item = item.musicData ? item.musicData : item.data ? item.data : item
     if (isValidMusic(item)) {
       ret.push(createSong(item))
     }
