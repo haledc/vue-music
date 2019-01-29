@@ -13,6 +13,7 @@
           v-for="item in topList"
           :key="item.id"
           class="item"
+          @click="selectItem(item)"
         >
           <div class="icon">
             <img
@@ -45,6 +46,7 @@
         <Loading />
       </div>
     </Scroll>
+    <router-view />
   </div>
 </template>
 
