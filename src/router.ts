@@ -33,14 +33,22 @@ export default new Router({
         {
           path: ':id',
           component: () =>
-            import(/* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue'),
+            import(/* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue')
         }
       ]
     },
     {
       path: '/rank',
       name: 'rank',
-      component: () => import(/* webpackChunkName: "rank" */ './views/Rank.vue')
+      component: () =>
+        import(/* webpackChunkName: "rank" */ './views/Rank.vue'),
+      children: [
+        {
+          path: ':id',
+          component: () =>
+            import(/* webpackChunkName: "topList" */ './views/TopList.vue')
+        }
+      ]
     },
     {
       path: '/search',
