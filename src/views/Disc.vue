@@ -14,7 +14,7 @@ import MusicList from '@/components/MusicList.vue'
 import { Getter } from 'vuex-class'
 import { getSongList } from '@/assets/api/recommend'
 import { ERR_OK } from '@/assets/api/config'
-import { createSong, isValidMusic, processSongUrl } from '@/assets/utils/song'
+import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
 
 @Component({
   components: {
@@ -47,22 +47,14 @@ export default class Disc extends Vue {
 
     getSongList(this.disc.dissid).then(res => {
       if (res.code === ERR_OK) {
-        processSongUrl(this.normalizeSongs(res.cdlist[0].songlist)).then(
+        processSongUrl(normalizeSongs(res.cdlist[0].songlist)).then(
           songs => (this.songs = songs)
         )
       }
     })
   }
 
-  private normalizeSongs(list: any) {
-    const ret: any = []
-    list.forEach((musicData: any) => {
-      if (isValidMusic(musicData)) {
-        ret.push(createSong(musicData))
-      }
-    })
-    return ret
-  }
+  
 }
 </script>
 
