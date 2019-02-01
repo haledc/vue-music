@@ -1,7 +1,7 @@
 import { commonParams, options } from './config'
 import jsonp from '../utils/jsonp'
 
-export function getSingerList() {
+export function getSingerList(): Promise<object> {
   const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
 
   const data = Object.assign({}, commonParams, {
@@ -18,7 +18,7 @@ export function getSingerList() {
   return jsonp(url, data, options)
 }
 
-export function getSingerDetail(singerId: string) {
+export function getSingerDetail(singerId: string): Promise<object> {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
 
   const data = Object.assign({}, commonParams, {

@@ -4,7 +4,7 @@ import jsonp from '../utils/jsonp'
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export function getHotKey() {
+export function getHotKey(): Promise<object> {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
 
   const data = Object.assign({}, commonParams, {
@@ -21,7 +21,7 @@ export function search(
   page: number,
   zhida: boolean,
   perPage: number
-) {
+): Promise<object> {
   const url = debug ? '/api/search' : 'http://127.0.0.1:9095/api/search'
 
   const data = Object.assign({}, commonParams, {
@@ -47,5 +47,5 @@ export function search(
     .get(url, {
       params: data
     })
-    .then(res => Promise.resolve(res.data))
+    .then((res: AxiosResponse) => Promise.resolve(res.data))
 }

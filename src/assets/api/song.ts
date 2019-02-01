@@ -1,10 +1,12 @@
 import axios, { AxiosResponse } from 'axios'
 import { commonParams, ERR_OK } from './config'
 import { getUid } from '../utils/uid'
+import { LyricResponse, SongsUrlResponse } from './apiInterface'
+import Song from '../utils/song'
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export function getLyric(mid: string): Promise<any> {
+export function getLyric(mid: string): Promise<LyricResponse> {
   const url = debug ? '/api/lyric' : 'http://127.0.0.1:9095/api/lyric'
 
   const data = Object.assign({}, commonParams, {
@@ -24,7 +26,7 @@ export function getLyric(mid: string): Promise<any> {
     .then((res: AxiosResponse) => Promise.resolve(res.data))
 }
 
-export function getSongsUrl(songs: any[]) {
+export function getSongsUrl (songs: Song[]): Promise<SongsUrlResponse> {
   const url = debug ? '/api/getPurlUrl' : 'http://127.0.0.1:9095/api/getPurlUrl'
   const mids: string[] = []
   const types: number[] = []
@@ -56,8 +58,7 @@ export function getSongsUrl(songs: any[]) {
         .then(response => {
           const ret = response.data
           if (ret.code === ERR_OK) {
-            const uMid: { code: number; data: { midurlinfo: any[] } } =
-              ret.url_mid
+            const uMid = ret.url_mid
             if (uMid && uMid.code === ERR_OK) {
               const info = uMid.data.midurlinfo[0]
               if (info && info.purl) {
