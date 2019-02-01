@@ -1,7 +1,23 @@
 import { playMode } from '../assets/utils/config'
 import { loadSearch } from '../assets/utils/cache'
+import Song from '../assets/utils/song'
 
-const state = {
+export interface State {
+  singer: object
+  playing: boolean
+  fullScreen: boolean
+  playlist: Song[]
+  sequenceList: Song[]
+  mode: number
+  currentIndex: number
+  disc: object
+  topList: object
+  searchHistory: string[]
+  playHistory: Song[]
+  favoriteList: Song[]
+}
+
+const state: State = {
   singer: {},
   playing: false,
   fullScreen: false,
@@ -11,7 +27,7 @@ const state = {
   currentIndex: -1,
   disc: {},
   topList: {},
-  searchHistory: loadSearch() || [],
+  searchHistory: loadSearch(),
   playHistory: [],
   favoriteList: []
 }
