@@ -22,12 +22,9 @@ import BScroll from 'better-scroll'
 
 @Component
 export default class Slider extends Vue {
-  @Prop({ default: true })
-  public loop!: boolean
-  @Prop({ default: true })
-  public autoPlay!: boolean
-  @Prop({ default: 2000 })
-  public interval!: number
+  @Prop({ default: true }) public loop!: boolean
+  @Prop({ default: true }) public autoPlay!: boolean
+  @Prop({ default: 2000 }) public interval!: number
 
   public dots: any[] = []
   public currentPageIndex: number = 0

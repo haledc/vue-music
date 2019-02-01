@@ -13,8 +13,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component
 export default class Loading extends Vue {
-  @Prop({ default: '正在载入...' })
-  public title!: string
+  @Prop({ default: '正在载入...' }) public title!: string
 }
 </script>
 
