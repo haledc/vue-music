@@ -65,10 +65,10 @@ module.exports = {
               let ret = response.data
               if (typeof ret === 'string') {
                 const reg = /^\w+\(({.+})\)$/
-                const matches = res.match(reg)
+                const matches = ret.match(reg)
                 matches && (ret = JSON.parse(matches[1]))
-                res.json(ret)
               }
+              res.json(ret)
             })
             .catch(err => console.log(err))
         })
