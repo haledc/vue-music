@@ -1,21 +1,45 @@
 import { getLyric, getSongsUrl } from '../api/song'
 import { ERR_OK } from '../api/config'
 import { Base64 } from 'js-base64'
+import { SongResponse } from '../api/apiInterface'
+
+interface SongParams {
+  id: string
+  mid: string
+  singer: string
+  name: string
+  album: string
+  duration: number
+  image: string
+  url: string
+}
+
+interface SingerObject {
+  name: string
+}
 
 export default class Song {
   public id: string
   public mid: string
-  public singer: object
+  public singer: string
   public name: string
   public album: string
   public duration: number
   public image: string
   public filename: string
   public url: string
+  public lyric!: string
 
-  public lyric: string = ''
-
-  constructor({ id, mid, singer, name, album, duration, image, url }: any) {
+  constructor({
+    id,
+    mid,
+    singer,
+    name,
+    album,
+    duration,
+    image,
+    url
+  }: SongParams) {
     this.id = id
     this.mid = mid
     this.singer = singer
@@ -45,7 +69,7 @@ export default class Song {
   }
 }
 
-export function createSong(musicData: any) {
+export function createSong(musicData: SongResponse) {
   return new Song({
     id: musicData.songid,
     mid: musicData.songmid,
@@ -60,8 +84,8 @@ export function createSong(musicData: any) {
   })
 }
 
-function filterSinger(singer: any[]): string {
-  const ret: any[] = []
+function filterSinger(singer: SingerObject[]): string {
+  const ret: string[] = []
   if (!singer) {
     return ''
   }
@@ -69,7 +93,7 @@ function filterSinger(singer: any[]): string {
   return ret.join('/')
 }
 
-export function isValidMusic(musicData: any) {
+export function isValidMusic(musicData: SongResponse) {
   return (
     musicData.songid &&
     musicData.albummid &&
@@ -77,12 +101,12 @@ export function isValidMusic(musicData: any) {
   )
 }
 
-export function processSongUrl(songs: any[]) {
+export function processSongUrl(songs: Song[]) {
   if (!songs.length) {
     return Promise.resolve(songs)
   }
 
-  return getSongsUrl(songs).then((res: any) => {
+  return getSongsUrl(songs).then(res => {
     if (res.code === ERR_OK) {
       const midUrlInfo = res.url_mid.data.midurlinfo
       midUrlInfo.forEach((info: any, index: number) => {
@@ -94,9 +118,11 @@ export function processSongUrl(songs: any[]) {
   })
 }
 
-export function normalizeSongs(list: any) {
+export function normalizeSongs(list: SongResponse[]) {
   const ret: any = []
-  list.forEach((item: any) => {
+
+  list.forEach(item => {
+    // @ts-ignore
     item = item.musicData ? item.musicData : item.data ? item.data : item
     if (isValidMusic(item)) {
       ret.push(createSong(item))

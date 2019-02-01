@@ -6,10 +6,10 @@ export function hasClass(el: Element, className: string) {
   return el.classList.contains(className)
 }
 
-export function getData(el: Element, name: string, val?: string) {
+export function getData(el: Element, name: string) {
   const prefix = 'data-'
   name = prefix + name
-  return val ? el.setAttribute(name, val) : el.getAttribute(name)
+  return el.getAttribute(name)
 }
 
 const elementStyle = document.createElement('div').style

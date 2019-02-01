@@ -3,6 +3,12 @@ interface SingerParams {
   name: string
 }
 
+interface OriginalSinger {
+  Fsinger_mid: string
+  Fsinger_name: string
+  Findex: string
+}
+
 export default class Singer {
   public id: string
   public name: string
@@ -17,8 +23,8 @@ export default class Singer {
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 
-export const normalizeSinger = (list: any[]) => {
-  const map: any = {
+export const normalizeSingers = (list: OriginalSinger[]) => {
+  const map:any = {
     hot: {
       title: HOT_NAME,
       items: []

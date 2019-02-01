@@ -3,41 +3,47 @@ import * as types from '../../store/mutation-types'
 import { Getter, Mutation, Action } from 'vuex-class'
 import { shuffle } from './util'
 import { Vue, Component, Watch } from 'vue-property-decorator'
+import Song from '@/assets/utils/song'
 
 @Component
 export class PlaylistMixin extends Vue {
-  @Getter protected playlist: any
+  @Getter public playlist!: Song[]
 
-  protected mounted() {
+  public mounted() {
     this.handlePlaylist(this.playlist)
   }
 
-  protected activated() {
+  public activated() {
     this.handlePlaylist(this.playlist)
   }
 
   @Watch('playlist')
-  protected onChangePlaylist(newVal: any[]) {
+  public onChangePlaylist(newVal: any[]) {
     this.handlePlaylist(newVal)
   }
 
-  protected handlePlaylist(playlist?: any[]) {
+  public handlePlaylist(playlist?: any[]) {
     throw new Error('component must implement handlePlaylist method')
   }
 }
 
+@Component
 export class PlayerMixin extends Vue {
-  @Getter protected sequenceList: any
-  @Getter protected currentSong: any
-  @Getter protected playlist: any
-  @Getter protected mode: any
-  @Getter protected favoriteList: any
-  @Mutation(types.SET_PLAYING_STATE) protected setPlayState: any
-  @Mutation(types.SET_CURRENT_INDEX) protected setCurrentIndex: any
-  @Mutation(types.SET_PLAY_MODE) protected setPlayMode: any
-  @Mutation(types.SET_PLAYLIST) protected setPlaylist: any
-  @Action protected saveFavoriteList: any
-  @Action protected deleteFavoriteList: any
+  @Getter public sequenceList!: Song[]
+  @Getter public currentSong!: Song
+  @Getter public playlist!: Song[]
+  @Getter public mode!: number
+  @Getter public favoriteList!: Song[]
+  @Mutation(types.SET_PLAYING_STATE) public setPlayingState!: (
+    flag: boolean
+  ) => void
+  @Mutation(types.SET_CURRENT_INDEX) public setCurrentIndex!: (
+    index: number
+  ) => void
+  @Mutation(types.SET_PLAY_MODE) public setPlayMode!: (mode: number) => void
+  @Mutation(types.SET_PLAYLIST) public setPlaylist!: (list: Song[]) => void
+  @Action public saveFavoriteList!: (song: Song) => void
+  @Action public deleteFavoriteList!: (song: Song) => void
 
   get iconMode() {
     return this.mode === playMode.sequence
@@ -51,68 +57,68 @@ export class PlayerMixin extends Vue {
     return this.getFavoriteIcon(this.currentSong)
   }
 
-  protected getFavoriteIcon(song: any) {
+  public getFavoriteIcon(song: Song) {
     if (this.isFavorite(song)) {
       return 'icon-favorite'
     }
     return 'icon-not-favorite'
   }
 
-  protected isFavorite(song: any) {
+  public isFavorite(song: Song) {
     const index = this.favoriteList.findIndex(
       (item: any) => item.id === song.id
     )
     return index > -1
   }
 
-  protected toggleFavorite(song: any) {
+  public toggleFavorite(song: Song) {
     this.isFavorite(song)
       ? this.deleteFavoriteList(song)
       : this.saveFavoriteList(song)
   }
 
-  protected changeMode() {
+  public changeMode() {
     const mode = (this.mode + 1) % 3
-    this.setPlayMode()
-    let list = null
+    this.setPlayMode(mode)
+    let list: Song[]
     if (mode === playMode.random) {
       list = shuffle(this.sequenceList)
     } else {
       list = this.sequenceList
     }
     this.resetCurrentIndex(list)
-    this.setPlaylist()
+    this.setPlaylist(list)
   }
 
-  protected resetCurrentIndex(list: any[]) {
+  public resetCurrentIndex(list: Song[]) {
     const index = list.findIndex(item => item.id === this.currentSong.id)
     this.setCurrentIndex(index)
   }
 }
 
+@Component
 export class SearchMixin extends Vue {
-  @Getter protected searchHistory: any
-  @Action protected saveSearchHistory: any
-  @Action protected deleteSearchHistory: any
+  @Getter public searchHistory!: string[]
+  @Action public saveSearchHistory!: (query: string) => void
+  @Action public deleteSearchHistory!: () => void
 
-  protected query: string = ''
-  protected refreshDelay: number = 120
+  public query: string = ''
+  public refreshDelay: number = 120
+  public $refs: any
 
-  protected addQuery(query: string) {
-    // @ts-ignore
+  public addQuery(query: string) {
     this.$refs.searchBox.setQuery(query)
   }
 
-  protected blurInput() {
-    // @ts-ignore
+  public blurInput() {
     this.$refs.searchBox.blur()
   }
 
-  protected saveSearch() {
+  public saveSearch() {
     this.saveSearchHistory(this.query)
   }
 
-  protected onQueryChange(query: string) {
+  public onQueryChange(query: string) {
     this.query = query.trim()
   }
 }
