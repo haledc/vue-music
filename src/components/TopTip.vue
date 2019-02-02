@@ -18,7 +18,7 @@ export default class TopTip extends Vue {
   @Prop({ default: 2000 }) public delay!: number
 
   public showFlag: boolean = false
-  public timer: any
+  public timer!: number
 
   public show() {
     this.showFlag = true

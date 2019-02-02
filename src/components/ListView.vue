@@ -74,6 +74,7 @@ import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import Scroll from '@/components/Scroll.vue'
 import Loading from '@/components/Loading.vue'
 import { getData } from '@/assets/utils/dom'
+import Singer from '@/assets/utils/singer'
 
 const ANCHOR_HEIGHT = 18
 const TITLE_HEIGHT = 30
@@ -85,8 +86,7 @@ const TITLE_HEIGHT = 30
   }
 })
 export default class ListView extends Vue {
-  @Prop({ default: [] })
-  public data!: any[]
+  @Prop({ default: [] }) public data!: any[]
 
   public scrollY: number = -1
   public currentIndex: number = 0
@@ -95,8 +95,12 @@ export default class ListView extends Vue {
   public listenScroll: boolean = true
   public listHeight: number[] = []
   public probeType: number = 3
-  public fixedTop: any
-  public $refs: any
+  public fixedTop!: number
+  public $refs!: {
+    listView: Scroll
+    listGroup: HTMLLIElement[]
+    fixed: HTMLDivElement
+  }
 
   get shortcutList() {
     return this.data.map(group => group.title.substr(0, 1))
@@ -111,20 +115,20 @@ export default class ListView extends Vue {
       : ''
   }
 
-  public onShortcutTouchStart(e: any) {
-    const anchorIndex = getData(e.target, 'index')
+  public onShortcutTouchStart(e: TouchEvent) {
+    const anchorIndex = getData(e.target as HTMLElement, 'index')
     const firstTouch = e.touches[0]
     this.touch.y1 = firstTouch.pageY
     this.touch.anchorIndex = anchorIndex
-    this.scrollTo(anchorIndex)
+    this.scrollTo(parseInt(anchorIndex, 10))
   }
 
-  public onShortcutTouchMove(e: any) {
+  public onShortcutTouchMove(e: TouchEvent) {
     const firstTouch = e.touches[0]
     this.touch.y2 = firstTouch.pageY
-    const delta = ((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT) || 0
-    const anchorIndex = parseInt(this.touch.anchorIndex, 10) + delta
-    this.scrollTo(anchorIndex)
+    const delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT || 0
+    const anchorIndex = this.touch.anchorIndex + delta
+    this.scrollTo(parseInt(anchorIndex, 10))
   }
 
   public refresh() {
@@ -136,9 +140,8 @@ export default class ListView extends Vue {
   }
 
   @Emit('select')
-  public selectItem(item: any) {
-    // ...
-  }
+  // tslint:disable no-empty-interface
+  public selectItem(item: any) {}
 
   @Watch('data')
   public onDataChange() {
@@ -148,7 +151,7 @@ export default class ListView extends Vue {
   }
 
   @Watch('scrollY')
-  public onScrollYChange(newY: any) {
+  public onScrollYChange(newY: number) {
     const listHeight = this.listHeight
     if (newY > 0) {
       this.currentIndex = 0
@@ -169,7 +172,7 @@ export default class ListView extends Vue {
   }
 
   @Watch('diff')
-  public onDiffChange(newVal: any) {
+  public onDiffChange(newVal: number) {
     const fixedTop =
       newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
     if (this.fixedTop === fixedTop) {
@@ -179,7 +182,7 @@ export default class ListView extends Vue {
     this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
   }
 
-  private scrollTo(index: any) {
+  private scrollTo(index: number) {
     if (!index && index !== 0) {
       return
     }
@@ -189,6 +192,7 @@ export default class ListView extends Vue {
       index = this.listHeight.length - 2
     }
     this.scrollY = -this.listHeight[index]
+    // @ts-ignore
     this.$refs.listView.scrollToElement(this.$refs.listGroup[index], 0)
   }
 

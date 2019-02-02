@@ -81,6 +81,7 @@ import { ERR_OK } from '@/assets/api/config'
 import { Mutation } from 'vuex-class'
 import * as types from '@/store/mutation-types'
 import { AxiosResponse } from 'axios'
+import Song from '@/assets/utils/song'
 
 @Component({
   components: {
@@ -90,13 +91,15 @@ import { AxiosResponse } from 'axios'
   }
 })
 export default class Recommend extends Vue {
-  public discList = []
-  public sliderList = []
+  public discList: object[] = []
+  public sliderList: object[] = []
   public checkLoaded: boolean = false
-  public $refs: any
+  public $refs!: {
+    scroll: Scroll
+    recommend: HTMLElement
+  }
 
-  @Mutation(types.SET_DISC) 
-  public setDisc!: (item: any) => void
+  @Mutation(types.SET_DISC) public setDisc!: (item: object) => void
 
   public created() {
     this.getSliderList()
@@ -110,19 +113,19 @@ export default class Recommend extends Vue {
     }
   }
 
-  public handlePlaylist(playlist: any[]) {
+  public handlePlaylist(playlist: Song[]) {
     const bottom = playlist.length > 0 ? '60px' : ''
     this.$refs.recommend.style.bottom = bottom
     this.$refs.scroll.refresh()
   }
 
-  public selectDisc(item: any) {
+  public selectDisc(item: { dissid: string }) {
     this.$router.push(`/recommend/${item.dissid}`)
     this.setDisc(item)
   }
 
   private getSliderList() {
-    getSliderList().then((res: any) => {
+    getSliderList().then(res => {
       if (res.code === ERR_OK) {
         this.sliderList = res.data.slider
       }

@@ -24,28 +24,26 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import Song from '@/assets/utils/song'
 
 @Component
 export default class MusicList extends Vue {
-  @Prop({ default: [] }) 
-  public songs!: any[]
-  @Prop({ default: false }) 
-  public rank!: boolean
+  @Prop({ default: [] }) public songs!: Song[]
+  @Prop({ default: false }) public rank!: boolean
 
   @Emit('select')
-  public selectSong(song: any, index: number) {
-    // ...
-  }
+  // tslint disable no-empty-brace
+  public selectSong(song: Song, index: number) {}
 
-  public getDesc(song: any): string {
+  public getDesc(song: Song) {
     return `${song.singer} - ${song.album}`
   }
 
-  public getRankCls(index: number): string {
+  public getRankCls(index: number) {
     return index <= 2 ? `icon icon${index}` : 'text'
   }
 
-  public getRankText(index: number): number | undefined {
+  public getRankText(index: number) {
     if (index > 2) {
       return index + 1
     }

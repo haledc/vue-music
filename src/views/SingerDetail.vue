@@ -15,6 +15,8 @@ import { Getter } from 'vuex-class'
 import { getSingerDetail } from '@/assets/api/singer'
 import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
 import { ERR_OK } from '@/assets/api/config'
+import SingerClass from '@/assets/utils/singer'
+import { SongInterface } from '@/assets/api/apiInterface'
 
 @Component({
   components: {
@@ -22,8 +24,7 @@ import { ERR_OK } from '@/assets/api/config'
   }
 })
 export default class SingerDetail extends Vue {
-  @Getter
-  public singer: any
+  @Getter public singer!: SingerClass
 
   public songs: any[] = []
 
@@ -45,9 +46,9 @@ export default class SingerDetail extends Vue {
       return
     }
 
-    getSingerDetail(this.singer.id).then((res: any) => {
+    getSingerDetail(this.singer.id).then(res => {
       if (res.code === ERR_OK) {
-        processSongUrl(normalizeSongs(res.data.list)).then(
+        processSongUrl(normalizeSongs(res.data.list as any)).then(
           songs => (this.songs = songs)
         )
       }

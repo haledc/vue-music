@@ -61,17 +61,19 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Mixins } from 'vue-property-decorator'
 import Scroll from '@/components/Scroll.vue'
 import SongList from '@/components/SongList.vue'
 import Loading from '@/components/Loading.vue'
 import { prefixStyle } from '@/assets/utils/dom'
 import { PlaylistMixin } from '@/assets/utils/mixin'
 import { Action } from 'vuex-class'
+import Song from '@/assets/utils/song'
+import { Position } from 'better-scroll'
 
 const RESERVED_HEIGHT: number = 40
-const transform = prefixStyle('transform')
-const backdrop = prefixStyle('backdrop-filter')
+const transform: any = prefixStyle('transform')
+const backdrop: any = prefixStyle('backdrop-filter')
 
 @Component({
   components: {
@@ -80,45 +82,49 @@ const backdrop = prefixStyle('backdrop-filter')
     Loading
   }
 })
-export default class MusicList extends PlaylistMixin {
-  @Action
-  public selectPlay: any
-  @Action
-  public randomPlay: any
+export default class MusicList extends Mixins(PlaylistMixin) {
+  @Prop({ default: '' }) public bgImage!: string
+  @Prop({ default: [] }) public songs!: Song[]
+  @Prop({ default: '' }) public title!: string
+  @Prop({ default: false }) public rank!: boolean
 
-  @Prop({ default: '' })
-  public bgImage!: string
-  @Prop({ default: [] })
-  public songs!: any[]
-  @Prop({ default: '' })
-  public title!: string
-  @Prop({ default: false })
-  public rank!: boolean
+  @Action public selectAndPlay!: (
+    params: { list: Song[]; index: number }
+  ) => void
+  @Action public randomPlay!: (params: { list: Song[] }) => void
 
   public scrollY: number = 0
   public probeType: number = 3
   public listenScroll: boolean = true
   public imageHeigth: number = 0
   public minTranslateY: number = 0
-  public $refs: any
+  public $refs!: {
+    bgImage: HTMLElement
+    list: Scroll
+    layer: HTMLElement
+    filter: HTMLElement
+    playBtn: HTMLElement
+  }
 
   public mounted() {
     this.imageHeigth = this.$refs.bgImage.clientHeight
     this.minTranslateY = -this.imageHeigth + RESERVED_HEIGHT
-    this.$refs.list.$el.style.top = `${this.imageHeigth}px`
+    const el = this.$refs.list.$el as HTMLElement
+    el.style.top = `${this.imageHeigth}px`
   }
 
   get bgStyle() {
     return `background-image:url(${this.bgImage})`
   }
 
-  public handlePlaylist(playlist: any) {
+  public handlePlaylist(playlist: Song[]) {
     const bottom = playlist.length > 0 ? '60px' : ''
-    this.$refs.list.$el.style.bottom = bottom
+    const el = this.$refs.list.$el as HTMLElement
+    el.style.bottom = bottom
     this.$refs.list.refresh()
   }
 
-  public scroll(pos: any) {
+  public scroll(pos: Position) {
     this.scrollY = pos.y
   }
 
@@ -126,8 +132,8 @@ export default class MusicList extends PlaylistMixin {
     this.$router.back()
   }
 
-  public selectDisc(disc: any, index: number) {
-    this.selectPlay({
+  public selectDisc(disc: Song, index: number) {
+    this.selectAndPlay({
       list: this.songs,
       index
     })
@@ -154,22 +160,24 @@ export default class MusicList extends PlaylistMixin {
       blur = Math.min(20, percent * 20)
     }
 
-    this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+    this.$refs.layer.style[
+      transform
+    ] = `translate3d(0, ${translateY}px, 0)`
     this.$refs.filter.style[backdrop] = `blur(${blur}px)`
 
     if (newY < this.minTranslateY) {
       zIndex = 10
-      this.$refs.bgImage.style.paddingTop = 0
+      this.$refs.bgImage.style.paddingTop = '0'
       this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
       this.$refs.playBtn.style.display = 'none'
     } else {
       this.$refs.bgImage.style.paddingTop = '70%'
-      this.$refs.bgImage.style.height = 0
+      this.$refs.bgImage.style.height = '0'
       this.$refs.playBtn.style.display = ''
     }
 
     this.$refs.bgImage.style[transform] = `scale(${scale})`
-    this.$refs.bgImage.style.zIndex = zIndex
+    this.$refs.bgImage.style.zIndex = zIndex.toString()
   }
 }
 </script>

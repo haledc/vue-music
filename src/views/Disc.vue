@@ -15,6 +15,7 @@ import { Getter } from 'vuex-class'
 import { getSongList } from '@/assets/api/recommend'
 import { ERR_OK } from '@/assets/api/config'
 import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
+import { DiscInterface, SongInterface } from '@/assets/api/apiInterface'
 
 @Component({
   components: {
@@ -22,8 +23,7 @@ import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
   }
 })
 export default class Disc extends Vue {
-  @Getter 
-  public disc: any
+  @Getter public disc!: DiscInterface
 
   public songs: any[] = []
 
@@ -53,8 +53,6 @@ export default class Disc extends Vue {
       }
     })
   }
-
-  
 }
 </script>
 

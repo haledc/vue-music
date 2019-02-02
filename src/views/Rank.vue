@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { getTopList } from '@/assets/api/rank'
 import { ERR_OK } from '@/assets/api/config'
 import Scroll from '@/components/Scroll.vue'
@@ -59,6 +59,7 @@ import Loading from '@/components/Loading.vue'
 import { Mutation } from 'vuex-class'
 import * as types from '@/store/mutation-types'
 import { PlaylistMixin } from '@/assets/utils/mixin'
+import Song from '@/assets/utils/song'
 
 @Component({
   components: {
@@ -66,30 +67,33 @@ import { PlaylistMixin } from '@/assets/utils/mixin'
     Loading
   }
 })
-export default class Rank extends PlaylistMixin {
-  @Mutation(types.SET_TOP_LIST)
-  public setTopList: any
+export default class Rank extends Mixins(PlaylistMixin) {
+  @Mutation(types.SET_TOP_LIST) public setTopList!: (list: object) => void
 
   public topList: any[] = []
-  public $refs: any
+  public $refs!: {
+    rank: HTMLElement
+    topList: Scroll
+  }
+
 
   public created() {
     this.getTopList()
   }
 
-  public handlePlaylist(playlist: any) {
+  public handlePlaylist(playlist: Song[]) {
     const bottom = playlist.length > 0 ? '60px' : ''
     this.$refs.rank.style.bottom = bottom
     this.$refs.topList.refresh()
   }
 
-  public selectItem(item: any) {
+  public selectItem(item: Song) {
     this.$router.push(`/rank/${item.id}`)
     this.setTopList(item)
   }
 
   private getTopList() {
-    getTopList().then((res: any) => {
+    getTopList().then(res => {
       if (res.code === ERR_OK) {
         this.topList = res.data.topList
       }

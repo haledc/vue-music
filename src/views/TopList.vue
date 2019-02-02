@@ -16,6 +16,8 @@ import { Getter } from 'vuex-class'
 import { getMusicList } from '@/assets/api/rank'
 import { ERR_OK } from '@/assets/api/config'
 import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
+import Song from '@/assets/utils/song'
+import { TopListInterface } from '@/assets/api/apiInterface'
 
 @Component({
   components: {
@@ -23,8 +25,7 @@ import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
   }
 })
 export default class TopList extends Vue {
-  @Getter
-  public topList: any
+  @Getter public topList!: TopListInterface
 
   public songs: any[] = []
   public rank: boolean = true
@@ -50,9 +51,11 @@ export default class TopList extends Vue {
       return
     }
 
-    getMusicList(this.topList.id).then((res: any) => {
+    getMusicList(this.topList.id).then(res => {
+      console.log(res)
+
       if (res.code === ERR_OK) {
-        processSongUrl(normalizeSongs(res.songlist)).then(
+        processSongUrl(normalizeSongs(res.songlist as any)).then(
           songs => (this.songs = songs)
         )
       }

@@ -26,13 +26,16 @@ export default class Slider extends Vue {
   @Prop({ default: true }) public autoPlay!: boolean
   @Prop({ default: 2000 }) public interval!: number
 
-  public dots: any[] = []
+  public dots!: any[]
   public currentPageIndex: number = 0
-  public slider: any
-  public resizeTimer: any
-  public timer: any
-  public children: any // ?
-  public $refs: any
+  public slider!: BScroll
+  public resizeTimer!: number
+  public timer!: number
+  public children!: HTMLElement[]
+  public $refs!: Vue['$refs'] & {
+    sliderGroup: HTMLElement
+    slider: HTMLElement
+  }
 
   public mounted() {
     setTimeout(() => {
@@ -91,12 +94,13 @@ export default class Slider extends Vue {
   public refresh() {
     if (!this.slider) {
       this.setSliderWidth(true)
+      // @ts-ignore
       this.slider.refresh()
     }
   }
 
   private setSliderWidth(isResize: boolean = false) {
-    this.children = this.$refs.sliderGroup.children
+    this.children = this.$refs.sliderGroup.children as any
     let width = 0
     const sliderWidth = this.$refs.slider.clientWidth
     for (const child of this.children) {

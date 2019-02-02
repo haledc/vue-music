@@ -17,7 +17,7 @@ import { Vue, Component } from 'vue-property-decorator'
 
 @Component
 export default class Tab extends Vue {
-  private routerContent: object[] = [
+  private routerContent = [
     { to: '/recommend', text: '推荐' },
     { to: '/singer', text: '歌手' },
     { to: '/rank', text: '排行' },

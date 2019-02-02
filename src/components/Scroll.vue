@@ -13,25 +13,19 @@ const DIRECTION_V = 'vertical'
 
 @Component
 export default class Scroll extends Vue {
-  @Prop({ default: 1 })
-  public probeType!: number
-  @Prop({ default: true })
-  public click!: boolean
-  @Prop({ default: null })
-  public data!: string[]
-  @Prop({ default: false })
-  public listenScroll!: boolean
-  @Prop({ default: false })
-  public pullup!: boolean
-  @Prop({ default: false })
-  public beforeScroll!: boolean
-  @Prop({ default: 20 })
-  public refreshDelay!: number
-  @Prop({ default: DIRECTION_V })
-  public direction!: string
+  @Prop({ default: 1 }) public probeType!: number
+  @Prop({ default: true }) public click!: boolean
+  @Prop({ default: null }) public data!: string[]
+  @Prop({ default: false }) public listenScroll!: boolean
+  @Prop({ default: false }) public pullup!: boolean
+  @Prop({ default: false }) public beforeScroll!: boolean
+  @Prop({ default: 20 }) public refreshDelay!: number
+  @Prop({ default: DIRECTION_V }) public direction!: string
 
-  public scroll: any
-  public $refs: any
+  public scroll!: BScroll
+  public $refs!: {
+    wrapper: HTMLElement
+  }
 
   public mounted() {
     setTimeout(() => {
@@ -79,7 +73,7 @@ export default class Scroll extends Vue {
     })
 
     if (this.listenScroll) {
-      this.scroll.on('scroll', (pos: any) => {
+      this.scroll.on('scroll', pos => {
         this.$emit('scroll', pos)
       })
     }

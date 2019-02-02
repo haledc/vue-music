@@ -11,7 +11,7 @@ export interface State {
   mode: number
   currentIndex: number
   disc: object
-  topList: object
+  topList: Song[]
   searchHistory: string[]
   playHistory: Song[]
   favoriteList: Song[]
@@ -26,7 +26,7 @@ const state: State = {
   mode: playMode.sequence,
   currentIndex: -1,
   disc: {},
-  topList: {},
+  topList: [],
   searchHistory: loadSearch(),
   playHistory: [],
   favoriteList: []
