@@ -1,7 +1,8 @@
 import { commonParams, options } from './config'
 import jsonp from '../utils/jsonp'
+import { TopListResponse, TopListSongListResponse } from './apiInterface'
 
-export function getTopList(): Promise<object> {
+export function getTopList(): Promise<TopListResponse> {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
 
   const data = Object.assign({}, commonParams, {
@@ -13,7 +14,7 @@ export function getTopList(): Promise<object> {
   return jsonp(url, data, options)
 }
 
-export function getMusicList(topid: string): Promise<object> {
+export function getMusicList (topid: number): Promise<TopListSongListResponse> {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
 
   const data = Object.assign({}, commonParams, {

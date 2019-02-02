@@ -1,11 +1,15 @@
 import axios, { AxiosResponse } from 'axios'
 import jsonp from '../utils/jsonp'
 import { commonParams, options } from '../api/config'
-import { SongResponse } from './apiInterface'
+import {
+  SongListResponse,
+  DiscListResponse,
+  SliderListResponse
+} from './apiInterface'
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export function getSliderList(): Promise<object> {
+export function getSliderList(): Promise<SliderListResponse> {
   const url =
     'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
 
@@ -18,7 +22,7 @@ export function getSliderList(): Promise<object> {
   return jsonp(url, data, options)
 }
 
-export function getDiscList(): Promise<object> {
+export function getDiscList(): Promise<DiscListResponse> {
   const url = debug
     ? '/api/getDiscList'
     : 'http://127.0.0.1:9095/api/getDiscList'
@@ -43,7 +47,7 @@ export function getDiscList(): Promise<object> {
     .then((res: AxiosResponse) => Promise.resolve(res.data))
 }
 
-export function getSongList(disstid: string): Promise<SongResponse[]> {
+export function getSongList(disstid: string): Promise<SongListResponse> {
   const url = debug ? '/api/getCdInfo/' : 'http://127.0.0.1:9095/api/getCdInfo'
   const data = Object.assign({}, commonParams, {
     disstid,

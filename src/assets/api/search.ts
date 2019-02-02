@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from 'axios'
 import { commonParams, options } from './config'
 import jsonp from '../utils/jsonp'
+import { SearchResponse, HotKeyResponse } from './apiInterface'
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export function getHotKey(): Promise<object> {
+export function getHotKey(): Promise<HotKeyResponse> {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
 
   const data = Object.assign({}, commonParams, {
@@ -21,7 +22,7 @@ export function search(
   page: number,
   zhida: boolean,
   perPage: number
-): Promise<object> {
+): Promise<SearchResponse> {
   const url = debug ? '/api/search' : 'http://127.0.0.1:9095/api/search'
 
   const data = Object.assign({}, commonParams, {
