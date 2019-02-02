@@ -2,14 +2,14 @@ import originJsonp from 'jsonp'
 
 export default function jsonp(
   url: string,
-  obj: object,
+  data: object,
   option: object
-): Promise<object> {
-  url += (url.indexOf('?') < 0 ? '?' : '&') + param(obj)
+): Promise<any> {
+  url += (url.indexOf('?') < 0 ? '?' : '&') + param(data)
 
   return new Promise((resolve, reject) => {
-    originJsonp(url, option, (err, data) => {
-      err ? reject(err) : resolve(data)
+    originJsonp(url, option, (err, dataObj) => {
+      err ? reject(err) : resolve(dataObj)
     })
   })
 }

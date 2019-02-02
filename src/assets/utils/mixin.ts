@@ -18,11 +18,11 @@ export class PlaylistMixin extends Vue {
   }
 
   @Watch('playlist')
-  public onChangePlaylist(newVal: any[]) {
+  public onChangePlaylist(newVal: Song[]) {
     this.handlePlaylist(newVal)
   }
 
-  public handlePlaylist(playlist?: any[]) {
+  public handlePlaylist(playlist?: Song[]) {
     throw new Error('component must implement handlePlaylist method')
   }
 }
@@ -65,9 +65,7 @@ export class PlayerMixin extends Vue {
   }
 
   public isFavorite(song: Song) {
-    const index = this.favoriteList.findIndex(
-      (item: any) => item.id === song.id
-    )
+    const index = this.favoriteList.findIndex(item => item.id === song.id)
     return index > -1
   }
 

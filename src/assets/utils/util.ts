@@ -15,12 +15,12 @@ export function shuffle(arr: Song[]) {
 }
 
 export function debounce(func: () => void, delay: number) {
-  let timeroutId: any
+  let timer: number
   return function(...args: any) {
-    if (timeroutId) {
-      clearTimeout(timeroutId)
+    if (timer) {
+      clearTimeout(timer)
     }
     // @ts-ignore
-    timeroutId = setTimeout(() => func.apply(this, args), delay)
+    timer = setTimeout(() => func.apply(this, args), delay)
   }
 }

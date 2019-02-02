@@ -1,7 +1,7 @@
 import { getLyric, getSongsUrl } from '../api/song'
 import { ERR_OK } from '../api/config'
 import { Base64 } from 'js-base64'
-import { SongResponse } from '../api/apiInterface'
+import { SongInterface } from '../api/apiInterface'
 
 interface SongParams {
   id: string
@@ -29,6 +29,7 @@ export default class Song {
   public filename: string
   public url: string
   public lyric!: string
+  public deleting?: boolean
 
   constructor({
     id,
@@ -51,7 +52,7 @@ export default class Song {
     this.url = url
   }
 
-  public getLyric() {
+  public getLyric(): Promise<string> {
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
@@ -69,7 +70,7 @@ export default class Song {
   }
 }
 
-export function createSong(musicData: SongResponse) {
+export function createSong(musicData: SongInterface) {
   return new Song({
     id: musicData.songid,
     mid: musicData.songmid,
@@ -93,7 +94,7 @@ function filterSinger(singer: SingerObject[]): string {
   return ret.join('/')
 }
 
-export function isValidMusic(musicData: SongResponse) {
+export function isValidMusic(musicData: SongInterface) {
   return (
     musicData.songid &&
     musicData.albummid &&
@@ -109,7 +110,7 @@ export function processSongUrl(songs: Song[]) {
   return getSongsUrl(songs).then(res => {
     if (res.code === ERR_OK) {
       const midUrlInfo = res.url_mid.data.midurlinfo
-      midUrlInfo.forEach((info: any, index: number) => {
+      midUrlInfo.forEach((info: { purl: string }, index: number) => {
         const song = songs[index]
         song.url = `http://dl.stream.qqmusic.qq.com/${info.purl}`
       })
@@ -118,8 +119,8 @@ export function processSongUrl(songs: Song[]) {
   })
 }
 
-export function normalizeSongs(list: SongResponse[]) {
-  const ret: any = []
+export function normalizeSongs(list: SongInterface[]) {
+  const ret: Song[] = []
 
   list.forEach(item => {
     // @ts-ignore

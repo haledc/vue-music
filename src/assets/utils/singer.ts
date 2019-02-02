@@ -1,19 +1,10 @@
-interface SingerParams {
-  id: string
-  name: string
-}
-
-interface OriginalSinger {
-  Fsinger_mid: string
-  Fsinger_name: string
-  Findex: string
-}
+import { SingerInterface } from '../api/apiInterface'
 
 export default class Singer {
   public id: string
   public name: string
   public avatar: string
-  constructor({ id, name }: SingerParams) {
+  constructor({ id, name }: { id: string; name: string }) {
     this.id = id
     this.name = name
     this.avatar = `http://y.gtimg.cn/music/photo_new/T001R300x300M000${id}.jpg?max_age=2592000`
@@ -23,8 +14,8 @@ export default class Singer {
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 
-export const normalizeSingers = (list: OriginalSinger[]) => {
-  const map:any = {
+export const normalizeSingers = (list: SingerInterface[]) => {
+  const map: any = {
     hot: {
       title: HOT_NAME,
       items: []

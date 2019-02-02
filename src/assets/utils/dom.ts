@@ -9,7 +9,7 @@ export function hasClass(el: Element, className: string) {
 export function getData(el: Element, name: string) {
   const prefix = 'data-'
   name = prefix + name
-  return el.getAttribute(name)
+  return el.getAttribute(name) || ''
 }
 
 const elementStyle = document.createElement('div').style
