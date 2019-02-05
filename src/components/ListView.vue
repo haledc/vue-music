@@ -140,7 +140,7 @@ export default class ListView extends Vue {
   }
 
   @Emit('select')
-  // tslint:disable no-empty-interface
+  // tslint:disable:no-empty-block
   public selectItem(item: any) {}
 
   @Watch('data')

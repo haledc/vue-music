@@ -23,7 +23,7 @@ export default class Switches extends Vue {
   @Prop({ default: 0 }) public currentIndex!: number
 
   @Emit('switch')
-  // tslint disable no-empty-brace
+  // tslint:disable:no-empty-block
   public selectItem(index: number) {}
 }
 </script>

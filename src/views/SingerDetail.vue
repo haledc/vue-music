@@ -26,7 +26,7 @@ import { SongInterface } from '@/assets/api/apiInterface'
 export default class SingerDetail extends Vue {
   @Getter public singer!: SingerClass
 
-  public songs: any[] = []
+  public songs: object[] = []
 
   get title() {
     return this.singer.name

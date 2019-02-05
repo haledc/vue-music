@@ -284,13 +284,7 @@ export default class Player extends Mixins(PlayerMixin) {
   public playingLyric: string = ''
   public isPureMusic: boolean = false
   public pureMusicLyric: string = ''
-  public touch!: {
-    initiated: boolean
-    startX: number
-    startY: number
-    percent: number
-    moved: boolean
-  }
+  public touch: any = {}
   public $refs!: Vue['$refs'] & {
     audio: HTMLAudioElement
     cdWrapper: HTMLElement

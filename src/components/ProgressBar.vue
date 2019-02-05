@@ -64,8 +64,6 @@ export default class ProgressBar extends Vue {
   }
 
   public onProgressClick(e: MouseEvent) {
-    console.log(e)
-
     const rect = this.$refs.progressBar.getBoundingClientRect()
     const offsetWidth = e.pageX - rect.left
     this.offset(offsetWidth)

@@ -52,8 +52,6 @@ export default class TopList extends Vue {
     }
 
     getMusicList(this.topList.id).then(res => {
-      console.log(res)
-
       if (res.code === ERR_OK) {
         processSongUrl(normalizeSongs(res.songlist as any)).then(
           songs => (this.songs = songs)

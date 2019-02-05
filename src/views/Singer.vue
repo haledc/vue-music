@@ -32,7 +32,7 @@ import Song from '@/assets/utils/song'
 export default class Singer extends Mixins(PlaylistMixin) {
   @Mutation(types.SET_SINGER) public setSinger!: (singer: SingerClass) => void
 
-  public singers: any[] = []
+  public singers: object[] = []
   public $refs!: {
     singer: HTMLElement
     list: ListView

@@ -129,7 +129,7 @@ export default class Suggest extends Vue {
   }
 
   @Emit()
-  // tslint:disable no-empty-brace
+  // tslint:disable:no-empty-block
   public listScroll() {}
 
   public refresh() {
