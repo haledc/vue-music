@@ -16,11 +16,10 @@ export function shuffle(arr: Song[]) {
 
 export function debounce(func: () => void, delay: number) {
   let timer: number
-  return function(...args: any) {
+  return function(this: void, ...args: any) {
     if (timer) {
       clearTimeout(timer)
     }
-    // @ts-ignore
     timer = setTimeout(() => func.apply(this, args), delay)
   }
 }
