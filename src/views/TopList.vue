@@ -27,7 +27,7 @@ import { TopListInterface } from '@/assets/api/apiInterface'
 export default class TopList extends Vue {
   @Getter public topList!: TopListInterface
 
-  public songs: any[] = []
+  public songs: Song[] = []
   public rank: boolean = true
 
   get title() {

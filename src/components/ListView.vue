@@ -75,9 +75,16 @@ import Scroll from '@/components/Scroll.vue'
 import Loading from '@/components/Loading.vue'
 import { getData } from '@/assets/utils/dom'
 import Singer from '@/assets/utils/singer'
+import { Position } from 'better-scroll'
 
 const ANCHOR_HEIGHT = 18
 const TITLE_HEIGHT = 30
+
+interface Touch {
+  y1: number
+  y2: number
+  anchorIndex: string
+}
 
 @Component({
   components: {
@@ -91,7 +98,7 @@ export default class ListView extends Vue {
   public scrollY: number = -1
   public currentIndex: number = 0
   public diff: number = -1
-  public touch: any = {}
+  public touch = {} as Touch
   public listenScroll: boolean = true
   public listHeight: number[] = []
   public probeType: number = 3
@@ -135,13 +142,13 @@ export default class ListView extends Vue {
     this.$refs.listView.refresh()
   }
 
-  public scroll(pos: any) {
+  public scroll(pos: Position) {
     this.scrollY = pos.y
   }
 
   @Emit('select')
   // tslint:disable:no-empty-block
-  public selectItem(item: any) {}
+  public selectItem(item: Singer) {}
 
   @Watch('data')
   public onDataChange() {

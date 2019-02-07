@@ -60,6 +60,7 @@ import { Mutation } from 'vuex-class'
 import * as types from '@/store/mutation-types'
 import { PlaylistMixin } from '@/assets/utils/mixin'
 import Song from '@/assets/utils/song'
+import { TopListInterface } from '@/assets/api/apiInterface'
 
 @Component({
   components: {
@@ -70,12 +71,11 @@ import Song from '@/assets/utils/song'
 export default class Rank extends Mixins(PlaylistMixin) {
   @Mutation(types.SET_TOP_LIST) public setTopList!: (list: object) => void
 
-  public topList: any[] = []
+  public topList: TopListInterface[] = []
   public $refs!: {
     rank: HTMLElement
     topList: Scroll
   }
-
 
   public created() {
     this.getTopList()

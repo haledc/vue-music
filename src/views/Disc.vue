@@ -16,6 +16,7 @@ import { getSongList } from '@/assets/api/recommend'
 import { ERR_OK } from '@/assets/api/config'
 import { processSongUrl, normalizeSongs } from '@/assets/utils/song'
 import { DiscInterface, SongInterface } from '@/assets/api/apiInterface'
+import Song from '@/assets/utils/song'
 
 @Component({
   components: {
@@ -25,7 +26,7 @@ import { DiscInterface, SongInterface } from '@/assets/api/apiInterface'
 export default class Disc extends Vue {
   @Getter public disc!: DiscInterface
 
-  public songs: any[] = []
+  public songs: Song[] = []
 
   public created() {
     this.getSongList()

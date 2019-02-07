@@ -258,6 +258,15 @@ const transform: any = prefixStyle('transform')
 const transitionDuration: any = prefixStyle('transitionDuration')
 const timeExp = /\[(\d{2}):(\d{2}):(\d{2})\]/g
 
+interface Touch {
+  initiated: boolean
+  moved: boolean
+  startX: number
+  startY: number
+  percent: number
+
+}
+
 @Component({
   components: {
     ProgressBar,
@@ -284,7 +293,7 @@ export default class Player extends Mixins(PlayerMixin) {
   public playingLyric: string = ''
   public isPureMusic: boolean = false
   public pureMusicLyric: string = ''
-  public touch: any = {}
+  public touch = {} as Touch
   public $refs!: Vue['$refs'] & {
     audio: HTMLAudioElement
     cdWrapper: HTMLElement

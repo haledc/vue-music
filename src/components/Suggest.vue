@@ -68,7 +68,7 @@ export default class Suggest extends Vue {
   @Action public insertSong!: (song: Song) => void
 
   public page: number = 1
-  public result: any[] = []
+  public result = [] as (Song | SingerZhida)[]
   public pullup: boolean = true
   public hasMore: boolean = true
   public beforeScroll: boolean = true
@@ -109,8 +109,8 @@ export default class Suggest extends Vue {
   public getDisplayName(item: SingerZhida) {
     return item.type === TYPE_SINGER
       ? item.singername
-    // @ts-ignore
-      : `${item.name}-${item.singer}` 
+      // @ts-ignore
+      : `${item.name}-${item.singer}`
   }
 
   @Emit('select')

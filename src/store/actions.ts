@@ -108,22 +108,22 @@ const actions: ActionTree<State, State> = {
     commit(types.SET_PLAYING_STATE, playingState)
   },
 
-  deleteSongList: ({ commit }: any) => {
+  deleteSongList: ({ commit }) => {
     commit(types.SET_CURRENT_INDEX, -1)
     commit(types.SET_PLAYLIST, [])
     commit(types.SET_SEQUENCE_LIST, [])
     commit(types.SET_PLAYING_STATE, false)
   },
 
-  savePlayHistory: ({ commit }: any, song: any) => {
+  savePlayHistory: ({ commit }, song) => {
     commit(types.SET_PLAY_HISTORY, savePlay(song))
   },
 
-  saveFavoriteList: ({ commit }: any, song: any) => {
+  saveFavoriteList: ({ commit }, song) => {
     commit(types.SET_FAVORITE_LIST, saveFavorite(song))
   },
 
-  deleteFavoriteList: ({ commit }: any, song: any) => {
+  deleteFavoriteList: ({ commit }, song) => {
     commit(types.SET_FAVORITE_LIST, deleteFavorite(song))
   }
 }

@@ -111,7 +111,7 @@ export default class Search extends Mixins(PlaylistMixin, SearchMixin) {
     suggest: Suggest
   }
 
-  public hotKey: any[] = []
+  public hotKey = [] as (HotKeyInterface | string)[]
 
   get shortcut() {
     return this.hotKey.concat(this.searchHistory)
