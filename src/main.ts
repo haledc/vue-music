@@ -15,5 +15,5 @@ Vue.use(VueLazyLoad, {
 new Vue({
   router,
   store,
-  render: (h: any) => h(App)
+  render: h => h(App)
 }).$mount('#app')
