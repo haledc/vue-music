@@ -115,7 +115,7 @@ export default class Playlist extends Mixins(PlayerMixin) {
 
   public showFlag: boolean = false
   public refreshDelay: number = 120
-  public $refs!: Vue['$refs'] & {
+  public $refs!: {
     listContent: Scroll
     list: Scroll
     confirm: Confirm

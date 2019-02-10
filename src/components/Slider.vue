@@ -32,7 +32,7 @@ export default class Slider extends Vue {
   public resizeTimer!: number
   public timer!: number
   public children!: HTMLElement[]
-  public $refs!: Vue['$refs'] & {
+  public $refs!: {
     sliderGroup: HTMLElement
     slider: HTMLElement
   }
