@@ -46,10 +46,12 @@ export default class Scroll extends Vue {
   }
 
   public scrollTo() {
+    // @ts-ignore    
     this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
   }
 
   public scrollToElement() {
+    // @ts-ignore
     this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
   }
 
