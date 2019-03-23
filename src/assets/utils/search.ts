@@ -1,7 +1,6 @@
 import { SearchResponse } from '../api/apiInterface'
 import Song, { processSongUrl, normalizeSongs } from './song'
 
-
 const PER_PAGE = 20
 const TYPE_SINGER = 'singer'
 
@@ -12,6 +11,8 @@ export interface SingerZhida {
   singername: string
   songnum: number
   type: string
+  name?: string
+  singer?: string
 }
 
 export function genResult(res: SearchResponse, page: number) {
@@ -28,7 +29,7 @@ export function genResult(res: SearchResponse, page: number) {
     return ret
   })
 }
-export function hasMore (res: SearchResponse) {
+export function hasMore(res: SearchResponse) {
   const song = res.data.song
   if (
     !song.list.length ||
