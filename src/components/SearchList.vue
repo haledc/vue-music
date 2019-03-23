@@ -35,12 +35,14 @@ export default class SearchList extends Vue {
   @Prop({ default: [] }) public searches!: string[]
 
   @Emit('select')
-  // tslint:disable no-empty-block
-  public selectItem(item: string) {}
+  public selectItem(item: string) {
+    // 
+  }
 
   @Emit('delete')
-  // tslint:disable no-empty-block
-  public deleteOne(item: string) {}
+  public deleteOne(item: string) {
+    //
+  }
 }
 </script>
 

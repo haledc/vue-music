@@ -7,9 +7,7 @@
       class="switch-item"
       :class="{'active': currentIndex === index}"
     >
-      <span>
-        {{ item.name }}
-      </span>
+      <span>{{ item.name }}</span>
     </li>
   </ul>
 </template>
@@ -23,8 +21,9 @@ export default class Switches extends Vue {
   @Prop({ default: 0 }) public currentIndex!: number
 
   @Emit('switch')
-  // tslint:disable:no-empty-block
-  public selectItem(index: number) {}
+  public selectItem(index: number) {
+    //
+  }
 }
 </script>
 

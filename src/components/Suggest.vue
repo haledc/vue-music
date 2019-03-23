@@ -19,19 +19,13 @@
           <i :class="getIconCls(item)"></i>
         </div>
         <div class="name">
-          <p
-            class="text"
-            v-html="getDisplayName(item)"
-          ></p>
+          <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
-      <Loading v-show="hasMore" />
+      <Loading v-show="hasMore"/>
     </ul>
-    <div
-      class="no-result-wrapper"
-      v-show="!hasMore && !result.length"
-    >
-      <NoResult title="抱歉，暂无搜索结果" />>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+      <NoResult title="抱歉，暂无搜索结果"/>>
     </div>
   </Scroll>
 </template>
@@ -68,7 +62,7 @@ export default class Suggest extends Vue {
   @Action public insertSong!: (song: Song) => void
 
   public page: number = 1
-  public result = [] as (Song | SingerZhida)[]
+  public result = [] as Array<Song | SingerZhida>
   public pullup: boolean = true
   public hasMore: boolean = true
   public beforeScroll: boolean = true
@@ -109,7 +103,6 @@ export default class Suggest extends Vue {
   public getDisplayName(item: SingerZhida) {
     return item.type === TYPE_SINGER
       ? item.singername
-      // @ts-ignore
       : `${item.name}-${item.singer}`
   }
 
@@ -129,8 +122,9 @@ export default class Suggest extends Vue {
   }
 
   @Emit()
-  // tslint:disable:no-empty-block
-  public listScroll() {}
+  public listScroll() {
+    //
+  }
 
   public refresh() {
     this.$refs.suggest.refresh()

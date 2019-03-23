@@ -32,8 +32,9 @@ export default class MusicList extends Vue {
   @Prop({ default: false }) public rank!: boolean
 
   @Emit('select')
-  // tslint:disable:no-empty-block
-  public selectSong(song: Song, index: number) {}
+  public selectSong(song: Song, index: number) {
+    //
+  }
 
   public getDesc(song: Song) {
     return `${song.singer} - ${song.album}`

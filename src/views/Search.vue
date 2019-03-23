@@ -1,22 +1,10 @@
 <template>
   <div class="search">
     <div class="search-hox-wrapper">
-      <SearchBox
-        ref="searchBox"
-        @query="onQueryChange"
-      />
+      <SearchBox ref="searchBox" @query="onQueryChange"/>
     </div>
-    <div
-      class="shortcut-wrapper"
-      v-show="!query"
-      ref="shortcutWrapper"
-    >
-      <Scroll
-        class="shortcut"
-        :data="shortcut"
-        ref="shortcut"
-        :refreshDelay="refreshDelay"
-      >
+    <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
+      <Scroll class="shortcut" :data="shortcut" ref="shortcut" :refreshDelay="refreshDelay">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -27,53 +15,27 @@
                 :key="index"
                 @click="addQuery(item.k)"
               >
-                <span>
-                  {{ item.k }}
-                </span>
+                <span>{{ item.k }}</span>
               </li>
             </ul>
           </div>
-          <div
-            class="search-history"
-            v-show="searchHistory.length"
-          >
+          <div class="search-history" v-show="searchHistory.length">
             <h1 class="title">
               <span class="text">搜索历史</span>
-              <span
-                class="clear"
-                @click="showConfirm"
-              >
+              <span class="clear" @click="showConfirm">
                 <i class="icon-clear"></i>
               </span>
             </h1>
-            <SearchList
-              @select="addQuery"
-              @delete="deleteSearchHistory"
-              :searches="searchHistory"
-            />
+            <SearchList @select="addQuery" @delete="deleteSearchHistory" :searches="searchHistory"/>
           </div>
         </div>
       </Scroll>
     </div>
-    <div
-      class="search-result"
-      v-show="query"
-      ref="searchResult"
-    >
-      <Suggest
-        :query="query"
-        @listScroll="blurInput"
-        @select="saveSearch"
-        ref="suggest"
-      />
+    <div class="search-result" v-show="query" ref="searchResult">
+      <Suggest :query="query" @listScroll="blurInput" @select="saveSearch" ref="suggest"/>
     </div>
-    <Confirm
-      ref="confirm"
-      text="是否清空所有搜索历史"
-      confirmBtnText="清空"
-      @confirm="clearSearchHistory"
-    />
-    <router-view />
+    <Confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空" @confirm="clearSearchHistory"/>
+    <router-view/>
   </div>
 </template>
 
@@ -111,7 +73,7 @@ export default class Search extends Mixins(PlaylistMixin, SearchMixin) {
     suggest: Suggest
   }
 
-  public hotKey = [] as (HotKeyInterface | string)[]
+  public hotKey = [] as Array<HotKeyInterface | string>
 
   get shortcut() {
     return this.hotKey.concat(this.searchHistory)

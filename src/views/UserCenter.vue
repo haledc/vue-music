@@ -1,31 +1,17 @@
 <template>
   <transition name="slide">
     <div class="user-center">
-      <div
-        class="back"
-        @click="back"
-      >
+      <div class="back" @click="back">
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
-        <Switches
-          :currentIndex="currentIndex"
-          :switches="switches"
-          @switch="switchItem"
-        />
+        <Switches :currentIndex="currentIndex" :switches="switches" @switch="switchItem"/>
       </div>
-      <div
-        class="play-btn"
-        ref="playBtn"
-        @click="random"
-      >
+      <div class="play-btn" ref="playBtn" @click="random">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
-      <div
-        class="list-wrapper"
-        ref="listWrapper"
-      >
+      <div class="list-wrapper" ref="listWrapper">
         <Scroll
           class="list-scroll"
           v-if="currentIndex === 0"
@@ -33,31 +19,17 @@
           ref="favoriteList"
         >
           <div class="list-inner">
-            <SongList
-              :songs="favoriteList"
-              @select="selectSong"
-            />
+            <SongList :songs="favoriteList" @select="selectSong"/>
           </div>
         </Scroll>
-        <Scroll
-          class="list-scroll"
-          v-if="currentIndex === 1"
-          :data="playHistory"
-          ref="playHistory"
-        >
+        <Scroll class="list-scroll" v-if="currentIndex === 1" :data="playHistory" ref="playHistory">
           <div class="list-inner">
-            <SongList
-              :songs="playHistory"
-              @select="selectSong"
-            />
+            <SongList :songs="playHistory" @select="selectSong"/>
           </div>
         </Scroll>
       </div>
-      <div
-        class="no-result-wrapper"
-        v-show="noResult"
-      >
-        <NoResult :title="noResultDesc" />
+      <div class="no-result-wrapper" v-show="noResult">
+        <NoResult :title="noResultDesc"/>
       </div>
     </div>
   </transition>
@@ -105,7 +77,7 @@ export default class UserCenter extends Mixins(PlaylistMixin) {
     return this.currentIndex === 0 ? '暂无收藏歌曲' : '你还没有听过歌曲'
   }
 
-  public handlePlaylist(playlist: Song[]) {
+  public handlePlaylist(this: UserCenter, playlist: Song[]) {
     const bottom = playlist.length > 0 ? '60px' : ''
     this.$refs.listWrapper.style.bottom = bottom
     this.$refs.favoriteList && this.$refs.favoriteList.refresh()

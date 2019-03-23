@@ -1,6 +1,6 @@
 <template>
   <div ref="wrapper">
-    <slot />
+    <slot/>
   </div>
 </template>
 
@@ -46,13 +46,12 @@ export default class Scroll extends Vue {
   }
 
   public scrollTo() {
-    // @ts-ignore    
-    this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments as any)
   }
 
   public scrollToElement() {
-    // @ts-ignore
-    this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    this.scroll &&
+      this.scroll.scrollToElement.apply(this.scroll, arguments as any)
   }
 
   @Watch('data')

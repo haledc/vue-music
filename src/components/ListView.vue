@@ -8,15 +8,8 @@
     @scroll="scroll"
   >
     <ul>
-      <li
-        v-for="group in data"
-        :key="group.title"
-        class="list-group"
-        ref="listGroup"
-      >
-        <h2 class="list-group-title">
-          {{ group.title }}
-        </h2>
+      <li v-for="group in data" :key="group.title" class="list-group" ref="listGroup">
+        <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li
             v-for="item in group.items"
@@ -24,11 +17,7 @@
             @click="selectItem(item)"
             class="list-group-item"
           >
-            <img
-              v-lazy="item.avatar"
-              alt="avatar"
-              class="avatar"
-            >
+            <img v-lazy="item.avatar" alt="avatar" class="avatar">
             <span class="name">{{ item.name }}</span>
           </li>
         </ul>
@@ -46,25 +35,14 @@
           class="item"
           :data-index="index"
           :class="{'current': currentIndex === index}"
-        >
-          {{ item }}
-        </li>
+        >{{ item }}</li>
       </ul>
     </div>
-    <div
-      class="list-fixed"
-      v-show="fixedTitle"
-      ref="fixed"
-    >
-      <h1 class="fixed-title">
-        {{ fixedTitle }}
-      </h1>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h1 class="fixed-title">{{ fixedTitle }}</h1>
     </div>
-    <div
-      class="loading-container"
-      v-show="!data.length"
-    >
-      <Loading />
+    <div class="loading-container" v-show="!data.length">
+      <Loading/>
     </div>
   </Scroll>
 </template>
@@ -147,8 +125,9 @@ export default class ListView extends Vue {
   }
 
   @Emit('select')
-  // tslint:disable:no-empty-block
-  public selectItem(item: Singer) {}
+  public selectItem(item: Singer) {
+    //
+  }
 
   @Watch('data')
   public onDataChange() {
