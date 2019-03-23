@@ -437,7 +437,7 @@ export default class Player extends Mixins(PlayerMixin) {
   }
 
   public end() {
-    this.currentIndex = 0
+    this.currentTime = 0
     this.mode === playMode.loop ? this.loop() : this.next()
   }
 
