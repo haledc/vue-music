@@ -1,8 +1,12 @@
 import originJsonp from 'jsonp'
 
+interface Data {
+  [key: string]: string | number
+}
+
 export default function jsonp(
   url: string,
-  data: object,
+  data: Data,
   option: object
 ): Promise<any> {
   url += (url.indexOf('?') < 0 ? '?' : '&') + param(data)
@@ -14,11 +18,11 @@ export default function jsonp(
   })
 }
 
-function param(data: any): string {
+function param(data: Data): string {
   let url: string = ''
   for (const key of Object.keys(data)) {
     const value = data[key] !== undefined ? data[key] : ''
-    url += `&${key}=${encodeURIComponent(value)}`
+    url += `&${key}=${encodeURIComponent(value.toString())}`
   }
 
   return url ? url.substring(1) : ''
