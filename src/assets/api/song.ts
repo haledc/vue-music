@@ -26,7 +26,7 @@ export function getLyric(mid: string): Promise<LyricResponse> {
     .then((res: AxiosResponse) => Promise.resolve(res.data))
 }
 
-export function getSongsUrl (songs: Song[]): Promise<SongsUrlResponse> {
+export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse[]> {
   const url = debug ? '/api/getPurlUrl' : 'http://127.0.0.1:9095/api/getPurlUrl'
   const mids: string[] = []
   const types: number[] = []
@@ -53,16 +53,16 @@ export function getSongsUrl (songs: Song[]): Promise<SongsUrlResponse> {
       return axios
         .post(url, {
           comn: data,
-          url_mid: urlMid
+          req_0: urlMid
         })
         .then(response => {
           const ret = response.data
           if (ret.code === ERR_OK) {
-            const uMid = ret.url_mid
+            const uMid = ret.req_0
             if (uMid && uMid.code === ERR_OK) {
               const info = uMid.data.midurlinfo[0]
               if (info && info.purl) {
-                resolve(ret)
+                resolve(uMid.data.midurlinfo)
               } else {
                 retry()
               }

@@ -27,20 +27,10 @@ export interface LyricResponse {
 }
 
 export interface SongsUrlResponse {
-  code: number
-  comn: object
-  ts: number
-  url_mid: {
-    code: number
-    data: {
-      retcode: number
-      midurlinfo: [
-        {
-          purl: string
-        }
-      ]
-    }
-  }
+  filename: string
+  purl: string
+  songmid: string
+  vkey: string
 }
 export interface SearchResponse {
   code: number

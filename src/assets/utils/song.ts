@@ -107,14 +107,14 @@ export function processSongUrl(songs: Song[]) {
     return Promise.resolve(songs)
   }
 
-  return getSongsUrl(songs).then(res => {
-    if (res.code === ERR_OK) {
-      const midUrlInfo = res.url_mid.data.midurlinfo
-      midUrlInfo.forEach((info: { purl: string }, index: number) => {
-        const song = songs[index]
-        song.url = `http://dl.stream.qqmusic.qq.com/${info.purl}`
-      })
-    }
+  return getSongsUrl(songs).then(midUrlInfo => {
+    midUrlInfo.forEach((info, index) => {
+      const song = songs[index]
+      song.url =
+        info.purl.indexOf('http') === -1
+          ? `http://dl.stream.qqmusic.qq.com/${info.purl}`
+          : info.purl
+    })
     return songs
   })
 }
