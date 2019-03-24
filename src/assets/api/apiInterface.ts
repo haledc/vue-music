@@ -27,10 +27,7 @@ export interface LyricResponse {
 }
 
 export interface SongsUrlResponse {
-  filename: string
-  purl: string
-  songmid: string
-  vkey: string
+  [key: string]: string
 }
 export interface SearchResponse {
   code: number

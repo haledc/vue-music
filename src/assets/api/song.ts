@@ -26,7 +26,20 @@ export function getLyric(mid: string): Promise<LyricResponse> {
     .then((res: AxiosResponse) => Promise.resolve(res.data))
 }
 
-export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse[]> {
+interface UMid {
+  code: number
+  data: {
+    midurlinfo: [
+      {
+        [key: string]: string
+        songmid: string
+        purl: string
+      }
+    ]
+  }
+}
+
+export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse> {
   const url = debug ? '/api/getPurlUrl' : 'http://127.0.0.1:9095/api/getPurlUrl'
   const mids: string[] = []
   const types: number[] = []
@@ -58,11 +71,16 @@ export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse[]> {
         .then(response => {
           const ret = response.data
           if (ret.code === ERR_OK) {
-            const uMid = ret.req_0
+            const uMid: UMid = ret.req_0
             if (uMid && uMid.code === ERR_OK) {
-              const info = uMid.data.midurlinfo[0]
-              if (info && info.purl) {
-                resolve(uMid.data.midurlinfo)
+              const purlMap: { [key: string]: string } = {}
+              uMid.data.midurlinfo.forEach(item => {
+                if (item.purl) {
+                  purlMap[item.songmid] = item.purl
+                }
+              })
+              if (Object.keys(purlMap).length > 0) {
+                resolve(purlMap)
               } else {
                 retry()
               }
