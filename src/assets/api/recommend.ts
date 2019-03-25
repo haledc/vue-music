@@ -25,7 +25,7 @@ export function getSliderList(): Promise<SliderListResponse> {
 export function getDiscList(): Promise<DiscListResponse> {
   const url = debug
     ? '/api/getDiscList'
-    : 'http://127.0.0.1:9095/api/getDiscList'
+    : 'http://music.haledeng.com/api/getDiscList'
 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
@@ -48,7 +48,7 @@ export function getDiscList(): Promise<DiscListResponse> {
 }
 
 export function getSongList(disstid: string): Promise<SongListResponse> {
-  const url = debug ? '/api/getCdInfo/' : 'http://127.0.0.1:9095/api/getCdInfo'
+  const url = debug ? '/api/getCdInfo/' : 'http://music.haledeng.com/api/getCdInfo'
   const data = Object.assign({}, commonParams, {
     disstid,
     type: 1,

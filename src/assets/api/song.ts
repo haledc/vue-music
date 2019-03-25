@@ -7,7 +7,7 @@ import Song from '../utils/song'
 const debug = process.env.NODE_ENV !== 'production'
 
 export function getLyric(mid: string): Promise<LyricResponse> {
-  const url = debug ? '/api/lyric' : 'http://127.0.0.1:9095/api/lyric'
+  const url = debug ? '/api/lyric' : 'http://music.haledeng.com/api/lyric'
 
   const data = Object.assign({}, commonParams, {
     songmid: mid,
@@ -40,7 +40,7 @@ interface UMid {
 }
 
 export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse> {
-  const url = debug ? '/api/getPurlUrl' : 'http://127.0.0.1:9095/api/getPurlUrl'
+  const url = debug ? '/api/getPurlUrl' : 'http://music.haledeng.com/api/getPurlUrl'
   const mids: string[] = []
   const types: number[] = []
 

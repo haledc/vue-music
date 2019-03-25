@@ -23,7 +23,7 @@ export function search(
   zhida: boolean,
   perPage: number
 ): Promise<SearchResponse> {
-  const url = debug ? '/api/search' : 'http://127.0.0.1:9095/api/search'
+  const url = debug ? '/api/search' : 'http://music.haledeng.com/api/search'
 
   const data = Object.assign({}, commonParams, {
     w: query,
