@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="player"
-    v-show="playlist.length > 0"
-  >
+  <div class="player" v-show="playlist.length > 0">
     <transition
       name="normal"
       @enter="enter"
@@ -10,33 +7,21 @@
       @leave="leave"
       @after-leave="afterLeave"
     >
-      <div
-        class="normal-player"
-        v-show="fullScreen"
-      >
+      <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img
             :src="currentSong.image"
             alt="image"
             width="100%"
             height="100%"
-          >
+          />
         </div>
         <div class="top">
-          <div
-            class="back"
-            @click="back"
-          >
+          <div class="back" @click="back">
             <i class="icon-back"></i>
           </div>
-          <h1
-            class="title"
-            v-html="currentSong.name"
-          ></h1>
-          <h2
-            class="subtitle"
-            v-html="currentSong.singer"
-          ></h2>
+          <h1 class="title" v-html="currentSong.name"></h1>
+          <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
         <div
           class="middle"
@@ -44,25 +29,16 @@
           @touchmove.prevent="middleTouchMove"
           @touchend="middleTouchEnd"
         >
-          <div
-            class="middle-l"
-            ref="middleL"
-          >
-            <div
-              class="cd-wrapper"
-              ref="cdWrapper"
-            >
-              <div
-                class="cd"
-                ref="imageWrapper"
-              >
+          <div class="middle-l" ref="middleL">
+            <div class="cd-wrapper" ref="cdWrapper">
+              <div class="cd" ref="imageWrapper">
                 <img
                   :src="currentSong.image"
                   alt="image"
                   class="image"
                   :class="cdCls"
                   ref="image"
-                >
+                />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -83,15 +59,12 @@
                   :key="index"
                   ref="lyricLine"
                   class="text"
-                  :class="{'current': currentLineNum === index}"
+                  :class="{ current: currentLineNum === index }"
                 >
                   {{ line.txt }}
                 </p>
               </div>
-              <div
-                class="pure-music"
-                v-show="isPureMusic"
-              >
+              <div class="pure-music" v-show="isPureMusic">
                 <p>
                   {{ pureMusicLyric }}
                 </p>
@@ -101,13 +74,10 @@
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
+            <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
             <span
               class="dot"
-              :class="{'active': currentShow === 'cd'}"
-            ></span>
-            <span
-              class="dot"
-              :class="{'active': currentShow === 'lyric'}"
+              :class="{ active: currentShow === 'lyric' }"
             ></span>
           </div>
           <div class="progress-wrapper">
@@ -127,39 +97,21 @@
             </span>
           </div>
           <div class="operators">
-            <div
-              class="icon i-left"
-              @click="changeMode"
-            >
+            <div class="icon i-left" @click="changeMode">
               <i :class="iconMode"></i>
             </div>
-            <div
-              class="icon i-left"
-              :class="disableCls"
-            >
-              <i
-                @click="prev"
-                class="icon-prev"
-              ></i>
+            <div class="icon i-left" :class="disableCls">
+              <i @click="prev" class="icon-prev"></i>
             </div>
-            <div
-              class="icon i-center"
-              :class="disableCls"
-            >
+            <div class="icon i-center" :class="disableCls">
               <i
                 class="needsclick"
                 @click="togglePlaying"
                 :class="playIcon"
               ></i>
             </div>
-            <div
-              class="icon i-right"
-              :class="disableCls"
-            >
-              <i
-                @click="next"
-                class="icon-next"
-              ></i>
+            <div class="icon i-right" :class="disableCls">
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i
@@ -173,16 +125,9 @@
       </div>
     </transition>
     <transition name="mini">
-      <div
-        class="mini-player"
-        v-show="!fullScreen"
-        @click="open"
-      >
+      <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <div
-            class="imgWrapper"
-            ref="miniWrapper"
-          >
+          <div class="imgWrapper" ref="miniWrapper">
             <img
               :src="currentSong.image"
               alt="image"
@@ -190,24 +135,15 @@
               :class="cdCls"
               width="40"
               height="40"
-            >
+            />
           </div>
         </div>
         <div class="text">
-          <h2
-            class="name"
-            v-html="currentSong.name"
-          ></h2>
-          <p
-            class="desc"
-            v-html="currentSong.singer"
-          ></p>
+          <h2 class="name" v-html="currentSong.name"></h2>
+          <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <ProgressCircle
-            :radius="radius"
-            :percent="percent"
-          >
+          <ProgressCircle :radius="radius" :percent="percent">
             <i
               class="icon-mini"
               :class="miniIcon"
@@ -215,10 +151,7 @@
             ></i>
           </ProgressCircle>
         </div>
-        <div
-          class="control"
-          @click.stop="showPlaylist"
-        >
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
@@ -264,7 +197,6 @@ interface Touch {
   startX: number
   startY: number
   percent: number
-
 }
 
 @Component({
@@ -849,7 +781,7 @@ export default class Player extends Mixins(PlayerMixin) {
         display: flex
         align-items: center
         width: 80%
-        margin: 0px auto
+        margin: 0 auto
         padding: 10px 0
 
         .time

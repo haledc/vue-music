@@ -1,13 +1,6 @@
 <template>
-  <div
-    class="rank"
-    ref="rank"
-  >
-    <Scroll
-      class="top-list"
-      ref="topList"
-      :data="topList"
-    >
+  <div class="rank" ref="rank">
+    <Scroll class="top-list" ref="topList" :data="topList">
       <ul>
         <li
           v-for="item in topList"
@@ -16,12 +9,7 @@
           @click="selectItem(item)"
         >
           <div class="icon">
-            <img
-              v-lazy="item.picUrl"
-              alt="picUrl"
-              width="100"
-              height="100"
-            >
+            <img v-lazy="item.picUrl" alt="picUrl" width="100" height="100" />
           </div>
           <ul class="song-list">
             <li
@@ -32,17 +20,12 @@
               <span>
                 {{ index + 1 }}
               </span>
-              <span>
-                {{ song.songname }}-{{ song.singername }}
-              </span>
+              <span> {{ song.songname }}-{{ song.singername }} </span>
             </li>
           </ul>
         </li>
       </ul>
-      <div
-        class="loading-container"
-        v-show="!topList.length"
-      >
+      <div class="loading-container" v-show="!topList.length">
         <Loading />
       </div>
     </Scroll>

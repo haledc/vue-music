@@ -1,16 +1,9 @@
 <template>
   <transition name="slide">
-    <div
-      class="add-song"
-      v-show="showFlag"
-      @click.stop
-    >
+    <div class="add-song" v-show="showFlag" @click.stop>
       <div class="header">
         <h1 class="title">添加歌曲列表</h1>
-        <div
-          class="close"
-          @click="hide"
-        >
+        <div class="close" @click="hide">
           <i class="icon-close"></i>
         </div>
       </div>
@@ -21,10 +14,7 @@
           ref="searchBox"
         />
       </div>
-      <div
-        class="shortcut"
-        v-show="!query"
-      >
+      <div class="shortcut" v-show="!query">
         <Switches
           :currentIndex="currentIndex"
           :switches="switches"
@@ -38,10 +28,7 @@
             ref="songList"
           >
             <div class="list-inner">
-              <SongList
-                :songs="playHistory"
-                @select="selectSong"
-              />
+              <SongList :songs="playHistory" @select="selectSong" />
             </div>
           </Scroll>
           <Scroll
@@ -61,10 +48,7 @@
           </Scroll>
         </div>
       </div>
-      <div
-        class="search-result"
-        v-show="query"
-      >
+      <div class="search-result" v-show="query">
         <Suggest
           :query="query"
           :showSinger="showSinger"
@@ -72,10 +56,7 @@
           @listScroll="blurInput"
         />
       </div>
-      <TopTip
-        ref="topTip"
-        :delay="delay"
-      >
+      <TopTip ref="topTip" :delay="delay">
         <div class="tip-title">
           <i class="icon-ok"></i>
           <span class="text">1首歌曲已经添加到播放队列</span>

@@ -1,28 +1,16 @@
 <template>
   <transition name="list-fade">
-    <div
-      class="playlist"
-      v-show="showFlag"
-      @click="hide"
-    >
-      <div
-        class="list-wrapper"
-        @click.stop
-      >
+    <div class="playlist" v-show="showFlag" @click="hide">
+      <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i
-              class="icon"
-              :class="iconMode"
-              @click="changeMode"
-            ></i>
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
             <span class="text">
               {{ modeText }}
             </span>
-            <span
-              class="clear"
-              @click="showConfirm"
-            ><i class="icon-clear"></i></span>
+            <span class="clear" @click="showConfirm"
+              ><i class="icon-clear"></i
+            ></span>
           </h1>
         </div>
         <Scroll
@@ -31,11 +19,7 @@
           ref="listContent"
           :refreshDelay="refreshDelay"
         >
-          <transition-group
-            name="list"
-            tag="ul"
-            ref="list"
-          >
+          <transition-group name="list" tag="ul" ref="list">
             <li
               class="item"
               v-for="(item, index) in sequenceList"
@@ -43,41 +27,26 @@
               @click="selectItem(item, index)"
               ref="listItem"
             >
-              <i
-                class="current"
-                :class="getCurrentIcon(item)"
-              ></i>
+              <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">
                 {{ item.name }}
               </span>
-              <span
-                class="like"
-                @click.stop="toggleFavorite(item)"
-              >
+              <span class="like" @click.stop="toggleFavorite(item)">
                 <i :class="getFavoriteIcon(item)"></i>
               </span>
-              <span
-                class="delete"
-                @click.stop="deleteOne(item)"
-              >
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
           </transition-group>
         </Scroll>
         <div class="list-operate">
-          <div
-            class="add"
-            @click="addSong"
-          >
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到列表</span>
           </div>
         </div>
-        <div
-          class="list-close"
-          @click="hide"
-        >
+        <div class="list-close" @click="hide">
           <span>关闭</span>
         </div>
       </div>

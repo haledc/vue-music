@@ -7,10 +7,7 @@
         :key="song.id"
         @click="selectSong(song, index)"
       >
-        <div
-          class="rank"
-          v-show="rank"
-        >
+        <div class="rank" v-show="rank">
           <span :class="getRankCls(index)">{{ getRankText(index) }}</span>
         </div>
         <div class="content">

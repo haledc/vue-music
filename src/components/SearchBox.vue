@@ -8,11 +8,7 @@
       :placeholder="placeholder"
       ref="query"
     />
-    <i
-      class="icon-dismiss"
-      v-show="query"
-      @click="clear"
-    ></i>
+    <i class="icon-dismiss" v-show="query" @click="clear"></i>
   </div>
 </template>
 

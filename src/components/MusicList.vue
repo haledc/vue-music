@@ -1,20 +1,10 @@
 <template>
   <div class="music-list">
-    <div
-      class="back"
-      @click="back"
-    >
+    <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
-    <h1
-      class="title"
-      v-html="title"
-    ></h1>
-    <div
-      class="bg-image"
-      :style="bgStyle"
-      ref="bgImage"
-    >
+    <h1 class="title" v-html="title"></h1>
+    <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper">
         <div
           class="play"
@@ -26,15 +16,9 @@
           <span class="text">随机播放全部</span>
         </div>
       </div>
-      <div
-        class="filter"
-        ref="filter"
-      ></div>
+      <div class="filter" ref="filter"></div>
     </div>
-    <div
-      class="bg-layer"
-      ref="layer"
-    ></div>
+    <div class="bg-layer" ref="layer"></div>
     <Scroll
       @scroll="scroll"
       :probe-type="probeType"
@@ -44,16 +28,9 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <SongList
-          :rank="rank"
-          @select="selectDisc"
-          :songs="songs"
-        />
+        <SongList :rank="rank" @select="selectDisc" :songs="songs" />
       </div>
-      <div
-        class="loading-container"
-        v-show="!songs.length"
-      >
+      <div class="loading-container" v-show="!songs.length">
         <Loading />
       </div>
     </Scroll>
@@ -88,9 +65,10 @@ export default class MusicList extends Mixins(PlaylistMixin) {
   @Prop({ default: '' }) public title!: string
   @Prop({ default: false }) public rank!: boolean
 
-  @Action public selectAndPlay!: (
-    params: { list: Song[]; index: number }
-  ) => void
+  @Action public selectAndPlay!: (params: {
+    list: Song[]
+    index: number
+  }) => void
   @Action public randomPlay!: (params: { list: Song[] }) => void
 
   public scrollY: number = 0
@@ -160,9 +138,7 @@ export default class MusicList extends Mixins(PlaylistMixin) {
       blur = Math.min(20, percent * 20)
     }
 
-    this.$refs.layer.style[
-      transform
-    ] = `translate3d(0, ${translateY}px, 0)`
+    this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
     this.$refs.filter.style[backdrop] = `blur(${blur}px)`
 
     if (newY < this.minTranslateY) {

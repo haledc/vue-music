@@ -22,10 +22,10 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
-      <Loading v-show="hasMore"/>
+      <Loading v-show="hasMore" />
     </ul>
     <div class="no-result-wrapper" v-show="!hasMore && !result.length">
-      <NoResult title="抱歉，暂无搜索结果"/>>
+      <NoResult title="抱歉，暂无搜索结果" />>
     </div>
   </Scroll>
 </template>

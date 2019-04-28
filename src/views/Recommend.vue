@@ -1,30 +1,17 @@
 <template>
-  <div
-    class="recommend"
-    ref="recommend"
-  >
-    <Scroll
-      ref="scroll"
-      class="recommend-content"
-      :data="discList"
-    >
+  <div class="recommend" ref="recommend">
+    <Scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
-        <div
-          v-if="sliderList.length"
-          class="slider-wrapper"
-        >
+        <div v-if="sliderList.length" class="slider-wrapper">
           <Slider>
-            <div
-              v-for="(item, index) in sliderList"
-              :key="index"
-            >
+            <div v-for="(item, index) in sliderList" :key="index">
               <a :href="item.linkUrl">
                 <img
                   :src="item.picUrl"
                   alt="picUrl"
                   class="needsclick"
                   @load="loadImage"
-                >
+                />
               </a>
             </div>
           </Slider>
@@ -39,31 +26,17 @@
               @click="selectDisc(item)"
             >
               <div class="icon">
-                <img
-                  v-lazy="item.imgurl"
-                  alt="imgurl"
-                  width="60"
-                  height="60"
-                >
+                <img v-lazy="item.imgurl" alt="imgurl" width="60" height="60" />
               </div>
               <div class="text">
-                <h2
-                  class="name"
-                  v-html="item.creator.name"
-                ></h2>
-                <p
-                  class="desc"
-                  v-html="item.dissname"
-                ></p>
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <div
-        class="loading-container"
-        v-show="!discList.length"
-      >
+      <div class="loading-container" v-show="!discList.length">
         <Loading />
       </div>
     </Scroll>

@@ -40,7 +40,9 @@ interface UMid {
 }
 
 export function getSongsUrl(songs: Song[]): Promise<SongsUrlResponse> {
-  const url = debug ? '/api/getPurlUrl' : 'http://music.haledeng.com/api/getPurlUrl'
+  const url = debug
+    ? '/api/getPurlUrl'
+    : 'http://music.haledeng.com/api/getPurlUrl'
   const mids: string[] = []
   const types: number[] = []
 

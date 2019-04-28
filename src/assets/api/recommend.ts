@@ -48,7 +48,9 @@ export function getDiscList(): Promise<DiscListResponse> {
 }
 
 export function getSongList(disstid: string): Promise<SongListResponse> {
-  const url = debug ? '/api/getCdInfo/' : 'http://music.haledeng.com/api/getCdInfo'
+  const url = debug
+    ? '/api/getCdInfo/'
+    : 'http://music.haledeng.com/api/getCdInfo'
   const data = Object.assign({}, commonParams, {
     disstid,
     type: 1,

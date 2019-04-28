@@ -1,12 +1,6 @@
 <template>
-  <div
-    class="search-list"
-    v-show="searches.length"
-  >
-    <transition-group
-      name="list"
-      tag="ul"
-    >
+  <div class="search-list" v-show="searches.length">
+    <transition-group name="list" tag="ul">
       <li
         v-for="(item, index) in searches"
         :key="index - 1"
@@ -16,10 +10,7 @@
         <span class="text">
           {{ item }}
         </span>
-        <span
-          class="icon"
-          @click.stop="deleteOne(item)"
-        >
+        <span class="icon" @click.stop="deleteOne(item)">
           <i class="icon-delete"></i>
         </span>
       </li>
@@ -36,7 +27,7 @@ export default class SearchList extends Vue {
 
   @Emit('select')
   public selectItem(item: string) {
-    // 
+    //
   }
 
   @Emit('delete')

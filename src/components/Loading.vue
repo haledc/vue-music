@@ -1,9 +1,6 @@
 <template>
   <div class="loading">
-    <img
-      src="@/assets/images/loading.gif"
-      alt="loading.git"
-    >
+    <img src="@/assets/images/loading.gif" alt="loading.git" />
     <p class="desc">{{ title }}</p>
   </div>
 </template>

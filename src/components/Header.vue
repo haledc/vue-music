@@ -2,11 +2,7 @@
   <div class="header">
     <div class="icon"></div>
     <h1 class="text">Chichen Music</h1>
-    <router-link
-      tag="div"
-      class="mine"
-      to="/user"
-    >
+    <router-link tag="div" class="mine" to="/user">
       <i class="icon-mine"></i>
     </router-link>
   </div>
@@ -19,7 +15,7 @@ import { Vue, Component } from 'vue-property-decorator'
 export default class Header extends Vue {}
 </script>
 
-<style  lang="stylus" scoped>
+<style lang="stylus" scoped>
 @import '~@/assets/styles/variable'
 @import '~@/assets/styles/mixin'
 

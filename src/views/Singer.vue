@@ -1,13 +1,6 @@
 <template>
-  <div
-    class="singer"
-    ref="singer"
-  >
-    <ListView
-      @select="selectSinger"
-      :data="singers"
-      ref="list"
-    />
+  <div class="singer" ref="singer">
+    <ListView @select="selectSinger" :data="singers" ref="list" />
     <router-view />
   </div>
 </template>

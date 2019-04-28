@@ -5,7 +5,11 @@
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
-        <Switches :currentIndex="currentIndex" :switches="switches" @switch="switchItem"/>
+        <Switches
+          :currentIndex="currentIndex"
+          :switches="switches"
+          @switch="switchItem"
+        />
       </div>
       <div class="play-btn" ref="playBtn" @click="random">
         <i class="icon-play"></i>
@@ -19,17 +23,22 @@
           ref="favoriteList"
         >
           <div class="list-inner">
-            <SongList :songs="favoriteList" @select="selectSong"/>
+            <SongList :songs="favoriteList" @select="selectSong" />
           </div>
         </Scroll>
-        <Scroll class="list-scroll" v-if="currentIndex === 1" :data="playHistory" ref="playHistory">
+        <Scroll
+          class="list-scroll"
+          v-if="currentIndex === 1"
+          :data="playHistory"
+          ref="playHistory"
+        >
           <div class="list-inner">
-            <SongList :songs="playHistory" @select="selectSong"/>
+            <SongList :songs="playHistory" @select="selectSong" />
           </div>
         </Scroll>
       </div>
       <div class="no-result-wrapper" v-show="noResult">
-        <NoResult :title="noResultDesc"/>
+        <NoResult :title="noResultDesc" />
       </div>
     </div>
   </transition>

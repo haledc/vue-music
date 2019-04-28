@@ -26,7 +26,7 @@ export default class Tab extends Vue {
 }
 </script>
 
-<style  lang="stylus" scoped>
+<style lang="stylus" scoped>
 @import '~@/assets/styles/variable.styl'
 
 .tab

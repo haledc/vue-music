@@ -1,10 +1,15 @@
 <template>
   <div class="search">
     <div class="search-hox-wrapper">
-      <SearchBox ref="searchBox" @query="onQueryChange"/>
+      <SearchBox ref="searchBox" @query="onQueryChange" />
     </div>
     <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
-      <Scroll class="shortcut" :data="shortcut" ref="shortcut" :refreshDelay="refreshDelay">
+      <Scroll
+        class="shortcut"
+        :data="shortcut"
+        ref="shortcut"
+        :refreshDelay="refreshDelay"
+      >
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -26,16 +31,30 @@
                 <i class="icon-clear"></i>
               </span>
             </h1>
-            <SearchList @select="addQuery" @delete="deleteSearchHistory" :searches="searchHistory"/>
+            <SearchList
+              @select="addQuery"
+              @delete="deleteSearchHistory"
+              :searches="searchHistory"
+            />
           </div>
         </div>
       </Scroll>
     </div>
     <div class="search-result" v-show="query" ref="searchResult">
-      <Suggest :query="query" @listScroll="blurInput" @select="saveSearch" ref="suggest"/>
+      <Suggest
+        :query="query"
+        @listScroll="blurInput"
+        @select="saveSearch"
+        ref="suggest"
+      />
     </div>
-    <Confirm ref="confirm" text="是否清空所有搜索历史" confirmBtnText="清空" @confirm="clearSearchHistory"/>
-    <router-view/>
+    <Confirm
+      ref="confirm"
+      text="是否清空所有搜索历史"
+      confirmBtnText="清空"
+      @confirm="clearSearchHistory"
+    />
+    <router-view />
   </div>
 </template>
 

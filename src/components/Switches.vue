@@ -5,7 +5,7 @@
       :key="index"
       @click="selectItem(index)"
       class="switch-item"
-      :class="{'active': currentIndex === index}"
+      :class="{ active: currentIndex === index }"
     >
       <span>{{ item.name }}</span>
     </li>

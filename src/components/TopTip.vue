@@ -1,10 +1,6 @@
 <template>
   <transition name="drop">
-    <div
-      class="top-tip"
-      v-show="showFlag"
-      @click.stop="hide"
-    >
+    <div class="top-tip" v-show="showFlag" @click.stop="hide">
       <slot />
     </div>
   </transition>
