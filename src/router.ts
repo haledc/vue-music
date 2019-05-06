@@ -33,7 +33,9 @@ export default new Router({
         {
           path: ':id',
           component: () =>
-            import(/* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue')
+            import(
+              /* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue'
+            )
         }
       ]
     },
@@ -59,7 +61,9 @@ export default new Router({
         {
           path: ':id',
           component: () =>
-            import(/* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue')
+            import(
+              /* webpackChunkName: "singerDetail" */ './views/SingerDetail.vue'
+            )
         }
       ]
     },

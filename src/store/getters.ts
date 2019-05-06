@@ -15,8 +15,7 @@ const getters: GetterTree<State, State> = {
   topList: state => state.topList,
   searchHistory: state => state.searchHistory,
   playHistory: state => state.playHistory.map(song => new Song(song)),
-  favoriteList: state =>
-    state.favoriteList.map(song => new Song(song))
+  favoriteList: state => state.favoriteList.map(song => new Song(song))
 }
 
 export default getters
