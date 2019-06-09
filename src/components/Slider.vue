@@ -57,7 +57,7 @@ export default class Slider extends Vue {
             this.play()
           }
         }
-        this.slider.refresh()
+        this.refresh()
       }, 60)
     })
   }
@@ -86,7 +86,7 @@ export default class Slider extends Vue {
   }
 
   public refresh() {
-    if (!this.slider) {
+    if (this.slider) {
       this.setSliderWidth(true)
       // @ts-ignore
       this.slider.refresh()

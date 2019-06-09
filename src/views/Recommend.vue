@@ -3,7 +3,7 @@
     <Scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
         <div v-if="sliderList.length" class="slider-wrapper">
-          <Slider>
+          <Slider ref="slider">
             <div v-for="(item, index) in sliderList" :key="index">
               <a :href="item.linkUrl">
                 <img
@@ -68,6 +68,7 @@ export default class Recommend extends Vue {
   public sliderList: object[] = []
   public checkLoaded: boolean = false
   public $refs!: {
+    slider: Slider
     scroll: Scroll
     recommend: HTMLElement
   }
@@ -77,6 +78,12 @@ export default class Recommend extends Vue {
   public created() {
     this.getSliderList()
     this.getDiscList()
+  }
+
+  public activated() {
+    setTimeout(() => {
+      this.$refs.slider && this.$refs.slider.refresh()
+    }, 20)
   }
 
   public loadImage() {
