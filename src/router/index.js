@@ -1,19 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Recommend from '@/views/Recommend' // 首页不用懒加载
 
 Vue.use(Router)
 
-// 组件异步加载 => 懒路由
-const Recommend = () => import('components/recommend/recommend')
-const Singer = () => import('components/singer/singer')
-const Search = () => import('components/search/search')
-const Rank = () => import('components/rank/rank')
-const SingerDetail = () => import('components/singer-detail/singer-detail')
-const Disc = () => import('components/disc/disc')
-const TopList = () => import('components/top-list/top-list')
-const UserCenter = () => import('components/user-center/user-center')
-
-export default new Router({
+const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -25,43 +17,55 @@ export default new Router({
       children: [
         {
           path: ':id',
-          component: Disc
+          component: () => import(/* webpackChunkName: "Disc" */ '@/views/Disc')
         }
       ]
     },
     {
       path: '/singer',
-      component: Singer,
+      component: () =>
+        import(/* webpackChunkName: "Singer" */ '@/views/Singer'),
       children: [
         {
           path: ':id',
-          component: SingerDetail
+          component: () =>
+            import(
+              /* webpackChunkName: "SingerDetail" */ '@/views/SingerDetail'
+            )
         }
       ]
     },
     {
       path: '/rank',
-      component: Rank,
+      component: () => import(/* webpackChunkName: "Rank" */ '@/views/Rank'),
       children: [
         {
           path: ':id',
-          component: TopList
+          component: () =>
+            import(/* webpackChunkName: "TopList" */ '@/views/TopList')
         }
       ]
     },
     {
       path: '/search',
-      component: Search,
+      component: () =>
+        import(/* webpackChunkName: "Search" */ '@/views/Search'),
       children: [
         {
           path: ':id',
-          component: SingerDetail
+          component: () =>
+            import(
+              /* webpackChunkName: "SingerDetail" */ '@/views/SingerDetail'
+            )
         }
       ]
     },
     {
       path: '/user',
-      component: UserCenter
+      component: () =>
+        import(/* webpackChunkName: "UserCenter" */ '@/views/UserCenter')
     }
   ]
 })
+
+export default router

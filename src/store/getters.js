@@ -1,4 +1,4 @@
-import Song from 'common/js/song'
+import Song from '../assets/helpers/song'
 
 // 获取当前歌手
 export const singer = state => state.singer
@@ -22,7 +22,7 @@ export const mode = state => state.mode
 export const currentIndex = state => state.currentIndex
 
 // 获取当前播放歌曲（通过播放列表和播放歌曲索引获得）
-export const currentSong = (state) => {
+export const currentSong = state => {
   return state.playlist[state.currentIndex] || {}
 }
 
@@ -37,14 +37,10 @@ export const searchHistory = state => state.searchHistory
 
 // 获取播放历史
 export const playHistory = state => {
-  return state.playHistory.map((song) => {
-    return new Song(song)
-  })
+  return state.playHistory.map(song => new Song(song))
 }
 
 // 获取收藏歌曲列表
 export const favoriteList = state => {
-  return state.favoriteList.map((song) => {
-    return new Song(song)
-  })
+  return state.favoriteList.map(song => new Song(song))
 }

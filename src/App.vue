@@ -1,32 +1,24 @@
 <template>
   <div id="app" @touchmove.prevent>
-    <!--头部-->
-    <m-header/>
-    <!--导航栏-->
-    <tab/>
-    <!--路由-->
-    <keep-alive>
-      <router-view/>
-    </keep-alive>
-    <!--播放器-->
-    <player/>
+    <Header />
+    <Tab />
+    <KeepAlive>
+      <RouterView />
+    </KeepAlive>
+    <Player />
   </div>
 </template>
 
-<script type="text/ecmascript-6">
-  import MHeader from 'components/m-header/m-header'
-  import Tab from 'components/tab/tab'
-  import Player from 'components/player/player'
+<script>
+import Header from '@/components/Header'
+import Tab from '@/components/Tab'
+import Player from '@/views/Player'
 
-  export default {
-    components: {
-      MHeader,
-      Tab,
-      Player
-    }
+export default {
+  components: {
+    Header,
+    Tab,
+    Player
   }
+}
 </script>
-
-<style scoped lang="stylus" type="text/stylus" rel="stylesheet/stylus">
-
-</style>

@@ -1,31 +1,19 @@
-import {playMode} from "common/js/config"
-import {loadSearch} from "common/js/cache"
+import { playMode } from '../assets/helpers/config'
+import { loadSearch } from '../assets/helpers/cache'
 
 const state = {
-  // 歌手
-  singer: {},
-  // 是否播放
-  playing: false,
-  // 是否全屏
-  fullScreen: false,
-  // 播放列表
-  playlist: [],
-  // 顺序播放列表
-  sequenceList: [],
-  // 播放模式（默认是顺序播放）
-  mode: playMode.sequence,
-  // 当前播放歌曲索引
-  currentIndex: -1,
-  // 推荐页面歌单
-  disc: {},
-  // 排行榜列表
-  topList: {},
-  // 搜索历史 【从本地缓存中获取】
-  searchHistory: loadSearch(),
-  // 播放历史
-  playHistory: [],
-  // 收藏歌曲列表
-  favoriteList: []
+  singer: {}, // 歌手
+  playing: false, // 是否播放
+  fullScreen: false, // 是否全屏
+  playlist: [], // 播放列表
+  sequenceList: [], // 顺序播放列表
+  mode: playMode.sequence, // 播放模式（默认是顺序播放）
+  currentIndex: -1, // 当前播放歌曲索引
+  disc: {}, // 推荐页面歌单
+  topList: {}, // 排行榜列表
+  searchHistory: loadSearch(), // 搜索历史 【从本地缓存中获取】
+  playHistory: [], // 播放历史
+  favoriteList: [] // 收藏歌曲列表
 }
 
 export default state
