@@ -131,7 +131,10 @@ export default class Suggest extends Vue {
   }
 
   @Watch('query')
-  public onQueryChangeInSuggest() {
+  public onQueryChangeInSuggest(newQuery: string) {
+    if (!newQuery) {
+      return
+    }
     this.search()
   }
 }
