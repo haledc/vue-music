@@ -5,7 +5,7 @@
         v-for="(item, index) in searches"
         :key="index - 1"
         class="search-item"
-        @click="select(item)"
+        @click="selectItem(item)"
       >
         <span class="text">
           {{ item }}
