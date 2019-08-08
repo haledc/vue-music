@@ -1,41 +1,25 @@
 # vue-music
 
-## Project setup
+> mobile web app
 
-```
+```bash
+# Project setup
 yarn install
+
+# Compiles and hot-reloads for development
+yarn serve
+
+# Compiles and minifies for production
+yarn build
+
+# Project running for production
+node prod.server.js
 ```
 
-### Compiles and hot-reloads for development
+### 版本信息
 
-```
-yarn run serve
-```
+- [vue-cli4 test 版本](https://github.com/haledc/vue-music/tree/vue-cli4)
 
-### Compiles and minifies for production
+- [vue-cli3 + typescript 版本](https://github.com/haledc/vue-music/tree/vue-cli3-ts)
 
-```
-yarn run build
-```
-
-### Run your tests
-
-```
-yarn run test
-```
-
-### Lints and fixes files
-
-```
-yarn run lint
-```
-
-### Run your unit tests
-
-```
-yarn run test:unit
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- [vue-cli2 版本](https://github.com/haledc/vue-music/tree/vue-cli2)
