@@ -2,14 +2,13 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const fallback = require('express-history-api-fallback')
 const axios = require('axios')
-
-const port = process.env.PORT || 9095
+const path = require('path')
 
 const app = express()
 
-const apiRoutes = express.Router()
+const router = express.Router()
 
-apiRoutes.get('/getDiscList', function(req, res) {
+router.get('/getDiscList', (req, res) => {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
   axios
     .get(url, {
@@ -19,15 +18,11 @@ apiRoutes.get('/getDiscList', function(req, res) {
       },
       params: req.query
     })
-    .then(response => {
-      res.json(response.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/getCdInfo', function(req, res) {
+router.get('/getCdInfo', (req, res) => {
   const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
   axios
     .get(url, {
@@ -48,13 +43,11 @@ apiRoutes.get('/getCdInfo', function(req, res) {
       }
       res.json(ret)
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/lyric', function(req, res) {
-  let url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+router.get('/lyric', (req, res) => {
+  const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
 
   axios
     .get(url, {
@@ -75,12 +68,10 @@ apiRoutes.get('/lyric', function(req, res) {
       }
       res.json(ret)
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/search', function(req, res) {
+router.get('/search', (req, res) => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
   axios
     .get(url, {
@@ -90,15 +81,11 @@ apiRoutes.get('/search', function(req, res) {
       },
       params: req.query
     })
-    .then(response => {
-      res.json(response.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-apiRoutes.post('/getPurlUrl', bodyParser.json(), function(req, res) {
+router.post('/getPurlUrl', bodyParser.json(), (req, res) => {
   const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
   axios
     .post(url, req.body, {
@@ -108,22 +95,20 @@ apiRoutes.post('/getPurlUrl', bodyParser.json(), function(req, res) {
         'Content-type': 'application/x-www-form-urlencoded'
       }
     })
-    .then(response => {
-      res.json(response.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-app.use('/api', apiRoutes)
-app.use(express.static('./dist'))
+app.use('/api', router)
+app.use(express.static(path.resolve(__dirname, 'dist')))
 app.use(fallback('dist/index.html', { root: __dirname }))
 
-module.exports = app.listen(port, function(err) {
-  if (err) {
-    console.log(err)
+const PORT = process.env.PORT || 9095
+
+app.listen(PORT, error => {
+  if (error) {
+    console.log(error)
     return
   }
-  console.log('Server running at http://localhost:' + port + '\n')
+  console.log(`Server running on http://127.0.0.1:${PORT}`)
 })
