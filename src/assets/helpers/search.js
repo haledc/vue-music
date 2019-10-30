@@ -17,7 +17,6 @@ export function genResult(data, page) {
 
 export function checkMore(data) {
   const song = data.song
-  console.log(song)
   if (
     !song.list.length ||
     song.curnum + song.curpage * PER_PAGE >= song.totalnum
