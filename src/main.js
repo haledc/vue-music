@@ -7,7 +7,7 @@ import { SET_PLAY_HISTORY, SET_FAVORITE_LIST } from './store/mutation-types'
 import { loadPlay, loadFavorite } from './assets/helpers/cache'
 import { processSongsUrl } from './assets/helpers/song'
 
-import './assets/styles/index.styl'
+import './assets/styles/index.scss'
 
 // 图片懒加载
 import VueLazyLoad from 'vue-lazyload'

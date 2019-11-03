@@ -197,52 +197,60 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
 
-.slider
-  min-height: 1px
+.slider {
+  min-height: 1px;
 
-  .slider-group
-    position: relative
-    overflow: hidden
-    white-space: nowrap
+  .slider-group {
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
 
-    .slider-item
-      float: left
-      box-sizing: border-box
-      overflow: hidden
-      text-align: center
+    .slider-item {
+      float: left;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-align: center;
 
-      a
-        display: block
-        width: 100%
-        overflow: hidden
-        text-decoration: none
+      a {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-decoration: none;
+      }
 
-      img
-        display: block
-        width: 100%
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
 
-  .dots
-    position: absolute
-    right: 0
-    left: 0
-    bottom: 12px
-    transform: translateZ(1px)
-    text-align: center
-    font-size: 0
+  .dots {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 12px;
+    transform: translateZ(1px);
+    text-align: center;
+    font-size: 0;
 
-    .dot
-      display: inline-block
-      margin: 0 4px
-      width: 8px
-      height: 8px
-      border-radius: 50%
-      background: $color-text-l
+    .dot {
+      display: inline-block;
+      margin: 0 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $color-text-l;
 
-      &.active
-        width: 20px
-        border-radius: 5px
-        background: $color-text-ll
+      &.active {
+        width: 20px;
+        border-radius: 5px;
+        background: $color-text-ll;
+      }
+    }
+  }
+}
 </style>

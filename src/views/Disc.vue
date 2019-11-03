@@ -60,10 +60,14 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-.slide-enter-active, .slide-leave-active
-  transition: all 0.3s ease
+<style scoped lang="scss">
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
 
-.slide-enter, .slide-leave-to
-  transform: translate3d(100%, 0, 0)
+.slide-enter,
+.slide-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
 </style>

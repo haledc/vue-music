@@ -44,19 +44,24 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
 
-.top-tip
-  position: fixed
-  top: 0
-  width: 100%
-  z-index: 500
-  background: $color-dialog-background
+.top-tip {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 500;
+  background: $color-dialog-background;
 
-  &.drop-enter-active, &.drop-leave-active
-    transition: all 0.3s
+  &.drop-enter-active,
+  &.drop-leave-active {
+    transition: all 0.3s;
+  }
 
-  &.drop-enter, &.drop-leave-to
-    transform: translate3d(0, -100%, 0)
+  &.drop-enter,
+  &.drop-leave-to {
+    transform: translate3d(0, -100%, 0);
+  }
+}
 </style>

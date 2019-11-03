@@ -46,31 +46,40 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
-@import '~@/assets/styles/mixin.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
+@import '@/assets/styles/mixin.scss';
 
-.search-list
-  .search-item
-    display: flex
-    align-items: center
-    height: 40px
-    overflow: hidden
+.search-list {
+  .search-item {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    overflow: hidden;
 
-    &.list-enter-active, &.list-leave-active
-      transition: all 0.1s
+    &.list-enter-active,
+    &.list-leave-active {
+      transition: all 0.1s;
+    }
 
-    &.list-enter, &.list-leave-to
-      height: 0
+    &.list-enter,
+    &.list-leave-to {
+      height: 0;
+    }
 
-    .text
-      flex: 1
-      color: $color-text-l
+    .text {
+      flex: 1;
+      color: $color-text-l;
+    }
 
-    .icon
-      extend-click()
+    .icon {
+      @include extend-click;
 
-      .icon-delete
-        font-size: $font-size-small
-        color: $color-text-d
+      .icon-delete {
+        font-size: $font-size-small;
+        color: $color-text-d;
+      }
+    }
+  }
+}
 </style>

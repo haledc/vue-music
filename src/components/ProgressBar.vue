@@ -124,38 +124,43 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
 
-.progress-bar
-  height: 30px
+.progress-bar {
+  height: 30px;
 
-  .bar-inner
-    position: relative
-    top: 13px
-    height: 4px
-    background: rgba(0, 0, 0, 0.3)
+  .bar-inner {
+    position: relative;
+    top: 13px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.3);
 
-    .progress
-      position: absolute
-      height: 100%
-      background: $color-theme
+    .progress {
+      position: absolute;
+      height: 100%;
+      background: $color-theme;
+    }
 
-    .progress-btn-wrapper
-      position: absolute
-      left: -8px
-      top: -13px
-      width: 30px
-      height: 30px
+    .progress-btn-wrapper {
+      position: absolute;
+      left: -8px;
+      top: -13px;
+      width: 30px;
+      height: 30px;
 
-      .progress-btn
-        position: relative
-        top: 7px
-        left: 7px
-        box-sizing: border-box
-        width: 16px
-        height: 16px
-        border: 3px solid $color-text
-        border-radius: 50%
-        background: $color-theme
+      .progress-btn {
+        position: relative;
+        top: 7px;
+        left: 7px;
+        box-sizing: border-box;
+        width: 16px;
+        height: 16px;
+        border: 3px solid $color-text;
+        border-radius: 50%;
+        background: $color-theme;
+      }
+    }
+  }
+}
 </style>

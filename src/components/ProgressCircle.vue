@@ -59,21 +59,25 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
 
-.progress-circle
-  position: relative
+.progress-circle {
+  position: relative;
 
-  circle
-    stroke-width: 8px
-    transform-origin: center
+  circle {
+    stroke-width: 8px;
+    transform-origin: center;
 
-    &.progress-background
-      transform: scale(0.9)
-      stroke: $color-theme-d
+    &.progress-background {
+      transform: scale(0.9);
+      stroke: $color-theme-d;
+    }
 
-    &.progress-bar
-      transform: scale(0.9) rotate(-90deg)
-      stroke: $color-theme
+    &.progress-bar {
+      transform: scale(0.9) rotate(-90deg);
+      stroke: $color-theme;
+    }
+  }
+}
 </style>

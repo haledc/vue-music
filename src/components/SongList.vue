@@ -68,54 +68,65 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
-@import '~@/assets/styles/mixin.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
+@import '@/assets/styles/mixin.scss';
 
-.song-list
-  .item
-    display: flex
-    align-items: center
-    box-sizing: border-box
-    height: 64px
-    font-size: $font-size-medium
+.song-list {
+  .item {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 64px;
+    font-size: $font-size-medium;
 
-    .rank
-      flex: 0 0 25px
-      width: 25px
-      margin-right: 30px
-      text-align: center
+    .rank {
+      flex: 0 0 25px;
+      width: 25px;
+      margin-right: 30px;
+      text-align: center;
 
-      .icon
-        display: inline-block
-        width: 25px
-        height: 24px
-        background-size: 25px 24px
+      .icon {
+        display: inline-block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
 
-        &.icon0
-          bg-image('first')
+        &.icon0 {
+          @include bg-image('first');
+        }
 
-        &.icon1
-          bg-image('second')
+        &.icon1 {
+          @include bg-image('second');
+        }
 
-        &.icon2
-          bg-image('third')
+        &.icon2 {
+          @include bg-image('third');
+        }
+      }
 
-      .text
-        color: $color-theme
-        font-size: $font-size-large
+      .text {
+        color: $color-theme;
+        font-size: $font-size-large;
+      }
+    }
 
-    .content
-      flex: 1
-      line-height: 20px
-      overflow: hidden
+    .content {
+      flex: 1;
+      line-height: 20px;
+      overflow: hidden;
 
-      .name
-        no-wrap()
-        color: $color-text
+      .name {
+        @include no-wrap;
+        color: $color-text;
+      }
 
-      .desc
-        no-wrap()
-        margin-top: 4px
-        color: $color-text-d
+      .desc {
+        @include no-wrap;
+        margin-top: 4px;
+        color: $color-text-d;
+      }
+    }
+  }
+}
 </style>

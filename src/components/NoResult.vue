@@ -16,22 +16,25 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-@import '~@/assets/styles/variable.styl'
-@import '~@/assets/styles/mixin.styl'
+<style scoped lang="scss">
+@import '@/assets/styles/variable.scss';
+@import '@/assets/styles/mixin.scss';
 
-.no-result
-  text-align: center
+.no-result {
+  text-align: center;
 
-  .no-result-icon
-    width: 86px
-    height: 90px
-    margin: 0 auto
-    bg-image('no-result')
-    background-size: 86px 90px
+  .no-result-icon {
+    width: 86px;
+    height: 90px;
+    margin: 0 auto;
+    @include bg-image('no-result');
+    background-size: 86px 90px;
+  }
 
-  .no-result-text
-    margin-top: 30px
-    font-size: $font-size-medium
-    color: $color-text-d
+  .no-result-text {
+    margin-top: 30px;
+    font-size: $font-size-medium;
+    color: $color-text-d;
+  }
+}
 </style>
