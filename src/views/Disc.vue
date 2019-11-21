@@ -9,9 +9,9 @@ import { mapGetters } from 'vuex'
 
 import MusicList from '@/components/MusicList'
 
-import { getSongList } from '@/assets/api/recommend'
-import { ERR_OK } from '@/assets/api/config'
-import { processSongsUrl, normalizeSongs } from '@/assets/helpers/song'
+import { getSongList } from '@/request/recommend'
+import { ERR_OK } from '@/request/config'
+import { processSongsUrl, normalizeSongs } from '@/utils/song'
 
 export default {
   components: {

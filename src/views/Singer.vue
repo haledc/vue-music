@@ -11,10 +11,10 @@ import { mapMutations } from 'vuex'
 
 import ListView from '@/components/ListView'
 
-import Singer from '@/assets/helpers/singer'
-import { playlistMixin } from '@/assets/helpers/mixin'
-import { getSingerList } from '@/assets/api/singer'
-import { ERR_OK } from '@/assets/api/config'
+import Singer from '@/utils/singer'
+import { playlistMixin } from '@/utils/mixin'
+import { getSingerList } from '@/request/singer'
+import { ERR_OK } from '@/request/config'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10

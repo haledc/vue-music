@@ -54,9 +54,9 @@ import Loading from '@/components/Loading'
 import Scroll from '@/components/Scroll'
 import Slider from '@/components/Slider'
 
-import { getSliderList, getDiscList } from '@/assets/api/recommend'
-import { ERR_OK } from '@/assets/api/config'
-import { playlistMixin } from '@/assets/helpers/mixin'
+import { getSliderList, getDiscList } from '@/request/recommend'
+import { ERR_OK } from '@/request/config'
+import { playlistMixin } from '@/utils/mixin'
 
 export default {
   mixins: [playlistMixin],

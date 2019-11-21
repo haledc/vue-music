@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { debounce } from '@/assets/helpers/util'
+import { debounce } from '@/utils/util'
 
 export default {
   props: {

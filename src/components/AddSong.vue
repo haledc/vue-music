@@ -85,8 +85,8 @@ import SongList from '@/components/SongList'
 import SearchList from '@/components/SearchList'
 import TopTip from '@/components/TopTip'
 
-import Song from '@/assets/helpers/song'
-import { searchMixin } from '@/assets/helpers/mixin'
+import Song from '@/utils/song'
+import { searchMixin } from '@/utils/mixin'
 
 export default {
   mixins: [searchMixin],

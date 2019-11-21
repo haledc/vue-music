@@ -62,7 +62,7 @@
 import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
 
-import { getData } from '@/assets/helpers/dom'
+import { getData } from '@/utils/dom'
 
 // 右侧每个锚点的高度
 const ANCHOR_HEIGHT = 18

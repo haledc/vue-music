@@ -180,9 +180,9 @@ import ProgressCircle from '@/components/ProgressCircle'
 import Scroll from '@/components/Scroll'
 import Playlist from '@/components/Playlist'
 
-import { playMode } from '@/assets/helpers/config'
-import { prefixStyle } from '@/assets/helpers/dom'
-import { playerMixin } from '@/assets/helpers/mixin'
+import { playMode } from '@/utils/config'
+import { prefixStyle } from '@/utils/dom'
+import { playerMixin } from '@/utils/mixin'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
