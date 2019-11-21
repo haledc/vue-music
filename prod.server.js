@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const fallback = require('express-history-api-fallback')
+const history = require('connect-history-api-fallback')
 const axios = require('axios')
 const path = require('path')
 
@@ -100,8 +100,8 @@ router.post('/getPurlUrl', bodyParser.json(), (req, res) => {
 })
 
 app.use('/api', router)
+app.use(history()) // 在静态文件前面
 app.use(express.static(path.resolve(__dirname, 'dist')))
-app.use(fallback('dist/index.html', { root: __dirname }))
 
 const PORT = process.env.PORT || 9095
 
