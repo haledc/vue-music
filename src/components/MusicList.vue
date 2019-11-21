@@ -52,8 +52,8 @@ import Scroll from '@/components/Scroll'
 import SongList from '@/components/SongList'
 import Loading from '@/components/Loading'
 
-import { prefixStyle } from '@/assets/helpers/dom'
-import { playlistMixin } from '@/assets/helpers/mixin'
+import { prefixStyle } from '@/utils/dom'
+import { playlistMixin } from '@/utils/mixin'
 
 // 顶部预留 40px（标题高度）常量不被滚动
 const RESERVED_HEIGHT = 40

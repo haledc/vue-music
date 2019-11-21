@@ -58,7 +58,7 @@ import NoResult from '@/components/NoResult'
 import Scroll from '@/components/Scroll'
 import SongList from '@/components/SongList'
 
-import { playlistMixin } from '@/assets/helpers/mixin'
+import { playlistMixin } from '@/utils/mixin'
 
 export default {
   mixins: [playlistMixin],

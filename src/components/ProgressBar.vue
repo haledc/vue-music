@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { prefixStyle } from '@/assets/helpers/dom'
+import { prefixStyle } from '@/utils/dom'
 
 // 按钮宽度(直径)
 const PROGRESSBTNWIDTH = 16

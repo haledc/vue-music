@@ -77,9 +77,9 @@ import SearchList from '@/components/SearchList'
 import Confirm from '@/components/Confirm'
 import Scroll from '@/components/Scroll'
 
-import { getHotKey } from '@/assets/api/search'
-import { ERR_OK } from '@/assets/api/config'
-import { playlistMixin, searchMixin } from '@/assets/helpers/mixin'
+import { getHotKey } from '@/request/search'
+import { ERR_OK } from '@/request/config'
+import { playlistMixin, searchMixin } from '@/utils/mixin'
 
 export default {
   mixins: [playlistMixin, searchMixin],

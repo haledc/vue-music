@@ -4,8 +4,8 @@ import router from './router'
 import store from './store'
 
 import { SET_PLAY_HISTORY, SET_FAVORITE_LIST } from './store/mutation-types'
-import { loadPlay, loadFavorite } from './assets/helpers/cache'
-import { processSongsUrl } from './assets/helpers/song'
+import { loadPlay, loadFavorite } from './utils/cache'
+import { processSongsUrl } from './utils/song'
 
 import './assets/styles/index.scss'
 

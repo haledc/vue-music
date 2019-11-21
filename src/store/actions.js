@@ -1,6 +1,6 @@
 import * as types from './mutation-types'
-import { playMode } from '../assets/helpers/config'
-import { shuffle } from '../assets/helpers/util'
+import { playMode } from '../utils/config'
+import { shuffle } from '../utils/util'
 import {
   saveSearch,
   deleteSearch,
@@ -8,7 +8,7 @@ import {
   savePlay,
   saveFavorite,
   deleteFavorite
-} from '../assets/helpers/cache'
+} from '../utils/cache'
 
 // 查找索引，封装一个函数
 function findIndex(list, song) {

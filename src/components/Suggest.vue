@@ -41,10 +41,10 @@ import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
 import NoResult from '@/components/NoResult'
 
-import Singer from '@/assets/helpers/singer'
-import { genResult, checkMore } from '@/assets/helpers/search'
-import { search } from '@/assets/api/search'
-import { ERR_OK } from '@/assets/api/config'
+import Singer from '@/utils/singer'
+import { genResult, checkMore } from '@/utils/search'
+import { search } from '@/request/search'
+import { ERR_OK } from '@/request/config'
 
 const TYPE_SINGER = 'singer'
 const PER_PAGE = 20

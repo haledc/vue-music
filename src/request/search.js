@@ -1,5 +1,5 @@
 import axios from 'axios'
-import jsonp from '../helpers/jsonp'
+import jsonp from '../utils/jsonp'
 import { commonParams, options } from './config'
 
 const debug = process.env.NODE_ENV !== 'production'

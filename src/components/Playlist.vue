@@ -72,8 +72,8 @@ import Scroll from '@/components/Scroll'
 import AddSong from '@/components/AddSong'
 import Confirm from '@/components/Confirm'
 
-import { playMode } from '@/assets/helpers/config'
-import { playerMixin } from '@/assets/helpers/mixin'
+import { playMode } from '@/utils/config'
+import { playerMixin } from '@/utils/mixin'
 
 export default {
   mixins: [playerMixin],

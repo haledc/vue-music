@@ -7,7 +7,7 @@ export const commonParams = {
   format: 'jsonp'
 }
 
-// jsonp参数选项
+// jsonp 参数选项
 export const options = {
   param: 'jsonpCallback',
   prefix: 'jp'
