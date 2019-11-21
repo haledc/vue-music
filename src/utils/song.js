@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64'
-import { getLyric, getSongsUrl } from '../api/song'
-import { ERR_OK } from '../api/config'
+import { getLyric, getSongsUrl } from '../request/song'
+import { ERR_OK } from '../request/config'
 
 // 歌曲类
 export default class Song {

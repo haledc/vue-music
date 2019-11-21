@@ -1,5 +1,5 @@
-import { playMode } from '../assets/helpers/config'
-import { loadSearch } from '../assets/helpers/cache'
+import { playMode } from '../utils/config'
+import { loadSearch } from '../utils/cache'
 
 const state = {
   singer: {}, // 歌手

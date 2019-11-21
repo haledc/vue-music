@@ -1,4 +1,4 @@
-import jsonp from '../helpers/jsonp'
+import jsonp from '../utils/jsonp'
 import { commonParams, options } from './config'
 
 // 获取歌手列表

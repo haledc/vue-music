@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { commonParams, ERR_OK } from './config'
-import { getUid } from '../helpers/uid'
+import { getUid } from '../utils/uid'
 
 const debug = process.env.NODE_ENV !== 'production'
 

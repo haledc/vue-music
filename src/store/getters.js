@@ -1,4 +1,4 @@
-import Song from '../assets/helpers/song'
+import Song from '../utils/song'
 
 // 获取当前歌手
 export const singer = state => state.singer
