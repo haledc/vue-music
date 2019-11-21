@@ -1,49 +1,39 @@
-const Koa = require('koa')
-const Router = require('koa-router')
+const express = require('express')
+const bodyParser = require('body-parser')
+const history = require('connect-history-api-fallback')
 const axios = require('axios')
-const bodyParser = require('koa-bodyparser')
-const history = require('koa2-history-api-fallback')
-const serve = require('koa-static')
 const path = require('path')
 
-const port = process.env.PORT || 9095
+const server = express()
 
-const app = new Koa()
+const apiRouter = new express.Router()
 
-const apiRoutes = new Router({
-  prefix: '/api'
-})
-
-apiRoutes.get('/getDiscList', async ctx => {
+apiRouter.get('/api/getDiscList', (req, res) => {
   const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
-  await axios
+  axios
     .get(url, {
       headers: {
         referer: 'https://c.y.qq.com/',
         host: 'c.y.qq.com'
       },
-      params: ctx.query
+      params: req.query
     })
-    .then(res => {
-      ctx.body = res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/getCdInfo', async ctx => {
+apiRouter.get('/api/getCdInfo', (req, res) => {
   const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
-  await axios
+  axios
     .get(url, {
       headers: {
         referer: 'https://c.y.qq.com/',
         host: 'c.y.qq.com'
       },
-      params: ctx.query
+      params: req.query
     })
-    .then(res => {
-      let ret = res.data
+    .then(response => {
+      let ret = response.data
       if (typeof ret === 'string') {
         let reg = /^\w+\(({.+})\)$/
         let matches = ret.match(reg)
@@ -51,87 +41,71 @@ apiRoutes.get('/getCdInfo', async ctx => {
           ret = JSON.parse(matches[1])
         }
       }
-      ctx.body = ret
+      res.json(ret)
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/lyric', async ctx => {
+apiRouter.get('/api/lyric', (req, res) => {
   const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
 
-  await axios
+  axios
     .get(url, {
       headers: {
         referer: 'https://c.y.qq.com/',
         host: 'c.y.qq.com'
       },
-      params: ctx.query
+      params: req.query
     })
-    .then(res => {
-      let ret = res.data
+    .then(response => {
+      let ret = response.data
       if (typeof ret === 'string') {
         let reg = /^\w+\(({.+})\)$/
-        let matches = res.data.match(reg)
+        let matches = ret.data.match(reg)
         if (matches) {
           ret = JSON.parse(matches[1])
         }
       }
-      ctx.body = ret
+      res.json(ret)
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch(error => console.log(error))
 })
 
-apiRoutes.get('/search', async ctx => {
+apiRouter.get('/api/search', (req, res) => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
-  await axios
+  axios
     .get(url, {
       headers: {
         referer: 'https://c.y.qq.com/',
         host: 'c.y.qq.com'
       },
-      params: ctx.query
+      params: req.query
     })
-    .then(res => {
-      ctx.body = res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-apiRoutes.post('/getPurlUrl', async ctx => {
+apiRouter.post('/api/getPurlUrl', bodyParser.json(), (req, res) => {
   const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
-  await axios
-    .post(url, ctx.request.body, {
+  axios
+    .post(url, req.body, {
       headers: {
         referer: 'https://y.qq.com/',
         origin: 'https://y.qq.com',
         'Content-type': 'application/x-www-form-urlencoded'
       }
     })
-    .then(res => {
-      ctx.body = res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    .then(response => res.json(response.data))
+    .catch(error => console.log(error))
 })
 
-app.use(history())
-app.use(bodyParser())
+server.use(history())
+server.use(apiRouter)
+server.use(express.static(path.resolve(__dirname, 'dist')))
 
-app.use(apiRoutes.routes()).use(apiRoutes.allowedMethods())
+const PORT = process.env.PORT || 9095
 
-app.use(serve(path.join(__dirname, './dist')))
-
-app.listen(port, err => {
-  if (err) {
-    console.log(err)
-    return
-  }
-  console.log(`Server started at port:${port}!`)
+server.listen(PORT, error => {
+  if (error) console.error(error)
+  console.log(`Server started at http://127.0.0.1:${PORT}!`)
 })
