@@ -1,7 +1,3 @@
-/**
- * 注意 Vue 的配置文件必须是 js 文件，而且是使用 Commonjs 模块
- */
-
 const axios = require('axios')
 const bodyParser = require('body-parser')
 
@@ -21,7 +17,7 @@ module.exports = {
             params: req.query
           })
           .then(response => res.json(response.data))
-          .catch(err => console.log(err))
+          .catch(error => console.log(error))
       })
 
       app.get('/api/getCdInfo', (req, res) => {
@@ -45,7 +41,7 @@ module.exports = {
               res.json(ret)
             }
           })
-          .catch(err => console.log(err))
+          .catch(error => console.log(error))
       })
 
       app.get('/api/lyric', (req, res) => {
@@ -68,7 +64,7 @@ module.exports = {
             }
             res.json(ret)
           })
-          .catch(err => console.log(err))
+          .catch(error => console.log(error))
       })
 
       app.post('/api/getPurlUrl', bodyParser.json(), (req, res) => {
@@ -83,7 +79,7 @@ module.exports = {
             }
           })
           .then(response => res.json(response.data))
-          .catch(err => console.log(err))
+          .catch(error => console.log(error))
       })
 
       app.get('/api/search', (req, res) => {
@@ -97,7 +93,7 @@ module.exports = {
             params: req.query
           })
           .then(response => res.json(response.data))
-          .catch(err => console.log(err))
+          .catch(error => console.log(error))
       })
     }
   }
