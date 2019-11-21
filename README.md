@@ -18,8 +18,6 @@ node prod.server.js
 
 ### 版本信息
 
-- [vue-cli4 test 版本](https://github.com/haledc/vue-music/tree/vue-cli4)
+- [Vue2 版本](https://github.com/haledc/vue-music/tree/vue2)
 
-- [vue-cli3 + typescript 版本](https://github.com/haledc/vue-music/tree/vue-cli3-ts)
-
-- [vue-cli2 版本](https://github.com/haledc/vue-music/tree/vue-cli2)
+- [Vue2 + Typescript 版本](https://github.com/haledc/vue-music/tree/vue2-ts)
