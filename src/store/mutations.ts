@@ -1,6 +1,6 @@
+import { MutationTree } from 'vuex'
 import * as types from './mutation-types'
 import { State } from './state'
-import { MutationTree } from 'vuex'
 
 const mutations: MutationTree<State> = {
   // 设置歌手

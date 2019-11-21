@@ -1,6 +1,6 @@
-import Song from '../assets/utils/song'
-import { State } from './state'
 import { GetterTree } from 'vuex'
+import Song from '../utils/song'
+import { State } from './state'
 
 const getters: GetterTree<State, State> = {
   singer: state => state.singer,

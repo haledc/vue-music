@@ -1,10 +1,10 @@
 import Vue from 'vue'
+import VueLazyLoad from 'vue-lazyload'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
-import './assets/styles/index.styl'
-import VueLazyLoad from 'vue-lazyload'
+import './assets/styles/index.scss'
 
 Vue.config.productionTip = false
 

@@ -1,6 +1,6 @@
-import { playMode } from '../assets/utils/config'
-import { loadSearch } from '../assets/utils/cache'
-import Song from '../assets/utils/song'
+import Song from '../utils/song'
+import { playMode } from '../utils/config'
+import { loadSearch } from '../utils/cache'
 
 export interface State {
   singer: object

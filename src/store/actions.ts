@@ -1,6 +1,7 @@
+import { ActionTree } from 'vuex'
 import * as types from './mutation-types'
-import { playMode } from './../assets/utils/config'
-import { shuffle } from '../assets/utils/util'
+import { playMode } from '../utils/config'
+import { shuffle } from '../utils/util'
 import {
   saveSearch,
   deleteSearch,
@@ -8,10 +9,9 @@ import {
   savePlay,
   saveFavorite,
   deleteFavorite
-} from '../assets/utils/cache'
-import { ActionTree } from 'vuex'
+} from '../utils/cache'
 import { State } from './state'
-import Song from '../assets/utils/song'
+import Song from '../utils/song'
 
 const findIndex = (list: any[], song: Song): number => {
   return list.findIndex(item => item.id === song.id)

@@ -11,9 +11,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Header from '@/components/Header.vue'
-import Tab from '@/components/Tab.vue'
-import Player from '@/views/Player.vue'
+import Header from '@/components/Header'
+import Tab from '@/components/Tab'
+import Player from '@/views/Player'
 
 @Component({
   components: {
