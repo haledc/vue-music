@@ -115,8 +115,7 @@ export default class Suggest extends Vue {
       })
       this.$router.push(`/search/${singer.id}`)
       this.setSinger(singer)
-    } else {
-      // @ts-ignore
+    } else if (item instanceof Song) {
       this.insertSong(item)
     }
   }

@@ -137,9 +137,9 @@ export default class Playlist extends Mixins(PlayerMixin) {
     const index = this.sequenceList.findIndex(
       song => currentSong.id === song.id
     )
-    // @ts-ignore
+
     this.$refs.listContent.scrollToElement(
-      this.$refs.list.$el.children[index],
+      this.$refs.list.$el.children[index] as HTMLElement,
       300
     )
   }
