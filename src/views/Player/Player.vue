@@ -497,10 +497,8 @@ export default class Player extends Mixins(PlayerMixin) {
     this.currentLineNum = lineNum
     if (lineNum > 5) {
       const lineE1 = this.$refs.lyricLine[lineNum - 5]
-      // @ts-ignore
       this.$refs.lyricList.scrollToElement(lineE1, 1000)
     } else {
-      // @ts-ignore
       this.$refs.lyricList.scrollTo(0, 0, 1000)
     }
     this.playingLyric = txt

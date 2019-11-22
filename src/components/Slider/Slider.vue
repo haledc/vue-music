@@ -88,7 +88,6 @@ export default class Slider extends Vue {
   public refresh() {
     if (this.slider) {
       this.setSliderWidth(true)
-      // @ts-ignore
       this.slider.refresh()
     }
   }

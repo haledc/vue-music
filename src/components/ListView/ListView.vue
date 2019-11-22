@@ -185,7 +185,6 @@ export default class ListView extends Vue {
       index = this.listHeight.length - 2
     }
     this.scrollY = -this.listHeight[index]
-    // @ts-ignore
     this.$refs.listView.scrollToElement(this.$refs.listGroup[index], 0)
   }
 
