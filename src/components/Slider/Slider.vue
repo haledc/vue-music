@@ -20,12 +20,12 @@ export default class Slider extends Vue {
   @Prop({ default: true }) public autoPlay!: boolean
   @Prop({ default: 2000 }) public interval!: number
 
-  public dots!: any[]
+  public dots!: string[]
   public currentPageIndex: number = 0
   public slider!: BScroll
   public resizeTimer!: number
   public timer!: number
-  public children!: HTMLElement[]
+  public children!: HTMLCollection
   public $refs!: {
     sliderGroup: HTMLElement
     slider: HTMLElement
@@ -93,12 +93,12 @@ export default class Slider extends Vue {
   }
 
   private setSliderWidth(isResize: boolean = false) {
-    this.children = this.$refs.sliderGroup.children as any
+    this.children = this.$refs.sliderGroup.children
     let width = 0
     const sliderWidth = this.$refs.slider.clientWidth
     for (const child of this.children) {
       addClass(child, 'slider-item')
-      child.style.width = sliderWidth + 'px'
+      ;(child as HTMLElement).style.width = sliderWidth + 'px'
       width += sliderWidth
     }
 
@@ -110,7 +110,7 @@ export default class Slider extends Vue {
   }
 
   private initDots() {
-    this.dots = new Array(this.children.length)
+    this.dots = new Array(this.children.length).fill('dot')
   }
 
   private initSlider() {
