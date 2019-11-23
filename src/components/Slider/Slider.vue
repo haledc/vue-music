@@ -4,7 +4,12 @@
       <slot />
     </div>
     <div class="dots">
-      <span class="dot"></span>
+      <span
+        class="dot"
+        v-for="(_, index) in dots"
+        :key="index"
+        :class="{ active: currentPageIndex === index }"
+      ></span>
     </div>
   </div>
 </template>
@@ -20,7 +25,7 @@ export default class Slider extends Vue {
   @Prop({ default: true }) public autoPlay!: boolean
   @Prop({ default: 2000 }) public interval!: number
 
-  public dots!: string[]
+  public dots: string[] = []
   public currentPageIndex: number = 0
   public slider!: BScroll
   public resizeTimer!: number
