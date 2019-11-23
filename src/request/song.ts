@@ -26,16 +26,20 @@ export function getLyric(mid: string): Promise<ILyricResult> {
     .then((res: AxiosResponse) => Promise.resolve(res.data))
 }
 
+interface PurlMap {
+  [key: string]: string
+}
+
+interface MidURLInfo {
+  songmid: string
+  purl: string
+  [key: string]: string
+}
+
 interface UMid {
   code: number
   data: {
-    midurlinfo: [
-      {
-        [key: string]: string
-        songmid: string
-        purl: string
-      }
-    ]
+    midurlinfo: MidURLInfo[]
   }
 }
 
@@ -65,7 +69,7 @@ export function getSongsUrl(songs: Song[]): Promise<ISongsUrlResult> {
     function request() {
       return axios
         .post(url, {
-          comn: data,
+          comm: data,
           req_0: urlMid
         })
         .then(response => {
@@ -73,7 +77,7 @@ export function getSongsUrl(songs: Song[]): Promise<ISongsUrlResult> {
           if (ret.code === ERR_OK) {
             const uMid: UMid = ret.req_0
             if (uMid && uMid.code === ERR_OK) {
-              const purlMap: { [key: string]: string } = {}
+              const purlMap: PurlMap = {}
               uMid.data.midurlinfo.forEach(item => {
                 if (item.purl) {
                   purlMap[item.songmid] = item.purl
