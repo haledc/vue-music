@@ -55,6 +55,7 @@ import { getSliderList, getDiscList } from '@/request/recommend'
 import { ERR_OK } from '@/request/config'
 import * as types from '@/store/mutation-types'
 import Song from '@/utils/song'
+import { IDisc, ISlider } from '../../types'
 
 @Component({
   components: {
@@ -64,8 +65,8 @@ import Song from '@/utils/song'
   }
 })
 export default class Recommend extends Vue {
-  public discList: object[] = []
-  public sliderList: object[] = []
+  public discList: IDisc[] = []
+  public sliderList: ISlider[] = []
   public checkLoaded: boolean = false
   public $refs!: {
     slider: Slider

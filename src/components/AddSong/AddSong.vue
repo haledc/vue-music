@@ -78,6 +78,7 @@ import TopTip from '@/components/TopTip'
 import SearchBox from '@/components/SearchBox'
 import { SearchMixin } from '@/utils/mixin'
 import Song from '@/utils/song'
+import { ISwitch } from '../../types'
 
 @Component({
   components: {
@@ -97,7 +98,7 @@ export default class AddSong extends Mixins(SearchMixin) {
   public showFlag: boolean = false
   public showSinger: boolean = false
   public currentIndex: number = 0
-  public switches: object[] = [{ name: '最近播放' }, { name: '搜索历史' }]
+  public switches: ISwitch[] = [{ name: '最近播放' }, { name: '搜索历史' }]
   public delay: number = 2000
   public $refs!: {
     songList: Scroll

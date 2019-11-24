@@ -53,6 +53,7 @@ import SongList from '@/components/SongList'
 import NoResult from '@/components/NoResult'
 import { PlaylistMixin } from '@/utils/mixin'
 import Song from '@/utils/song'
+import { ISwitch } from '@/types'
 
 @Component({
   components: {
@@ -69,7 +70,7 @@ export default class UserCenter extends Mixins(PlaylistMixin) {
   @Action public randomPlay!: (params: { list: Song[] }) => void
 
   public currentIndex: number = 0
-  public switches: object[] = [{ name: '我喜欢的' }, { name: '最近听的' }]
+  public switches: ISwitch[] = [{ name: '我喜欢的' }, { name: '最近听的' }]
   public $refs!: {
     listWrapper: HTMLElement
     favoriteList: Scroll

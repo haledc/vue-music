@@ -14,10 +14,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import { ISwitch } from '@/types'
 
 @Component
 export default class Switches extends Vue {
-  @Prop({ default: [] }) public switches!: object[]
+  @Prop({ default: [] }) public switches!: ISwitch[]
   @Prop({ default: 0 }) public currentIndex!: number
 
   @Emit('switch')

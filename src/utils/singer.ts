@@ -1,6 +1,6 @@
-import { ISingerResult } from '../types'
+import { ISingerResult, INormalizeSinger, ISinger } from '../types'
 
-export default class Singer {
+export default class Singer implements ISinger {
   public id: string
   public name: string
   public avatar: string
@@ -14,12 +14,7 @@ export default class Singer {
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 
-export interface NormalizeSinger {
-  title: string
-  items: Singer[]
-}
-
-export const normalizeSingers = (list: ISingerResult[]): NormalizeSinger[] => {
+export const normalizeSingers = (list: ISingerResult[]): INormalizeSinger[] => {
   const map: any = {
     hot: {
       title: HOT_NAME,

@@ -8,11 +8,11 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import MusicList from '@/components/MusicList'
-import { processSongUrl, normalizeSongs } from '@/utils/song'
+import Song, { processSongUrl, normalizeSongs } from '@/utils/song'
 import SingerClass from '@/utils/singer'
 import { ERR_OK } from '@/request/config'
 import { getSingerDetail } from '@/request/singer'
-import { IDiscSong } from '../../types'
+import { IDiscSong, ISingerResult } from '../../types'
 
 @Component({
   components: {
@@ -22,7 +22,7 @@ import { IDiscSong } from '../../types'
 export default class SingerDetail extends Vue {
   @Getter public singer!: SingerClass
 
-  public songs: object[] = []
+  public songs: Song[] = []
 
   get title() {
     return this.singer.name

@@ -1,7 +1,7 @@
 import { Base64 } from 'js-base64'
 import { getLyric, getSongsUrl } from '../request/song'
 import { ERR_OK } from '../request/config'
-import { IDiscSong, ISinger, ISingerSong, ITopSong } from '../types'
+import { IDiscSong, ISinger, ISong } from '../types'
 
 interface ISongParams {
   id: string
@@ -14,7 +14,7 @@ interface ISongParams {
   url: string
 }
 
-export default class Song {
+export default class Song implements ISong {
   public id: string
   public mid: string
   public singer: string
@@ -24,7 +24,7 @@ export default class Song {
   public image: string
   public filename: string
   public url: string
-  public lyric!: string
+  public lyric?: string
   public deleting?: boolean
 
   constructor({

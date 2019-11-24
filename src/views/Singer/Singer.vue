@@ -16,6 +16,7 @@ import SingerClass from '@/utils/singer'
 import Song from '@/utils/song'
 import { ERR_OK } from '@/request/config'
 import { getSingerList } from '@/request/singer'
+import { INormalizeSinger } from '@/types'
 
 @Component({
   components: {
@@ -25,7 +26,7 @@ import { getSingerList } from '@/request/singer'
 export default class Singer extends Mixins(PlaylistMixin) {
   @Mutation(types.SET_SINGER) public setSinger!: (singer: SingerClass) => void
 
-  public singers: object[] = []
+  public singers: INormalizeSinger[] = []
   public $refs!: {
     singer: HTMLElement
     list: ListView

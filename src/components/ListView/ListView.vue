@@ -60,12 +60,13 @@ import { Position } from 'better-scroll'
 import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
 import { getData } from '@/utils/dom'
-import Singer, { NormalizeSinger } from '@/utils/singer'
+import Singer from '@/utils/singer'
+import { INormalizeSinger } from '@/types'
 
 const ANCHOR_HEIGHT = 18
 const TITLE_HEIGHT = 30
 
-interface Touch {
+interface ITouch {
   y1: number
   y2: number
   anchorIndex: string
@@ -78,12 +79,12 @@ interface Touch {
   }
 })
 export default class ListView extends Vue {
-  @Prop({ default: [] }) public data!: NormalizeSinger[]
+  @Prop({ default: [] }) public data!: INormalizeSinger[]
 
   public scrollY: number = -1
   public currentIndex: number = 0
   public diff: number = -1
-  public touch = {} as Touch
+  public touch = {} as ITouch
   public listenScroll: boolean = true
   public listHeight: number[] = []
   public probeType: number = 3

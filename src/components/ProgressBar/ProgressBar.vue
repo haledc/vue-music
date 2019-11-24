@@ -22,7 +22,7 @@ import { prefixStyle } from '@/utils/dom'
 const PROGRESS_BTN_WIDTH = 16
 const transform: any = prefixStyle('transform')
 
-interface Touch {
+interface IProgressTouch {
   initiated: boolean
   startX: number
   left: number
@@ -32,7 +32,7 @@ interface Touch {
 export default class ProgressBar extends Vue {
   @Prop({ default: 0 }) public percent!: number
 
-  public touch = {} as Touch
+  public touch = {} as IProgressTouch
   public $refs!: {
     progressBar: HTMLElement
     progress: HTMLElement

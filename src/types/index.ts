@@ -31,6 +31,20 @@ export interface ISinger {
   name: string
 }
 
+export interface ISong {
+  id: string
+  mid: string
+  singer: string
+  name: string
+  album: string
+  duration: number
+  image: string
+  filename: string
+  url: string
+  lyric?: string
+  deleting?: boolean
+}
+
 export interface IDiscSong {
   songid: string
   songmid: string
@@ -66,6 +80,17 @@ export interface ISingerListResult {
   data: {
     list: ISingerResult[]
   }
+}
+
+export interface ISinger {
+  id: string
+  name: string
+  avatar: string
+}
+
+export interface INormalizeSinger {
+  title: string
+  items: ISinger[]
 }
 
 export interface ISingerSong<T> {
@@ -151,4 +176,8 @@ export interface IHotKeyResult {
   data: {
     hotkey: IHotKey[]
   }
+}
+
+export interface ISwitch {
+  name: string
 }
