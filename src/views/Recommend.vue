@@ -102,7 +102,7 @@ export default {
     _getSliderList() {
       getSliderList().then(res => {
         if (res.code === ERR_OK) {
-          this.sliderList = res.data.slider
+          this.sliderList = res.data.slider.slice(0, 5)
         }
       })
     },
