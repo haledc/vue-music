@@ -22,9 +22,7 @@ export function getLyric(mid) {
     .get(url, {
       params: data
     })
-    .then(res => {
-      return Promise.resolve(res.data)
-    })
+    .then(res => res.data)
 }
 
 // 获取歌曲链接

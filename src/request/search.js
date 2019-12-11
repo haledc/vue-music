@@ -50,7 +50,5 @@ export function search(query, page, zhida, perpage) {
     .get(url, {
       params: data
     })
-    .then(res => {
-      return Promise.resolve(res.data)
-    })
+    .then(res => res.data)
 }
