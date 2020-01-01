@@ -1,10 +1,10 @@
 <template>
   <div class="m-header">
-    <!--LOGO-->
+    <!-- LOGO -->
     <div class="icon"></div>
-    <!--文本-->
+    <!-- 文本 -->
     <h1 class="text">{{ title }}</h1>
-    <!--个人中心-->
+    <!-- 个人中心 -->
     <router-link tag="div" class="mine" to="/user">
       <i class="icon-mine" />
     </router-link>

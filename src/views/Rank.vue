@@ -1,6 +1,6 @@
 <template>
   <div class="rank" ref="rank">
-    <!--排行榜列表-滚动组件-->
+    <!-- 排行榜列表-滚动组件 -->
     <Scroll :data="topList" class="toplist" ref="topList">
       <ul>
         <li
@@ -9,11 +9,11 @@
           :key="item.id"
           @click="selectItem(item)"
         >
-          <!--排行榜图标-->
+          <!-- 排行榜图标 -->
           <div class="icon">
             <img width="100" height="100" v-lazy="item.picUrl" />
           </div>
-          <!--排行榜歌曲列表-->
+          <!-- 排行榜歌曲列表 -->
           <ul class="songlist">
             <li
               class="song"
@@ -26,7 +26,7 @@
           </ul>
         </li>
       </ul>
-      <!--加载图标-->
+      <!-- 加载图标 -->
       <div class="loading-container" v-show="!topList.length">
         <Loading />
       </div>
@@ -60,23 +60,21 @@ export default {
     this._getTopList()
   },
   methods: {
-    // 列表新增 bottom=60px，使得 mini 播放器 (高度60px) 不会覆盖住播放列表底部
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.rank.style.bottom = bottom
       this.$refs.topList.refresh()
     },
 
-    // 选中排行榜,跳转到排行榜详情
+    // 选中排行榜
     selectItem(item) {
       this.$router.push({
         path: `/rank/${item.id}`
       })
-      // 设置排行榜
       this.setTopList(item)
     },
 
-    // 获得排行榜列表
+    // 获取排行榜数据
     _getTopList() {
       getTopList().then(res => {
         if (res.code === ERR_OK) {

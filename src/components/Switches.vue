@@ -28,7 +28,7 @@ export default {
     }
   },
   methods: {
-    // 选中开关，派发事件
+    // 选中开关
     selectItem(index) {
       this.$emit('switch', index)
     }

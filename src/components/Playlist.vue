@@ -3,7 +3,7 @@
     <div class="playlist" v-show="isShowFlag" @click="hide">
       <!-- click.stop 阻止点击冒泡-->
       <div class="list-wrapper" @click.stop>
-        <!--列表头部-->
+        <!-- 列表头部 -->
         <div class="list-header">
           <h1 class="title">
             <i class="icon" :class="iconMode" @click="changeMode"></i>
@@ -13,14 +13,14 @@
             ></span>
           </h1>
         </div>
-        <!--歌曲列表-滚动组件-->
+        <!-- 歌曲列表-滚动组件 -->
         <Scroll
           class="list-content"
           :data="sequenceList"
           ref="listContent"
           :refreshDelay="refreshDelay"
         >
-          <!--列表过渡动画 子元素需要加 key-->
+          <!-- 列表过渡动画 子元素需要加 key -->
           <transition-group name="list" tag="ul" ref="list">
             <li
               :key="item.id"
@@ -40,19 +40,19 @@
             </li>
           </transition-group>
         </Scroll>
-        <!--列表操作-添加歌曲-->
+        <!-- 列表操作-添加歌曲 -->
         <div class="list-operate">
           <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到列表</span>
           </div>
         </div>
-        <!--列表关闭-->
+        <!-- 列表关闭 -->
         <div class="list-close" @click="hide">
           <span>关闭</span>
         </div>
       </div>
-      <!--清除确认弹窗组件-->
+      <!-- 清除确认弹窗组件 -->
       <Confirm
         ref="confirm"
         text="是否清空播放列表"
@@ -98,18 +98,28 @@ export default {
         : '单曲循环'
     }
   },
+  watch: {
+    // 监听当前歌曲，滚动到新歌曲位置
+    currentSong(newSong, oldSong) {
+      if (!this.isShowFlag || newSong.id === oldSong.id) {
+        return
+      }
+      setTimeout(() => {
+        this.scrollToCurrent(newSong)
+      }, 20)
+    }
+  },
   methods: {
-    // 显示播放列表
+    // 显示
     show() {
       this.isShowFlag = true
-      // 需要重新刷新scroll才能滚动
       setTimeout(() => {
         this.$refs.listContent.refresh()
         this.scrollToCurrent(this.currentSong)
       }, 20)
     },
 
-    // 隐藏播放列表
+    // 隐藏
     hide() {
       this.isShowFlag = false
     },
@@ -135,7 +145,6 @@ export default {
 
     // 滚动到当前歌曲（播放歌曲）
     scrollToCurrent(currentSong) {
-      // 获得当前歌曲的索引
       const index = this.sequenceList.findIndex(
         song => currentSong.id === song.id
       )
@@ -152,6 +161,7 @@ export default {
       }
       item.deleting = true
       this.deleteSong(item)
+
       // 如果此时播放列表已经没有歌曲，隐藏列表
       if (!this.playlist.length) {
         this.hide()
@@ -167,29 +177,17 @@ export default {
     },
 
     // 清空播放列表
-    // 隐藏播放列表
     confirmClear() {
       this.deleteSongList()
       this.hide()
     },
 
-    // 显示增加歌曲组件
+    // 显示增加歌曲界面
     addSong() {
       this.$refs.addSong.show()
     },
 
     ...mapActions(['deleteSong', 'deleteSongList'])
-  },
-  watch: {
-    // 监听当前歌曲，滚动到新歌曲位置
-    currentSong(newSong, oldSong) {
-      if (!this.isShowFlag || newSong.id === oldSong.id) {
-        return
-      }
-      setTimeout(() => {
-        this.scrollToCurrent(newSong)
-      }, 20)
-    }
   }
 }
 </script>

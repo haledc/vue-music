@@ -1,9 +1,9 @@
 <template>
   <div class="recommend" ref="recommend">
-    <!--滚动组件-->
+    <!-- 滚动组件 -->
     <Scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
-        <!--轮播图-->
+        <!-- 轮播图 -->
         <div v-if="sliderList.length" class="slider-wrapper">
           <!--轮播图组件-->
           <Slider ref="slider">
@@ -15,7 +15,7 @@
             </div>
           </Slider>
         </div>
-        <!--歌单列表-->
+        <!-- 歌单列表 -->
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
@@ -26,7 +26,7 @@
               class="item"
             >
               <div class="icon">
-                <!--懒加载，替换属性 :src => v-lazy-->
+                <!-- 懒加载，替换属性 :src => v-lazy -->
                 <img v-lazy="item.imgurl" width="60" height="60" />
               </div>
               <div class="text">
@@ -37,12 +37,12 @@
           </ul>
         </div>
       </div>
-      <!--加载图标-->
+      <!-- 加载图标 -->
       <div class="loading-container" v-show="!discList.length">
         <Loading />
       </div>
     </Scroll>
-    <!-- 二级路由渲染 - 歌单详情 -->
+    <!-- 二级路由挂载 - 歌单详情 -->
     <router-view />
   </div>
 </template>
@@ -81,17 +81,15 @@ export default {
     }, 20)
   },
   methods: {
-    // 播放列表新增 bottom=60px，使得 mini 播放器 (高度60px) 不会覆盖住播放列表底部
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
 
-    // 选中歌单，跳转到歌单详情页
+    // 选中歌单
     selectItem(item) {
       this.$router.push({
-        // 跳转到子路由，绝对路径
         path: `/recommend/${item.dissid}`
       })
       // 设置歌单
@@ -121,7 +119,7 @@ export default {
     // 如果获取轮播图数据比获取歌单数据更慢，实例化 Bscroll 后轮播图高度会占用歌单部分高度，导致歌单列表最后几项无法显示（歌单列表显示不全）
     // 所以，需要加上在有轮播图片加载时后，重新刷新 BScroll 对象，加载一张图片时，刷新一次即可
     loadImage() {
-      // 自定义变量checkLoaded，只触发一次
+      // 自定义变量 checkLoaded，只触发一次
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()
         this.checkLoaded = true

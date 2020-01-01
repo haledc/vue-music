@@ -9,7 +9,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: Recommend
+      redirect: '/recommend'
     },
     {
       path: '/recommend',

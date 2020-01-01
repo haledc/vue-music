@@ -2,7 +2,7 @@ import { playMode } from '../utils/config'
 import { loadSearch } from '../utils/cache'
 
 const state = {
-  singer: {}, // 歌手
+  singer: {}, // 歌手信息
   playing: false, // 是否播放
   fullScreen: false, // 是否全屏
   playlist: [], // 播放列表

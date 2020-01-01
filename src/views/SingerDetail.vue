@@ -31,7 +31,6 @@ export default {
     },
     ...mapGetters(['singer'])
   },
-
   created() {
     this._getDetail()
   },

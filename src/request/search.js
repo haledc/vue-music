@@ -18,11 +18,11 @@ export function getHotKey() {
 }
 
 /**
- * 搜索方法，获得搜索结果
- * @param query 关键字
- * @param page 页数
+ * 搜索方法，获取搜索结果
+ * @param {String} query 关键字
+ * @param {String} page 页数
  * @param {Boolean} zhida 是否直达
- * @param perpage 每页数目
+ * @param {String} perpage 每页数目
  */
 export function search(query, page, zhida, perpage) {
   const url = debug ? '/api/search' : 'http://127.0.0.1:9095/api/search'

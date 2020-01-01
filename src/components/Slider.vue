@@ -1,11 +1,11 @@
 <template>
   <div class="slider" ref="slider">
-    <!--滚动图片-->
+    <!-- 滚动图片 -->
     <div class="slider-group" ref="sliderGroup">
-      <!--图片插槽-->
+      <!-- 图片插槽 -->
       <slot />
     </div>
-    <!--滚动圆点-->
+    <!-- 定位圆点 -->
     <div class="dots">
       <span
         class="dot"
@@ -103,14 +103,13 @@ export default {
 
     // 设置轮播图总长度
     _setSliderWidth(isResize) {
-      // 轮播 item 列表[]
       this.children = this.$refs.sliderGroup.children
 
       let width = 0
       let sliderWidth = this.$refs.slider.clientWidth
       for (let i = 0; i < this.children.length; i++) {
         let child = this.children[i]
-        // 每个子元素设置class属性
+        // 每个子元素设置 class
         addClass(child, 'slider-item')
 
         child.style.width = sliderWidth + 'px'
@@ -127,12 +126,9 @@ export default {
     // 初始化轮播图
     _initSlider() {
       this.slider = new BScroll(this.$refs.slider, {
-        // 横向滚动
         scrollX: true,
-        // 纵向滚动
         scrollY: false,
-        // 滚动动画
-        momentum: false,
+        momentum: false, // 滚动动画
         // 循环设置
         snap: {
           loop: this.loop,

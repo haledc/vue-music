@@ -6,12 +6,12 @@ const mutations = {
     state.singer = singer
   },
 
-  // 设置是否播放
+  // 设置播放状态
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
   },
 
-  // 设置是否全屏
+  // 设置全屏状态
   [types.SET_FULL_SCREEN](state, flag) {
     state.fullScreen = flag
   },

@@ -29,7 +29,7 @@ export default {
       return this.topList.topTitle
     },
 
-    // 排行榜图片 (第一首歌的图片)
+    // 排行榜图片（第一首歌的图片）
     bgImage() {
       if (this.songs.length) {
         return this.songs[0].image
@@ -43,7 +43,7 @@ export default {
     this._getMusicList()
   },
   methods: {
-    // 获得排行榜歌曲列表
+    // 获取排行榜歌曲数据
     _getMusicList() {
       if (!this.topList.id) {
         this.$router.push('/rank')

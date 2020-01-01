@@ -1,7 +1,6 @@
 <template>
   <div class="singer" ref="singer">
     <ListView @select="selectSinger" :data="singers" ref="list" />
-    <!-- 歌手详情承载路由 -->
     <router-view />
   </div>
 </template>
@@ -33,7 +32,6 @@ export default {
     this._getSingerList()
   },
   methods: {
-    // 列表新增 bottom=60px，使得 mini 播放器(高度60px)不会覆盖住播放列表底部
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.singer.style.bottom = bottom
@@ -41,12 +39,10 @@ export default {
     },
 
     // 跳转到歌手详情页面
-    // 路由跳转
     selectSinger(singer) {
       this.$router.push({
         path: `/singer/${singer.id}`
       })
-      // 把数据保存到 vuex 中
       this.setSinger(singer)
     },
 
@@ -61,7 +57,7 @@ export default {
 
     // 处理歌手列表数据
     _normalizeSinger(list) {
-      // 新建歌手列表对象，其中包含一个hot类别对象
+      // 新建歌手列表对象，其中包含一个 hot 类别对象
       let map = {
         hot: {
           title: HOT_NAME,
@@ -71,7 +67,7 @@ export default {
       // 遍历歌手列表
       list.forEach((item, index) => {
         if (index < HOT_SINGER_LEN) {
-          // 取出前10位歌手，放入到hot类别中
+          // 取出前十位歌手，放入到 hot 类别中
           map.hot.items.push(
             new Singer({
               id: item.Fsinger_mid,
@@ -98,7 +94,7 @@ export default {
           })
         )
       })
-      // 为了得到有序列表， 我们需要处理 map
+      // 为了得到有序列表，我们需要处理 map
       let hot = []
       let ret = []
       for (let key in map) {
@@ -109,7 +105,7 @@ export default {
           hot.push(val)
         }
       }
-      // 按照歌手的title的首字母升序排序
+      // 按照歌手的 title 的首字母升序排序
       ret.sort((a, b) => {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })

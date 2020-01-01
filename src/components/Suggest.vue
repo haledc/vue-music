@@ -1,5 +1,5 @@
 <template>
-  <!--滚动组件-->
+  <!-- 滚动组件 -->
   <Scroll
     class="suggest"
     :data="result"
@@ -9,7 +9,7 @@
     @beforeScroll="listScroll"
     @scrollToEnd="searchMore"
   >
-    <!--搜索列表结果-->
+    <!-- 搜索列表结果 -->
     <ul class="suggest-list">
       <li
         class="suggest-item"
@@ -24,10 +24,10 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
-      <!--上拉刷新时加载图标，出现在最下面-->
+      <!-- 上拉刷新时加载图标，出现在最下面 -->
       <Loading v-show="hasMore" title="" />
     </ul>
-    <!--无搜索结果情况-无结果组件-->
+    <!-- 无搜索结果情况-无结果组件 -->
     <div class="no-result-wrapper" v-show="!hasMore && !result.length">
       <NoResult title="抱歉，暂无搜索结果" />
     </div>
@@ -78,7 +78,7 @@ export default {
     }
   },
   watch: {
-    // 监听 query 变化，执行搜索方法，获得搜索结果
+    // 监听 query 变化，执行搜索方法，获取搜索结果
     query(newQuery) {
       if (!newQuery) {
         return
@@ -89,11 +89,8 @@ export default {
   methods: {
     // 搜索方法，获取搜索结果
     _search() {
-      // 重置页面为1
       this.page = 1
-      // 设置是否加载完成条件
       this.hasMore = true
-      // 重置滚动到最上面
       this.$refs.suggest.scrollTo(0, 0)
       search(this.query, this.page, this.showSinger, PER_PAGE).then(res => {
         if (res.code === ERR_OK) {
@@ -106,7 +103,7 @@ export default {
     },
 
     // 搜索更多
-    // 上拉刷新，加载更多的搜索数据，原来的数据和新加载的数据concat起来
+    // 上拉刷新，加载更多的搜索数据
     searchMore() {
       if (!this.hasMore) {
         return
@@ -135,8 +132,6 @@ export default {
     },
 
     // 选中歌手或者歌曲
-    // 跳转到歌手详情页 或者 把歌曲插入到播放列表中
-    // 并且派发一个事件，让父组件把当前的搜索关键字作为搜索历史数据保存到缓存中
     selectItem(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
@@ -153,13 +148,11 @@ export default {
       this.$emit('select')
     },
 
-    // 继续派发事件，主要用于滚动前隐藏手机端输入键盘
-    // 子组件的 beforeScroll 事件
+    // 监听 beforeScroll 事件，用于滚动前隐藏手机端输入键盘
     listScroll() {
       this.$emit('listScroll')
     },
 
-    // 调用子组件 scroll 的刷新方法
     refresh() {
       this.$refs.suggest.refresh()
     },

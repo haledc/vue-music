@@ -23,9 +23,7 @@ export default {
     }
   },
   created() {
-    // query变化时，派发事件，并把新值传出
-    // 需要处理派发事件的时间间隔，节省流量
-    // 不用每次一变化就派发事件，导致父组件不停的搜索数据
+    // 监听 query 变化时
     this.$watch(
       'query',
       debounce(newQuery => {

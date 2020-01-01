@@ -7,11 +7,11 @@
         v-for="(song, index) in songs"
         :key="index"
       >
-        <!--歌曲排行（有排行才显示）-->
+        <!-- 歌曲排行（有排行才显示） -->
         <div class="rank" v-show="rank">
           <span :class="getRankCls(index)">{{ getRankText(index) }}</span>
         </div>
-        <!--歌曲内容-->
+        <!-- 歌曲内容 -->
         <div class="content">
           <h2 class="name">{{ song.name }}</h2>
           <p class="desc">{{ getDesc(song) }}</p>
@@ -42,12 +42,12 @@ export default {
       this.$emit('select', item, index)
     },
 
-    // 获得歌曲描述
+    // 获取歌曲描述
     getDesc(song) {
       return `${song.singer} - ${song.album}`
     },
 
-    // 歌曲排行样式控制
+    // 获取歌曲排行样式
     // 前三名【金牌 银牌 铜牌】
     getRankCls(index) {
       if (index <= 2) {
@@ -58,7 +58,7 @@ export default {
     },
 
     // 歌曲排行索引显示
-    // 从第4名开始显示
+    // 从第四名开始显示
     getRankText(index) {
       if (index > 2) {
         return index + 1

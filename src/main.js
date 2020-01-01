@@ -9,12 +9,10 @@ import { processSongsUrl } from './utils/song'
 
 import './assets/styles/index.scss'
 
-// 图片懒加载
 import VueLazyLoad from 'vue-lazyload'
 
 Vue.use(VueLazyLoad, {
-  // 默认加载的图片
-  loading: require('@/assets/images/default.png')
+  loading: require('@/assets/images/default.png') // 默认加载图片
 })
 
 // 设置播放列表

@@ -19,26 +19,18 @@
 <script>
 export default {
   props: {
-    // 搜索历史列表
+    // 搜索历史
     searches: {
       type: Array,
       default: () => []
     }
   },
   methods: {
-    /**
-     * 选中搜索历史列表的搜索关键词
-     * 基础组件不作业务逻辑，只派发事件和传值
-     * @param item
-     */
+    // 选中搜索历史列表的搜索关键词
     selectItem(item) {
       this.$emit('select', item)
     },
-    /**
-     * 删除搜索历史列表的搜索关键词
-     * 基础组件不作业务逻辑，只派发事件和传值
-     * @param item
-     */
+    // 删除搜索历史列表的搜索关键词
     deleteOne(item) {
       this.$emit('delete', item)
     }
