@@ -83,7 +83,6 @@ export function getDiscList() {
     sortId: 5,
     categoryId: 10000000,
     rnd: Math.random(),
-    // 不是 jsonp
     format: 'json'
   })
 

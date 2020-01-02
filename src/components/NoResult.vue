@@ -23,7 +23,7 @@ export default {
 .no-result {
   text-align: center;
 
-  .no-result-icon {
+  &-icon {
     width: 86px;
     height: 90px;
     margin: 0 auto;
@@ -31,7 +31,7 @@ export default {
     background-size: 86px 90px;
   }
 
-  .no-result-text {
+  &-text {
     margin-top: 30px;
     font-size: $font-size-medium;
     color: $color-text-d;

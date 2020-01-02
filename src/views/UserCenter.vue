@@ -1,11 +1,11 @@
 <template>
   <transition name="slide">
     <div class="user-center">
-      <!--后退-->
+      <!-- 后退 -->
       <div class="back" @click="back">
         <i class="icon-back"></i>
       </div>
-      <!--导航开关-->
+      <!-- 导航开关 -->
       <div class="switches-wrapper">
         <Switches
           :currentIndex="currentIndex"
@@ -13,13 +13,13 @@
           @switch="switchItem"
         />
       </div>
-      <!--随机播放全部-->
+      <!-- 随机播放全部 -->
       <div class="play-btn" ref="playBtn" @click="random">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper" ref="listWrapper">
-        <!--我喜欢的-->
+        <!-- 我喜欢的 -->
         <Scroll
           class="list-scroll"
           v-if="currentIndex === 0"
@@ -30,7 +30,7 @@
             <SongList :songs="favoriteList" @select="selectSong" />
           </div>
         </Scroll>
-        <!--最近听的-->
+        <!-- 最近听的 -->
         <Scroll
           class="list-scroll"
           v-if="currentIndex === 1"
@@ -42,7 +42,7 @@
           </div>
         </Scroll>
       </div>
-      <!--没有内容-->
+      <!-- 没有内容 -->
       <div class="no-result-wrapper" v-show="noResult">
         <NoResult :title="noResultDesc" />
       </div>
@@ -75,7 +75,7 @@ export default {
     }
   },
   computed: {
-    // 没有数据显示的条件
+    // 没有数据时显示的条件
     noResult() {
       if (this.currentIndex === 0) {
         return !this.favoriteList.length
@@ -84,7 +84,7 @@ export default {
       }
     },
 
-    // 没有数据显示的文本
+    // 没有数据时显示的文本
     noResultDesc() {
       if (this.currentIndex === 0) {
         return '暂无收藏歌曲'
@@ -96,7 +96,6 @@ export default {
     ...mapGetters(['favoriteList', 'playHistory'])
   },
   methods: {
-    // 列表新增 bottom=60px，使得 mini 播放器(高度60px)不会覆盖住播放列表底部
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.listWrapper.style.bottom = bottom
@@ -109,7 +108,7 @@ export default {
       this.currentIndex = index
     },
 
-    // 选中歌曲，插入到播放列表中
+    // 选中歌曲
     selectSong(song) {
       this.insertSong(song)
     },

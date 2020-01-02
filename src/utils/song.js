@@ -27,8 +27,7 @@ export default class Song {
     return new Promise((resolve, reject) => {
       getLyric(this.mid).then(res => {
         if (res.retcode === ERR_OK) {
-          // 歌词Base64解码
-          this.lyric = Base64.decode(res.lyric)
+          this.lyric = Base64.decode(res.lyric) // 歌词 Base64 解码
           resolve(this.lyric)
         } else {
           reject('no lyric')
@@ -40,30 +39,34 @@ export default class Song {
 
 // 生成歌曲
 export function createSong(musicData) {
+  const {
+    songid,
+    songmid,
+    singer,
+    songname,
+    albumname,
+    albummid,
+    interval,
+    url
+  } = musicData
   return new Song({
-    id: musicData.songid,
-    mid: musicData.songmid,
-    singer: filterSinger(musicData.singer),
-    name: musicData.songname,
-    album: musicData.albumname,
-    duration: musicData.interval,
-    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: musicData.url // 播放地址
+    id: songid,
+    mid: songmid,
+    singer: filterSinger(singer),
+    name: songname,
+    album: albumname,
+    duration: interval,
+    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${albummid}.jpg?max_age=2592000`,
+    url: url // 播放地址
   })
 }
 
-// 处理歌手  Array => String(xxx, xxx/xxx)
+// 处理歌手
 export function filterSinger(singer) {
-  let ret = []
   if (!singer) {
     return ''
   }
-  singer.forEach(item => {
-    ret.push(item.name)
-  })
-
-  // 如果有2个以上歌手用'/'分割成字符串
-  return ret.join('/')
+  return singer.map(item => item.name).join('/')
 }
 
 // 确定是否为可行歌曲（非付费歌曲）
@@ -97,12 +100,8 @@ export function processSongsUrl(songs) {
 }
 
 export function normalizeSongs(list) {
-  const ret = []
-  list.forEach(item => {
+  return list.map(item => {
     item = item.musicData ? item.musicData : item.data ? item.data : item
-    if (isValidMusic(item)) {
-      ret.push(createSong(item))
-    }
+    return isValidMusic(item) && createSong(item)
   })
-  return ret
 }

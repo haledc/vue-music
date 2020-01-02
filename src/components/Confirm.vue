@@ -1,12 +1,11 @@
 <template>
   <transition name="confirm-fade">
-    <!-- click.stop 阻止冒泡到引用的父组件上-->
     <div class="confirm" v-show="isShowFlag" @click.stop>
       <div class="confirm-wrapper">
         <div class="confirm-content">
-          <!--描述-->
+          <!-- 信息 -->
           <p class="text">{{ text }}</p>
-          <!--按钮-->
+          <!-- 按钮 -->
           <div class="operate">
             <div @click="cancel" class="operate-btn left">
               {{ cancelBtnText }}
@@ -22,19 +21,19 @@
 <script>
 export default {
   props: {
-    // 弹窗描述
+    // 弹窗信息
     text: {
       type: String,
       default: ''
     },
 
-    // 确认按钮内容
+    // 确认按钮文本
     confirmBtnText: {
       type: String,
       default: '确定'
     },
 
-    // 取消按钮内容
+    // 取消按钮文本
     cancelBtnText: {
       type: String,
       default: '取消'
@@ -46,23 +45,23 @@ export default {
     }
   },
   methods: {
-    // 显示窗口
+    // 显示
     show() {
       this.isShowFlag = true
     },
 
-    // 隐藏窗口
+    // 隐藏
     hide() {
       this.isShowFlag = false
     },
 
-    // 取消选项，派发事件
+    // 取消选项
     cancel() {
       this.hide()
       this.$emit('cancel')
     },
 
-    // 确认选项，派发事件
+    // 确认选项
     confirm() {
       this.hide()
       this.$emit('confirm')

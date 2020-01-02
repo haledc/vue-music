@@ -36,7 +36,7 @@ export default {
       }, this.delay)
     },
 
-    // 隐藏窗口
+    // 隐藏
     hide() {
       this.isShowFlag = false
     }

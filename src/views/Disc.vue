@@ -28,7 +28,6 @@ export default {
       return this.disc.imgurl
     },
 
-    // 获取歌单
     ...mapGetters(['disc'])
   },
   data() {
@@ -49,9 +48,7 @@ export default {
       getSongList(this.disc.dissid).then(res => {
         if (res.code === ERR_OK) {
           processSongsUrl(normalizeSongs(res.cdlist[0].songlist)).then(
-            songs => {
-              this.songs = songs
-            }
+            songs => (this.songs = songs)
           )
         }
       })

@@ -1,6 +1,6 @@
 <template>
   <div class="player" v-show="playlist.length > 0">
-    <!--全屏播放器-->
+    <!-- 全屏播放器 -->
     <transition
       name="normal"
       @enter="enter"
@@ -12,7 +12,7 @@
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image" />
         </div>
-        <!--播放器头部-->
+        <!-- 播放器头部 -->
         <div class="top">
           <div class="back" @click="back">
             <i class="icon-back"></i>
@@ -20,16 +20,16 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
-        <!--播放器中间部分-->
+        <!-- 播放器中间部分 -->
         <div
           class="middle"
           @touchstart.prevent="middleTouchStart"
           @touchmove.prevent="middleTouchMove"
           @touchend="middleTouchEnd"
         >
-          <!--播放器中间左边-CD页面-->
+          <!-- 播放器中间左边-CD页面 -->
           <div class="middle-l" ref="middleL">
-            <!--cd图片-->
+            <!-- cd图片 -->
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" ref="imageWrapper">
                 <img
@@ -40,12 +40,12 @@
                 />
               </div>
             </div>
-            <!--当前歌词-->
+            <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
               <div class="playing-lyric">{{ playingLyric }}</div>
             </div>
           </div>
-          <!--播放器中间右边-歌词页面 滚动组件 -->
+          <!-- 播放器中间右边-歌词页面 滚动组件  -->
           <Scroll
             class="middle-r"
             ref="lyricList"
@@ -69,9 +69,9 @@
             </div>
           </Scroll>
         </div>
-        <!--播放器底部-->
+        <!-- 播放器底部 -->
         <div class="bottom">
-          <!--滑动点阵-->
+          <!-- 滑动点阵 -->
           <div class="dot-wrapper">
             <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
             <span
@@ -79,12 +79,12 @@
               :class="{ active: currentShow === 'lyric' }"
             ></span>
           </div>
-          <!--播放器进度条-->
+          <!-- 播放器进度条 -->
           <div class="progress-wrapper">
-            <!--当前播放时间-->
+            <!-- 当前播放时间 -->
             <span class="time time-l">{{ format(currentTime) }}</span>
             <div class="progress-bar-wrapper">
-              <!--进度条组件-->
+              <!-- 进度条组件 -->
               <ProgressBar
                 ref="progressBar"
                 :percent="percent"
@@ -92,10 +92,10 @@
                 @percentChanging="onProgressBarChanging"
               />
             </div>
-            <!--歌曲总时长-->
+            <!-- 歌曲总时长 -->
             <span class="time time-r">{{ format(currentSong.duration) }}</span>
           </div>
-          <!--播放器控制面板-->
+          <!-- 播放器控制面板 -->
           <div class="operators">
             <div class="icon i-left" @click="changeMode">
               <i :class="iconMode"></i>
@@ -124,7 +124,7 @@
         </div>
       </div>
     </transition>
-    <!--迷你播放器-->
+    <!-- 迷你播放器 -->
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
@@ -156,9 +156,9 @@
         </div>
       </div>
     </transition>
-    <!--播放列表组件-->
+    <!-- 播放列表组件 -->
     <Playlist ref="playlist" />
-    <!--多媒体标签播放音乐-->
+    <!-- 多媒体标签播放音乐 -->
     <audio
       ref="audio"
       @playing="ready"
@@ -205,7 +205,7 @@ export default {
       currentLyric: null, // 当前歌曲的歌词
       currentLineNum: 0, // 当前歌词索引
       currentShow: 'cd', // 当前展示页面
-      playingLyric: '', // 当前播放的歌词(一行歌词)
+      playingLyric: '', // 当前播放的歌词（一行歌词）
       isPureMusic: false,
       pureMusicLyric: ''
     }
@@ -238,8 +238,6 @@ export default {
     ...mapGetters(['fullScreen', 'playing', 'currentIndex'])
   },
   created() {
-    // 创建一个 touch 对象，用来作为中间量在几个 touch 事件中共享数据
-    // 服务于播放器中间部分 CD 页面和歌词页面切换的 touch 事件
     this.touch = {}
   },
   watch: {
@@ -310,9 +308,7 @@ export default {
 
     // 全屏播放器-动画-进入
     enter(el, done) {
-      // 获取实际偏移量X，Y，比例scale
       const { x, y, scale } = this._getPosAndScale()
-      // 动画过程步骤 相当于原生的keyframes
       let animation = {
         0: {
           transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
@@ -334,30 +330,23 @@ export default {
           easing: 'linear' // 过渡类型
         }
       })
-      // 使用第三方库，运行动画，并传入回调函数 done，跳转到 afterEnter
-      // animations.runAnimation (dom, name, cb)
       animations.runAnimation(this.$refs.cdWrapper, 'move', done)
     },
 
     // 全屏播放器-动画-进入之后
     afterEnter() {
-      // 注销动画
       animations.unregisterAnimation('move')
-      // 动画设置为空
       this.$refs.cdWrapper.style.animation = ''
     },
 
     // 全屏播放器-动画-离开
     leave(el, done) {
-      // 过渡时间
       this.$refs.cdWrapper.style.transition = 'all 0.4s'
       const { x, y, scale } = this._getPosAndScale()
-      // 移动图片
       this.$refs.cdWrapper.style[
         transform
       ] = `translate3d(${x}px,${y}px,0) scale(${scale})`
       const timer = setTimeout(done, 4000)
-      // 监听过渡完成事件，清除定时器，并调用函数done，跳转到afterLeave
       this.$refs.cdWrapper.addEventListener('transitionend', () => {
         clearTimeout(timer)
         done()
@@ -365,26 +354,23 @@ export default {
     },
 
     // 全屏播放器-动画-离开之后
-    // 过渡和转换设置为空
     afterLeave() {
       this.$refs.cdWrapper.style.transition = ''
       this.$refs.cdWrapper.style[transform] = ''
     },
 
-    // 歌曲播放暂停切换方法
+    // 歌曲播放暂停切换
     togglePlaying() {
       if (!this.songReady) {
         return
       }
       this.setPlayingState(!this.playing)
-      // 歌词也要调用第三方库的切换方法
       if (this.currentLyric) {
         this.currentLyric.togglePlay()
       }
     },
 
-    // 监听监听 audio 的 ended 事件方法
-    // 重置播放时间为 0，如果是循环模式则进入调用循环播放方法，否则，播放下一首
+    // 监听 audio 的 ended 事件
     end() {
       this.currentTime = 0
       if (this.mode === playMode.loop) {
@@ -394,7 +380,7 @@ export default {
       }
     },
 
-    // 循环播放方法
+    // 循环播放
     loop() {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
@@ -411,17 +397,15 @@ export default {
       if (!this.songReady) {
         return
       }
-      // 如果列表只有一首歌，设置单曲循环, 否则索引+1，如果上一首歌是是最后一首歌则跳转到第一首歌
+      // 如果列表只有一首歌，设置单曲循环, 否则索引+1，如果上一首歌是最后一首歌则跳转到第一首歌
       if (this.playlist.length === 1) {
         this.loop()
       } else {
         let index = this.currentIndex + 1
-        // 当最后一首歌 (length - 1) 要跳转时
         if (index === this.playlist.length) {
           index = 0
         }
         this.setCurrentIndex(index)
-        // 如果歌曲不播放时，就使它播放
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -430,21 +414,18 @@ export default {
 
     // 播放上一首歌曲
     prev() {
-      // 如果歌曲没准备好时，点击无效（针对快速连点报错）
       if (!this.songReady) {
         return
       }
-      // 如果列表只有一首歌，设置单曲循环，否则索引-1，如果是上一首歌是第一首歌则跳转到最后一首歌
+      // 如果列表只有一首歌，设置单曲循环，否则索引 -1，如果是上一首歌是第一首歌则跳转到最后一首歌
       if (this.playlist.length === 1) {
         this.loop()
       } else {
         let index = this.currentIndex - 1
-        // 当第一首歌要跳转时
         if (index === -1) {
           index = this.currentIndex.length - 1
         }
         this.setCurrentIndex(index)
-        // 如果歌曲不播放时，就使它播放
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -454,10 +435,8 @@ export default {
     // 监听 audio 的 playing 事件
     ready() {
       clearTimeout(this.timer)
-      // 监听 playing 这个事件可以确保慢网速或者快网速切换歌曲导致的 DOM Exception
       this.songReady = true
       this.canLyricPlay = true
-      // 保存到播放历史
       this.savePlayHistory(this.currentSong)
       // 如果歌曲的播放晚于歌词的出现， 播放的时候需要同步歌词
       if (this.currentLyric && !this.isPureMusic) {
@@ -465,7 +444,7 @@ export default {
       }
     },
 
-    // 监听 audio 的 pause 事件，设置播放状态为 false,并且停止歌词
+    // 监听 audio 的 pause 事件
     paused() {
       this.setPlayingState(false)
       if (this.currentLyric) {
@@ -473,7 +452,7 @@ export default {
       }
     },
 
-    // 监听audio的error事件
+    // 监听 audio 的 error 事件
     error() {
       clearTimeout(this.timer)
       this.songReady = true
@@ -487,16 +466,12 @@ export default {
     // 格式化时间戳
     format(interval) {
       interval = interval | 0
-      // 获得分钟数
       const minute = (interval / 60) | 0
-      // 获得秒数，1位的秒数需要在前面补0  0.1 => 0.01
       const second = this._pad(interval % 60)
-      // 返回固定时间格式
       return `${minute}:${second}`
     },
 
     // 监听进度条子组件派发的 touchMove 事件
-    // 根据进度条的偏移量来调整当前歌曲播放时间
     onProgressBarChanging(percent) {
       this.currentTime = this.currentSong.duration * percent
       if (this.currentLyric) {
@@ -504,12 +479,10 @@ export default {
       }
     },
 
-    // 监听进度条子组件派发的进度条 touchEnd 和 click 事件
-    // 根据进度条的偏移量来调整当前歌曲播放时间和歌词显示
+    // 监听进度条的变化
     onProgressBarChange(percent) {
       const currentTime = this.currentSong.duration * percent
       this.currentTime = this.$refs.audio.currentTime = currentTime
-      // 歌词也重置到进度条所在位置的时间
       if (this.currentLyric) {
         this.currentLyric.seek(currentTime * 1000)
       }
@@ -550,24 +523,19 @@ export default {
         })
     },
 
-    // 操作歌词变化
+    // 处理歌词
     handleLyric({ lineNum, txt }) {
       if (!this.$refs.lyricLine) {
         return
       }
       // 设置高亮样式，当前歌词行 = 歌词索引
       this.currentLineNum = lineNum
-      // 第5行之后开始滚动
       if (lineNum > 5) {
-        // 拿到第五行后的歌词DOM
         let lineEl = this.$refs.lyricLine[lineNum - 5]
-        // 滚动到歌词DOM
         this.$refs.lyricList.scrollToElement(lineEl, 1000)
       } else {
-        // 前五行滚动到顶部
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
-      // 当前的播放歌词就是txt
       this.playingLyric = txt
     },
 
@@ -575,10 +543,9 @@ export default {
       this.$refs.playlist.show()
     },
 
-    // 监听中间部分 touchStart 事件，记录初始值
+    // 监听中间部分 touchStart 事件
     middleTouchStart(e) {
       this.touch.initiated = true
-      // 用来判断是否是一次移动
       this.touch.moved = false
       const touch = e.touches[0]
       this.touch.startX = touch.pageX
@@ -591,60 +558,45 @@ export default {
         return
       }
       const touch = e.touches[0]
-      // X轴偏移差值
       const deltaX = touch.pageX - this.touch.startX
-      // Y轴偏移差值
       const deltaY = touch.pageY - this.touch.startY
-      // 如果Y轴偏移更多的话，认为是在Y轴滚动了歌词，不进行操作【dom的touch事件是在X轴滑动的】【注意针对滑动屏幕的时候手势可能会偏】
       if (Math.abs(deltaY) > Math.abs(deltaX)) {
         return
       }
       if (!this.touch.moved) {
         this.touch.moved = true
       }
-      // 定义一个左偏距 当页面为左边的 CD 页面时为 0， 为歌词页面时为屏幕宽度（负值）【从右滑动到左为负值】
       const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
-      // 滑动偏移量范围【特指歌词页面的滑动偏移】 最大为0，最小为-375px（向左滑动）
       const offsetWidth = Math.min(
         0,
         Math.max(-window.innerWidth, left + deltaX)
       )
-      // 滑动百分比 = 滑动偏移量 / 屏幕宽度
       this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
-      // move过程中的滑动操作
       this.$refs.lyricList.$el.style[
         transform
       ] = `translate3d(${offsetWidth}px, 0, 0)`
-      // move过程中的滑动的过渡时间
       this.$refs.lyricList.$el.style[transitionDuration] = 0
-      // move过程中滑动的透明度变化
       this.$refs.middleL.style.opacity = 1 - this.touch.percent
-      // move过程中滑动的透明度的过渡时间
       this.$refs.middleL.style[transitionDuration] = 0
     },
 
-    // 监听中间部分 touchEnd 事件，操作 CD 页面和歌词页面的最终滑动状态
+    // 监听中间部分 touchEnd 事件
     middleTouchEnd() {
       if (!this.touch.moved) {
         return
       }
       let offsetWidth
       let opacity
-      // 当在cd页面时
       if (this.currentShow === 'cd') {
-        // 滑动的偏移量大于10%时，向右滑动页面宽度一样的距离，透明度变为0
         if (this.touch.percent > 0.1) {
           offsetWidth = -window.innerWidth
           opacity = 0
           this.currentShow = 'lyric'
-          // 偏移量不到10%时偏移量重置为0，滑动为0，透明度不变
         } else {
           offsetWidth = 0
           opacity = 1
         }
-        // 当在歌词页面时
       } else {
-        // 滑动的偏移量大于 10% 时就可以成功滑到左边
         if (this.touch.percent < 0.9) {
           offsetWidth = 0
           this.currentShow = 'cd'
@@ -655,21 +607,16 @@ export default {
         }
       }
       const time = 300
-      // 歌词页面滑动操作
       this.$refs.lyricList.$el.style[
         transform
       ] = `translate3d(${offsetWidth}px,0,0)`
-      // 歌词页面滑动的过渡时间
       this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
-      // CD 页面透明度操作
       this.$refs.middleL.style.opacity = opacity
-      // CD 页面透明度的过渡时间
       this.$refs.middleL.style[transitionDuration] = `${time}ms`
-      // 重置初始化值为 false
       this.touch.initiated = false
     },
 
-    // 1位秒数前面补0
+    // 补 0
     _pad(num, n = 2) {
       let len = num.toString().length
       while (len < n) {
@@ -681,21 +628,16 @@ export default {
 
     // 获取全屏播放器 CD 图片和迷你播放器 CD 图片的距离差值和比例
     _getPosAndScale() {
-      // 小圆图标尺寸 宽=高
+      // 小圆图片
       const targetWidth = 100
-      // 小圆距左边距离
       const paddingLeft = 40
-      // 小圆距底部距离
       const paddingBottom = 30
-      // 大圆距离顶部距离
+      // 大圆图片
       const paddingTop = 80
-      // 大圆图标尺寸 宽=高
       const width = window.innerWidth * 0.8
-      // 比例 小圆宽度/大圆宽度
+
       const scale = targetWidth / width
-      // X轴移动距离  【屏幕宽度的一半 - 小圆距离左边的距离】 从右移动到左 为负值
       const x = -(window.innerWidth / 2 - paddingLeft)
-      // Y轴移动距离  【屏幕高度的一般 - 大圆距离顶部距离 - 再减去大圆宽度的一半 - 小圆距底部距离】 从上移动到下 为正值
       const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
       return {
         x,

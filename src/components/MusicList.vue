@@ -1,12 +1,12 @@
 <template>
   <div class="music-list">
-    <!--后退按钮-->
+    <!-- 后退按钮 -->
     <div class="back" @click="back">
       <i class="icon-back" />
     </div>
-    <!--标题-歌手名字-->
+    <!-- 标题-歌手名字 -->
     <h1 class="title" v-html="title"></h1>
-    <!--背景-歌手图片-->
+    <!-- 背景-歌手图片 -->
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper">
         <div
@@ -19,12 +19,12 @@
           <span class="text">随机播放全部</span>
         </div>
       </div>
-      <!--作高斯模糊图层-->
+      <!-- 作高斯模糊图层 -->
       <div class="filter" ref="filter"></div>
     </div>
-    <!--背景覆盖层 可以移动遮住图片-->
+    <!-- 背景覆盖层 可以移动遮住图片 -->
     <div class="bg-layer" ref="layer"></div>
-    <!--滚动组件-->
+    <!-- 滚动组件 -->
     <Scroll
       @scroll="scroll"
       :probe-type="probeType"
@@ -34,10 +34,10 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <!--歌曲列表组件-->
+        <!-- 歌曲列表组件 -->
         <SongList :rank="rank" @select="selectItem" :songs="songs" />
       </div>
-      <!--加载图标-->
+      <!-- 加载图标 -->
       <div class="loading-container" v-show="!songs.length">
         <Loading />
       </div>
@@ -86,7 +86,7 @@ export default {
       default: ''
     },
 
-    // 是否排行
+    // 是否是排行榜
     rank: {
       type: Boolean,
       default: false
@@ -95,6 +95,12 @@ export default {
   data() {
     return {
       scrollY: 0
+    }
+  },
+  computed: {
+    // 背景图片样式
+    bgStyle() {
+      return `background-image:url(${this.bgImage})`
     }
   },
   created() {
@@ -108,64 +114,46 @@ export default {
     // 最大滚动的距离（预留40px） 向上滚动为负值
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
 
-    // 设置歌曲列表的top值为背景图片的高度（设置组件的样式要加$el）
+    // 设置歌曲列表的top值为背景图片的高度
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
-  computed: {
-    // 背景图片样式
-    bgStyle() {
-      return `background-image:url(${this.bgImage})`
-    }
-  },
   watch: {
-    // 监听 scrollY 值，设置 bgLayer 滚动值 ★★★
+    // 监听 scrollY 值，设置 bgLayer 滚动值
     scrollY(newY) {
-      // layer滚动值范围（newY~（-222px）） 最大值为this.minTranslateY即-222px
-      let translateY = Math.max(this.minTranslateY, newY)
-      // 默认图层
+      // layer滚动值范围
+      const translateY = Math.max(this.minTranslateY, newY)
       let zIndex = 0
-      // 默认放大比例
       let scale = 1
-      // 默认模糊效果
       let blur = 0
-      // 比例： 滚动新值/ 背景图片高度
       const percent = Math.abs(newY / this.imageHeight)
-      // newY > 0 即【下拉，向下滚动】，图片比例放大
+      // newY > 0 向下滚动
       if (newY > 0) {
         scale = 1 + percent
-        // zIndex需比歌曲列表层大，图片才会有放大的效果
-        zIndex = 10
-        // 上拉，向上滚动，高斯模糊效果，苹果手机才能看到效果
+        zIndex = 10 // zIndex需比歌曲列表层大，图片才会有放大的效果
+        // 向上滚动
       } else {
-        // 模糊效果最大为20
-        blur = Math.min(20, percent * 20)
+        blur = Math.min(20, percent * 20) // 模糊效果最大为20
       }
       // layer层跟着一起往上滚动
       this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
       // 高斯模糊效果
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
-      // 当滚动的新值比最远的滚动距离小时(this.minTranslateY = -222)，即【滚动到顶部】★
+      // 当滚动的新值比最远的滚动距离小时，即滚动到顶部
       if (newY < this.minTranslateY) {
-        // 图片显示出来，遮住歌词列表
         zIndex = 10
-        // 图片的paddingTop设置为0
         this.$refs.bgImage.style.paddingTop = 0
-        // 图片的高度设置和标题的高度一样
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
-        // 设置随机播放按钮消失
         this.$refs.playBtn.style.display = 'none'
-        // 当滚动的新值比最远的滚动距离大时，即【还没有滚到顶部】★
+        // 当滚动的新值比最远的滚动距离大时，即还没有滚到顶部
         // 需要重置图片的高度，不然下拉的时候会把最上面80px的背景图片遮住
       } else {
-        // 样式重置，下同
         this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
-        // 设置随机播放按钮出现
         this.$refs.playBtn.style.display = ''
       }
-      // 图片比例变化，随着前面的scale变化而变化
+      // 图片比例变化
       this.$refs.bgImage.style[transform] = `scale(${scale})`
-      // 图片显示设置，随着前面的zIndex变化而变化
+      // 图片显示设置
       this.$refs.bgImage.style.zIndex = zIndex
     }
   },
@@ -177,7 +165,7 @@ export default {
       this.$refs.list.refresh()
     },
 
-    // 滚动方法
+    // 监听 scroll 事件
     scroll(pos) {
       this.scrollY = pos.y
     },

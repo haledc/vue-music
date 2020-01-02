@@ -1,14 +1,14 @@
 <template>
   <transition name="slide">
     <div class="add-song" v-show="isShowFlag" @click.stop>
-      <!--头部-->
+      <!-- 头部 -->
       <div class="header">
         <h1 class="title">添加歌曲列表</h1>
         <div class="close" @click="hide">
           <i class="icon-close"></i>
         </div>
       </div>
-      <!--搜索栏-->
+      <!-- 搜索栏 -->
       <div class="search-box-wrapper">
         <SearchBox
           @query="onQueryChange"
@@ -16,16 +16,16 @@
           ref="searchBox"
         />
       </div>
-      <!--快捷方式-->
+      <!-- 快捷方式 -->
       <div class="shortcut" v-show="!query">
-        <!--开关组件-->
+        <!-- 开关组件 -->
         <Switches
           :currentIndex="currentIndex"
           :switches="switches"
           @switch="switchItem"
         />
         <div class="list-wrapper">
-          <!--最近播放-->
+          <!-- 最近播放 -->
           <Scroll
             class="list-scroll"
             v-if="currentIndex === 0"
@@ -36,7 +36,7 @@
               <SongList :songs="playHistory" @select="selectSong" />
             </div>
           </Scroll>
-          <!--搜索历史-->
+          <!-- 搜索历史 -->
           <Scroll
             class="list-scroll"
             v-if="currentIndex === 1"
@@ -54,7 +54,7 @@
           </Scroll>
         </div>
       </div>
-      <!--搜索结果-->
+      <!-- 搜索结果 -->
       <div class="search-result" v-show="query">
         <Suggest
           :query="query"
@@ -63,7 +63,7 @@
           @listScroll="blurInput"
         />
       </div>
-      <!--提示组件-->
+      <!-- 提示组件 -->
       <TopTip ref="topTip" :delay="delay">
         <div class="tip-title">
           <i class="icon-ok"></i>
@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       isShowFlag: false,
-      isShowSinger: false, // 不搜索歌手
+      isShowSinger: false, // 是否搜索歌手
       currentIndex: 0, // 开关索引
       switches: [{ name: '最近播放' }, { name: '搜索历史' }], // 开关文本
       delay: 2000 // 消息提示窗持续时间
@@ -112,7 +112,7 @@ export default {
     ...mapGetters(['playHistory'])
   },
   methods: {
-    // 显示窗口
+    // 显示
     show() {
       this.isShowFlag = true
 
@@ -126,13 +126,12 @@ export default {
       }, 20)
     },
 
-    // 隐藏窗口
+    // 隐藏
     hide() {
       this.isShowFlag = false
     },
 
     // 选中搜索结果，保存到搜索历史
-    // 监听子组件派发的select事件
     selectSuggest() {
       this.saveSearch()
       this.showTip()
@@ -144,7 +143,6 @@ export default {
     },
 
     // 选中歌曲，插入到播放列表中
-    // 监听子组件派发的select事件
     selectSong(song, index) {
       if (index !== 0) {
         this.insertSong(new Song(song))
@@ -153,7 +151,6 @@ export default {
     },
 
     // 显示消息提示窗
-    // 调用子组件方法
     showTip() {
       this.$refs.topTip.show()
     },

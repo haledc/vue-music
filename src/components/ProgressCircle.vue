@@ -7,7 +7,7 @@
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <!--内圈-->
+      <!-- 内圈 -->
       <circle
         class="progress-background"
         r="50"
@@ -15,7 +15,7 @@
         cy="50"
         fill="transparent"
       ></circle>
-      <!--外圈-->
+      <!-- 外圈 -->
       <circle
         class="progress-bar"
         r="50"
@@ -39,7 +39,7 @@ export default {
       default: 32
     },
 
-    // 百分比(歌曲播放时间/总时长)
+    // 播放进度百分比
     percent: {
       type: Number,
       default: 0
@@ -51,7 +51,7 @@ export default {
     }
   },
   computed: {
-    // 运动轨迹（1为无轨迹，0为满圈）
+    // 运动轨迹（1 为无轨迹，0 为满圈）
     dashOffset() {
       return (1 - this.percent) * this.dashArray
     }

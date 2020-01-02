@@ -73,7 +73,7 @@ export default {
     }
   },
   methods: {
-    // 初始化BScroll
+    // 初始化 BScroll 对象
     _initScroll() {
       if (!this.$refs.wrapper) {
         return
@@ -86,23 +86,23 @@ export default {
           this.direction === DIRECTION_V ? DIRECTION_H : DIRECTION_V
       })
 
-      // 根据父组件传来的值来监听事件，
-      // 监听scroll事件，派发事件，传出实时位置
+      // 监听 scroll 事件，派发事件，传出实时位置
       if (this.listenScroll) {
         this.scroll.on('scroll', pos => {
           this.$emit('scroll', pos)
         })
       }
-      // 监听scrollEnd事件，如果快要滚动到底部了，派发事件
+
+      // 监听 scrollEnd 事件，如果快要滚动到底部，派发事件
       if (this.pullup) {
         this.scroll.on('scrollEnd', () => {
-          // 如果小于最大值+buffer值，说明快要滚动到底部了【派发一次】
           if (this.scroll.y <= this.scroll.maxScrollY + 50) {
             this.$emit('scrollToEnd')
           }
         })
       }
-      // 监听beforeScrollStart事件【滚动之前】，派发事件，主要用于滚动前隐藏手机端输入键盘
+
+      // 监听 beforeScrollStart 事件【滚动之前】，派发事件，主要用于滚动前隐藏手机端输入键盘
       if (this.beforeScroll) {
         this.scroll.on('beforeScrollStart', () => {
           this.$emit('beforeScroll')
