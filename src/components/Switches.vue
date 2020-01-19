@@ -15,22 +15,21 @@
 <script>
 export default {
   props: {
-    // 窗口文本数组
     switches: {
       type: Array,
       default: () => []
     },
-
-    // 当前索引（高亮）
     currentIndex: {
       type: Number,
       default: 0
     }
   },
-  methods: {
-    // 选中开关
-    selectItem(index) {
-      this.$emit('switch', index)
+  setup(props, { emit }) {
+    function selectItem(index) {
+      emit('switch', index)
+    }
+    return {
+      selectItem
     }
   }
 }

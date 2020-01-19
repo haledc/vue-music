@@ -31,29 +31,25 @@
 </template>
 
 <script>
+import { ref, computed } from '@vue/composition-api'
+
 export default {
   props: {
-    // 半径
     radius: {
       type: Number,
       default: 32
     },
-
-    // 播放进度百分比
     percent: {
       type: Number,
       default: 0
     }
   },
-  data() {
+  setup(props) {
+    const dashArray = ref(Math.PI * 100)
+    const dashOffset = computed(() => (1 - props.percent) * dashArray.value)
     return {
-      dashArray: Math.PI * 100 // 周长 = π * 直径
-    }
-  },
-  computed: {
-    // 运动轨迹（1 为无轨迹，0 为满圈）
-    dashOffset() {
-      return (1 - this.percent) * this.dashArray
+      dashArray,
+      dashOffset
     }
   }
 }

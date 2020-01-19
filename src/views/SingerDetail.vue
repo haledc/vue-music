@@ -5,10 +5,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
+import { ref, computed } from '@vue/composition-api'
 import MusicList from '@/components/MusicList'
-
 import { getSingerDetail } from '@/request/singer'
 import { ERR_OK } from '@/request/config'
 import { processSongsUrl, normalizeSongs } from '@/utils/song'
@@ -17,38 +15,32 @@ export default {
   components: {
     MusicList
   },
-  data() {
-    return {
-      songs: []
-    }
-  },
-  computed: {
-    title() {
-      return this.singer.name
-    },
-    bgImage() {
-      return this.singer.avatar
-    },
-    ...mapGetters(['singer'])
-  },
-  created() {
-    this._getDetail()
-  },
-  methods: {
-    // 获取歌手详情方法
-    _getDetail() {
-      // 没有歌手id时回退到歌手列表页
-      if (!this.singer.id) {
-        this.$router.push('/singer')
+  setup(props, { root }) {
+    const songs = ref([])
+
+    const singer = computed(() => root.$store.getters.singer)
+    const title = computed(() => singer.value.name)
+    const bgImage = computed(() => singer.value.avatar)
+
+    function _getDetail() {
+      if (!singer.value.id) {
+        root.$router.push('/singer')
         return
       }
-      getSingerDetail(this.singer.id).then(res => {
+      getSingerDetail(singer.value.id).then(res => {
         if (res.code === ERR_OK) {
-          processSongsUrl(normalizeSongs(res.data.list)).then(songs => {
-            this.songs = songs
+          processSongsUrl(normalizeSongs(res.data.list)).then(val => {
+            songs.value = val
           })
         }
       })
+    }
+    _getDetail()
+
+    return {
+      songs,
+      title,
+      bgImage
     }
   }
 }

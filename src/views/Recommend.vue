@@ -1,16 +1,16 @@
 <template>
   <div class="recommend" ref="recommend">
     <!-- 滚动组件 -->
-    <Scroll ref="scroll" class="recommend-content" :data="discList">
+    <Scroll ref="scroll" class="recommend-content" :data="state.discList">
       <div>
         <!-- 轮播图 -->
-        <div v-if="sliderList.length" class="slider-wrapper">
+        <div v-if="state.sliderList.length" class="slider-wrapper">
           <!--轮播图组件-->
           <Slider ref="slider">
-            <div v-for="item in sliderList" :key="item.picUrl">
+            <div v-for="item in state.sliderList" :key="item.picUrl">
               <a :href="item.linkUrl">
                 <!-- needsclick是fastclick内置可点击class配置 -->
-                <img class="needsclick" @load="loadImage" :src="item.picUrl" />
+                <img @load="loadImage" :src="item.picUrl" />
               </a>
             </div>
           </Slider>
@@ -21,12 +21,11 @@
           <ul>
             <li
               @click="selectItem(item)"
-              v-for="item in discList"
+              v-for="item in state.discList"
               :key="item.dissid"
               class="item"
             >
               <div class="icon">
-                <!-- 懒加载，替换属性 :src => v-lazy -->
                 <img v-lazy="item.imgurl" width="60" height="60" />
               </div>
               <div class="text">
@@ -38,7 +37,7 @@
         </div>
       </div>
       <!-- 加载图标 -->
-      <div class="loading-container" v-show="!discList.length">
+      <div class="loading-container" v-show="!state.discList.length">
         <Loading />
       </div>
     </Scroll>
@@ -48,87 +47,82 @@
 </template>
 
 <script>
+import { reactive, onActivated } from '@vue/composition-api'
 import { mapMutations } from 'vuex'
-
 import Loading from '@/components/Loading'
 import Scroll from '@/components/Scroll'
 import Slider from '@/components/Slider'
-
 import { getSliderList, getDiscList } from '@/request/recommend'
 import { ERR_OK } from '@/request/config'
-import { playlistMixin } from '@/utils/mixin'
+import { usePlaylist, useMutations } from '@/hooks'
 
 export default {
-  mixins: [playlistMixin],
   components: {
     Slider,
     Scroll,
     Loading
   },
-  data() {
-    return {
+  setup(props, { root, refs }) {
+    const setDisc = useMutations(root, 'SET_DISC')
+
+    const state = reactive({
       sliderList: [],
       discList: []
-    }
-  },
-  created() {
-    this._getSliderList()
-    this._getDiscList()
-  },
-  activated() {
-    setTimeout(() => {
-      this.$refs.slider && this.$refs.slider.refresh()
-    }, 20)
-  },
-  methods: {
-    handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.recommend.style.bottom = bottom
-      this.$refs.scroll.refresh()
-    },
+    })
 
-    // 选中歌单
-    selectItem(item) {
-      this.$router.push({
+    let checkLoaded = false
+
+    onActivated(() => {
+      setTimeout(() => {
+        refs.slider && refs.slider.refresh()
+      }, 20)
+    })
+
+    function handlePlaylist(playlist) {
+      const bottom = playlist.value.length > 0 ? '60px' : ''
+      refs.recommend.style.bottom = bottom
+      refs.scroll.refresh()
+    }
+
+    usePlaylist(root, handlePlaylist)
+
+    function selectItem(item) {
+      root.$router.push({
         path: `/recommend/${item.dissid}`
       })
-      // 设置歌单
-      this.setDisc(item)
-    },
+      setDisc(item)
+    }
 
-    // 获取轮播图数据
-    _getSliderList() {
+    function _getSliderList() {
       getSliderList().then(res => {
         if (res.code === ERR_OK) {
-          this.sliderList = res.data.slider.slice(0, 5)
+          state.sliderList = res.data.slider.slice(0, 5)
         }
       })
-    },
+    }
+    _getSliderList()
 
-    // 获取歌单数据
-    _getDiscList() {
+    function _getDiscList() {
       getDiscList().then(res => {
         if (res.code === ERR_OK) {
-          this.discList = res.data.list
+          state.discList = res.data.list
         }
       })
-    },
+    }
+    _getDiscList()
 
-    // 图片加载时调用子组件方法刷新 BScroll（加载一张图片即可撑开 DOM）
-    // 因为 BScroll 对象是用歌单数据来撑开的，当获取到歌单数据后，scroll 组件即创建 BScroll 对象，高度已固定
-    // 如果获取轮播图数据比获取歌单数据更慢，实例化 Bscroll 后轮播图高度会占用歌单部分高度，导致歌单列表最后几项无法显示（歌单列表显示不全）
-    // 所以，需要加上在有轮播图片加载时后，重新刷新 BScroll 对象，加载一张图片时，刷新一次即可
-    loadImage() {
-      // 自定义变量 checkLoaded，只触发一次
-      if (!this.checkLoaded) {
-        this.$refs.scroll.refresh()
-        this.checkLoaded = true
+    function loadImage() {
+      if (!checkLoaded) {
+        refs.scroll.refresh()
+        checkLoaded = true
       }
-    },
+    }
 
-    ...mapMutations({
-      setDisc: 'SET_DISC'
-    })
+    return {
+      state,
+      loadImage,
+      selectItem
+    }
   }
 }
 </script>

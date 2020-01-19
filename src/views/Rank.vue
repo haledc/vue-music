@@ -1,7 +1,7 @@
 <template>
   <div class="rank" ref="rank">
     <!-- 排行榜列表-滚动组件 -->
-    <Scroll :data="topList" class="toplist" ref="topList">
+    <Scroll :data="topList" class="toplist" ref="scroll">
       <ul>
         <li
           class="item"
@@ -36,56 +36,51 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-
+import { ref } from '@vue/composition-api'
 import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
-
 import { getTopList } from '@/request/rank'
 import { ERR_OK } from '@/request/config'
-import { playlistMixin } from '@/utils/mixin'
+import { usePlaylist, useMutations } from '@/hooks'
 
 export default {
-  mixins: [playlistMixin],
   components: {
     Scroll,
     Loading
   },
-  data() {
-    return {
-      topList: []
-    }
-  },
-  created() {
-    this._getTopList()
-  },
-  methods: {
-    handlePlaylist(playlist) {
+  setup(props, { root, refs }) {
+    const setTopList = useMutations(root, 'SET_TOP_LIST')
+
+    const topList = ref([])
+
+    function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.rank.style.bottom = bottom
-      this.$refs.topList.refresh()
-    },
+      refs.rank.style.bottom = bottom
+      refs.scroll.refresh()
+    }
 
-    // 选中排行榜
-    selectItem(item) {
-      this.$router.push({
-        path: `/rank/${item.id}`
-      })
-      this.setTopList(item)
-    },
-
-    // 获取排行榜数据
-    _getTopList() {
+    function _getTopList() {
       getTopList().then(res => {
         if (res.code === ERR_OK) {
-          this.topList = res.data.topList
+          topList.value = res.data.topList
         }
       })
-    },
+    }
+    _getTopList()
 
-    ...mapMutations({
-      setTopList: 'SET_TOP_LIST'
-    })
+    usePlaylist(root, handlePlaylist)
+
+    function selectItem(item) {
+      root.$router.push({
+        path: `/rank/${item.id}`
+      })
+      setTopList(item)
+    }
+
+    return {
+      topList,
+      selectItem
+    }
   }
 }
 </script>

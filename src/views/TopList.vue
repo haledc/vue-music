@@ -5,10 +5,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
+import { ref, computed } from '@vue/composition-api'
 import MusicList from '@/components/MusicList'
-
 import { getMusicList } from '@/request/rank'
 import { ERR_OK } from '@/request/config'
 import { processSongsUrl, normalizeSongs } from '@/utils/song'
@@ -17,45 +15,35 @@ export default {
   components: {
     MusicList
   },
-  data() {
-    return {
-      songs: [],
-      rank: true
-    }
-  },
-  computed: {
-    // 排行榜名称
-    title() {
-      return this.topList.topTitle
-    },
+  setup(props, { root }) {
+    const songs = ref([])
 
-    // 排行榜图片（第一首歌的图片）
-    bgImage() {
-      if (this.songs.length) {
-        return this.songs[0].image
-      }
-      return ''
-    },
+    const topList = computed(() => root.$store.getters.topList)
+    const title = computed(() => topList.value.topTitle)
+    const bgImage = computed(() =>
+      songs.value.length > 0 ? songs.value[0].image : ''
+    )
 
-    ...mapGetters(['topList'])
-  },
-  created() {
-    this._getMusicList()
-  },
-  methods: {
-    // 获取排行榜歌曲数据
-    _getMusicList() {
-      if (!this.topList.id) {
-        this.$router.push('/rank')
+    function _getMusicList() {
+      if (!topList.value.id) {
+        root.$router.push('/rank')
         return
       }
-      getMusicList(this.topList.id).then(res => {
+      getMusicList(topList.value.id).then(res => {
         if (res.code === ERR_OK) {
-          processSongsUrl(normalizeSongs(res.songlist)).then(songs => {
-            this.songs = songs
+          processSongsUrl(normalizeSongs(res.songlist)).then(val => {
+            songs.value = val
           })
         }
       })
+    }
+    _getMusicList()
+
+    return {
+      songs,
+      rank: true,
+      title,
+      bgImage
     }
   }
 }

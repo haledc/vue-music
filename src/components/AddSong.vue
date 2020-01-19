@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="add-song" v-show="isShowFlag" @click.stop>
+    <div class="add-song" v-show="state.isShowFlag" @click.stop>
       <!-- 头部 -->
       <div class="header">
         <h1 class="title">添加歌曲列表</h1>
@@ -17,18 +17,18 @@
         />
       </div>
       <!-- 快捷方式 -->
-      <div class="shortcut" v-show="!query">
+      <div class="shortcut" v-show="!_state.query">
         <!-- 开关组件 -->
         <Switches
-          :currentIndex="currentIndex"
-          :switches="switches"
+          :currentIndex="state.currentIndex"
+          :switches="state.switches"
           @switch="switchItem"
         />
         <div class="list-wrapper">
           <!-- 最近播放 -->
           <Scroll
             class="list-scroll"
-            v-if="currentIndex === 0"
+            v-if="state.currentIndex === 0"
             :data="playHistory"
             ref="songList"
           >
@@ -39,8 +39,8 @@
           <!-- 搜索历史 -->
           <Scroll
             class="list-scroll"
-            v-if="currentIndex === 1"
-            :refreshDelay="refreshDelay"
+            v-if="state.currentIndex === 1"
+            :refreshDelay="_state.refreshDelay"
             :data="searchHistory"
             ref="searchList"
           >
@@ -55,16 +55,16 @@
         </div>
       </div>
       <!-- 搜索结果 -->
-      <div class="search-result" v-show="query">
+      <div class="search-result" v-show="_state.query">
         <Suggest
-          :query="query"
-          :isShowSinger="isShowSinger"
+          :query="_state.query"
+          :isShowSinger="state.isShowSinger"
           @select="selectSuggest"
           @listScroll="blurInput"
         />
       </div>
       <!-- 提示组件 -->
-      <TopTip ref="topTip" :delay="delay">
+      <TopTip ref="topTip" :delay="state.delay">
         <div class="tip-title">
           <i class="icon-ok"></i>
           <span class="text">1首歌曲已经添加到播放队列</span>
@@ -75,8 +75,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-
+import { reactive, computed } from '@vue/composition-api'
 import SearchBox from '@/components/SearchBox'
 import Suggest from '@/components/Suggest'
 import Switches from '@/components/Switches'
@@ -84,12 +83,10 @@ import Scroll from '@/components/Scroll'
 import SongList from '@/components/SongList'
 import SearchList from '@/components/SearchList'
 import TopTip from '@/components/TopTip'
-
 import Song from '@/utils/song'
-import { searchMixin } from '@/utils/mixin'
+import { useSearch, useActions } from '@/hooks'
 
 export default {
-  mixins: [searchMixin],
   components: {
     SongList,
     SearchBox,
@@ -99,63 +96,78 @@ export default {
     SearchList,
     TopTip
   },
-  data() {
-    return {
-      isShowFlag: false,
-      isShowSinger: false, // 是否搜索歌手
-      currentIndex: 0, // 开关索引
-      switches: [{ name: '最近播放' }, { name: '搜索历史' }], // 开关文本
-      delay: 2000 // 消息提示窗持续时间
-    }
-  },
-  computed: {
-    ...mapGetters(['playHistory'])
-  },
-  methods: {
-    // 显示
-    show() {
-      this.isShowFlag = true
+  setup(props, { root, refs }) {
+    const insertSong = useActions(root, 'insertSong')
 
-      // 显示后需要刷新 scroll 才能滚动
+    const state = reactive({
+      isShowFlag: false,
+      isShowSinger: false,
+      currentSwitchIndex: 0,
+      switches: [{ name: '最近播放' }, { name: '搜索历史' }],
+      delay: 2000
+    })
+
+    const {
+      _state,
+      searchHistory,
+      addQuery,
+      saveSearch,
+      onQueryChange,
+      deleteSearchHistory,
+      blurInput
+    } = useSearch(root, refs)
+
+    const playHistory = computed(() => root.$store.getters.playHistory)
+
+    function show() {
+      state.isShowFlag = true
       setTimeout(() => {
-        if (this.currentIndex === 0) {
-          this.$refs.songList.refresh()
+        if (state.currentSwitchIndex === 0) {
+          refs.songList.refresh()
         } else {
-          this.$refs.searchLisr.refresh()
+          refs.searchLisr.refresh()
         }
       }, 20)
-    },
+    }
 
-    // 隐藏
-    hide() {
-      this.isShowFlag = false
-    },
+    function hide() {
+      state.isShowFlag = false
+    }
 
-    // 选中搜索结果，保存到搜索历史
-    selectSuggest() {
-      this.saveSearch()
-      this.showTip()
-    },
+    function selectSuggest() {
+      saveSearch()
+      showTip()
+    }
 
-    // 切换开关
-    switchItem(index) {
-      this.currentIndex = index
-    },
+    function switchItem(index) {
+      state.currentSwitchIndex = index
+    }
 
-    // 选中歌曲，插入到播放列表中
-    selectSong(song, index) {
+    function selectSong(song, index) {
       if (index !== 0) {
-        this.insertSong(new Song(song))
+        insertSong(new Song(song))
       }
-      this.showTip()
-    },
+      showTip()
+    }
 
-    // 显示消息提示窗
-    showTip() {
-      this.$refs.topTip.show()
-    },
+    function showTip() {
+      refs.topTip.show()
+    }
 
-    ...mapActions(['insertSong'])
+    return {
+      state,
+      _state,
+      playHistory,
+      searchHistory,
+      hide,
+      switchItem,
+      selectSong,
+      deleteSearchHistory,
+      addQuery,
+      selectSuggest,
+      blurInput,
+      onQueryChange
+    }
   }
 }
 </script>
