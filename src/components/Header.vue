@@ -12,10 +12,13 @@
 </template>
 
 <script>
+import { ref } from '@vue/composition-api'
+
 export default {
-  data() {
+  setup() {
+    const title = ref('Chicken Music')
     return {
-      title: 'Chicken Music'
+      title
     }
   }
 }

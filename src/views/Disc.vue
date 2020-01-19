@@ -5,10 +5,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
+import { ref, computed } from '@vue/composition-api'
 import MusicList from '@/components/MusicList'
-
 import { getSongList } from '@/request/recommend'
 import { ERR_OK } from '@/request/config'
 import { processSongsUrl, normalizeSongs } from '@/utils/song'
@@ -17,41 +15,32 @@ export default {
   components: {
     MusicList
   },
-  computed: {
-    // 歌单名称
-    title() {
-      return this.disc.dissname
-    },
+  setup(props, { root }) {
+    const songs = ref([])
 
-    // 歌单图片
-    bgImage() {
-      return this.disc.imgurl
-    },
+    const disc = computed(() => root.$store.getters.disc)
+    const title = computed(() => disc.value.dissname)
+    const bgImage = computed(() => disc.value.imgurl)
 
-    ...mapGetters(['disc'])
-  },
-  data() {
-    return {
-      songs: []
-    }
-  },
-  created() {
-    this._getSongList()
-  },
-  methods: {
-    // 获取歌单详情-歌曲
-    _getSongList() {
-      if (!this.disc.dissid) {
-        this.$router.push('/recommend')
+    function _getSongList() {
+      if (!disc.value.dissid) {
+        root.$router.push('/recommend')
         return
       }
-      getSongList(this.disc.dissid).then(res => {
+      getSongList(disc.value.dissid).then(res => {
         if (res.code === ERR_OK) {
           processSongsUrl(normalizeSongs(res.cdlist[0].songlist)).then(
-            songs => (this.songs = songs)
+            val => (songs.value = val)
           )
         }
       })
+    }
+    _getSongList()
+
+    return {
+      songs,
+      title,
+      bgImage
     }
   }
 }

@@ -24,45 +24,39 @@
 <script>
 export default {
   props: {
-    // 歌曲列表
     songs: {
       type: Array,
       default: () => []
     },
-
-    // 是否排行
     rank: {
       type: Boolean,
       default: false
     }
   },
-  methods: {
-    // 选中歌曲
-    selectItem(item, index) {
-      this.$emit('select', item, index)
-    },
+  setup(props, { emit }) {
+    function selectItem(item, index) {
+      emit('select', item, index)
+    }
 
-    // 获取歌曲描述
-    getDesc(song) {
+    function getDesc(song) {
       return `${song.singer} - ${song.album}`
-    },
+    }
 
-    // 获取歌曲排行样式
-    // 前三名【金牌 银牌 铜牌】
-    getRankCls(index) {
-      if (index <= 2) {
-        return `icon icon${index}`
-      } else {
-        return 'text'
-      }
-    },
+    function getRankCls(index) {
+      return index <= 2 ? `icon icon${index}` : 'text'
+    }
 
-    // 歌曲排行索引显示
-    // 从第四名开始显示
-    getRankText(index) {
+    function getRankText(index) {
       if (index > 2) {
         return index + 1
       }
+    }
+
+    return {
+      selectItem,
+      getDesc,
+      getRankCls,
+      getRankText
     }
   }
 }

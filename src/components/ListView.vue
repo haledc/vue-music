@@ -40,7 +40,7 @@
         <li
           v-for="(item, index) in shortcutList"
           class="item"
-          :class="{ current: currentIndex === index }"
+          :class="{ current: state.currentIndex === index }"
           :data-index="index"
           :key="index"
         >
@@ -59,15 +59,12 @@
 </template>
 
 <script>
+import { reactive, computed, watch } from '@vue/composition-api'
 import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
-
 import { getData } from '@/utils/dom'
 
-// 右侧单个锚点的高度
 const ANCHOR_HEIGHT = 18
-
-// 歌曲列表 title 的高度
 const TITLE_HEIGHT = 30
 
 export default {
@@ -81,139 +78,137 @@ export default {
       default: () => []
     }
   },
-  data() {
-    return {
+  setup(props, { emit, refs }) {
+    const touch = {}
+    const listenScroll = true
+    let listHeight = []
+    const probeType = 3
+    let fixedTop = 0
+
+    const state = reactive({
       scrollY: -1,
       currentIndex: 0,
       diff: -1
-    }
-  },
-  computed: {
-    // 获取歌手标题首字母列表
-    shortcutList() {
-      return this.data.map(group => {
-        return group.title.substr(0, 1)
-      })
-    },
+    })
 
-    // 固定标题栏的标题内容
-    fixedTitle() {
-      if (this.scrollY > 0) {
+    const shortcutList = computed(() =>
+      props.data.map(group => group.title.substr(0, 1))
+    )
+
+    const fixedTitle = computed(() => {
+      if (state.scrollY > 0) {
         return
       }
-      return this.data[this.currentIndex]
-        ? this.data[this.currentIndex].title
+      return props.data[state.currentIndex]
+        ? props.data[state.currentIndex].title
         : ''
-    }
-  },
-  created() {
-    this.touch = {}
-    this.listenScroll = true // 监听滚动事件
-    this.listHeight = [] // DOM 高度集合
-    this.probeType = 3 // 滚动实时 + 动画实时
-  },
-  watch: {
-    // 监听传入的 data 的变化，计算歌手列表每组的高度
-    data() {
-      setTimeout(() => {
-        this._calculateHeight()
-      }, 20)
-    },
+    })
 
-    // 监听歌手列表的 Y 轴的滚动值
-    scrollY(newY) {
-      const listHeight = this.listHeight
+    watch(
+      () => props.data,
+      () => {
+        setTimeout(() => {
+          _calculateHeight()
+        }, 20)
+      },
+      { lazy: true }
+    )
 
-      if (newY > 0) {
-        this.currentIndex = 0
-        return
-      }
-
-      // 当在中间部分滚动，遍历到倒数第2个值为止，保证 height2 一定会有的
-      for (let i = 0; i < listHeight.length - 1; i++) {
-        let height1 = listHeight[i]
-        let height2 = listHeight[i + 1]
-        if (-newY >= height1 && -newY < height2) {
-          this.currentIndex = i
-          // 获取下区间和Y轴滚动值的差值
-          this.diff = height2 + newY
+    watch(
+      () => state.scrollY,
+      newY => {
+        if (newY > 0) {
+          state.currentIndex = 0
           return
         }
-      }
 
-      this.currentIndex = listHeight.length - 2
-    },
+        for (let i = 0; i < listHeight.length - 1; i++) {
+          let height1 = listHeight[i]
+          let height2 = listHeight[i + 1]
+          if (-newY >= height1 && -newY < height2) {
+            state.currentIndex = i
+            state.diff = height2 + newY
+            return
+          }
+        }
 
-    // 监听歌手组下区间和 Y 轴滚动值的差值变化
-    diff(newVal) {
-      let fixedTop =
-        newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
-      if (this.fixedTop === fixedTop) {
-        return
+        state.currentIndex = listHeight.length - 2
       }
-      this.fixedTop = fixedTop
-      // 操作 DOM 向上移动，移动距离为固定标题栏距离顶部距离（负值）
-      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
+    )
+
+    watch(
+      () => state.diff,
+      newVal => {
+        let fixedTopVal =
+          newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
+        if (fixedTop === fixedTopVal) return
+        fixedTop = fixedTopVal
+        refs.fixed.style.transform = `translate3d(0, ${fixedTopVal}px, 0)`
+      }
+    )
+
+    function onShortcutTouchStart(event) {
+      const anchorIndex = getData(event.target, 'index')
+      const firstTouch = event.touches[0]
+      touch.y1 = firstTouch.pageY
+      touch.anchorIndex = anchorIndex
+      _scrollTo(anchorIndex)
     }
-  },
-  methods: {
-    // 监听触摸开始事件, 滚动到对应歌手列表
-    onShortcutTouchStart(e) {
-      const anchorIndex = getData(e.target, 'index')
-      const firstTouch = e.touches[0]
-      this.touch.y1 = firstTouch.pageY
-      this.touch.anchorIndex = anchorIndex
-      this._scrollTo(anchorIndex)
-    },
 
-    // 监听触摸滚动事件，滚动到对应的歌手列表
-    onShortcutTouchMove(e) {
-      const firstTouch = e.touches[0]
-      this.touch.y2 = firstTouch.pageY
-      let delta = ((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT) | 0
-      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
-      this._scrollTo(anchorIndex)
-    },
+    function onShortcutTouchMove(event) {
+      const firstTouch = event.touches[0]
+      touch.y2 = firstTouch.pageY
+      const delta = ((touch.y2 - touch.y1) / ANCHOR_HEIGHT) | 0
+      const anchorIndex = parseInt(touch.anchorIndex) + delta
+      _scrollTo(anchorIndex)
+    }
 
-    refresh() {
-      this.$refs.listview.refresh()
-    },
+    function refresh() {
+      refs.listview.refresh()
+    }
 
-    // 监听 scroll 事件
-    scroll(pos) {
-      this.scrollY = pos.y
-    },
+    function scroll(pos) {
+      state.scrollY = pos.y
+    }
 
-    selectItem(item) {
-      this.$emit('select', item)
-    },
+    function selectItem(item) {
+      emit('select', item)
+    }
 
-    // 滚动到对应歌手列表
-    _scrollTo(index) {
-      // 点击锚点首尾两端的 padding 空隙时，index 为 null，此时不滚动
-      if (!index && index !== 0) {
-        return
-      }
+    function _scrollTo(index) {
+      if (!index && index !== 0) return
       if (index < 0) {
         index = 0
-      } else if (index > this.listHeight.length - 2) {
-        index = this.listHeight.length - 2
+      } else if (index > listHeight.length - 2) {
+        index = listHeight.length - 2
       }
-      this.scrollY = -this.listHeight[index]
-      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
-    },
+      state.scrollY = -listHeight[index]
+      refs.listview.scrollToElement(refs.listGroup[index], 0)
+    }
 
-    // 计算歌手列表高度
-    _calculateHeight() {
-      this.listHeight = []
-      const list = this.$refs.listGroup
+    function _calculateHeight() {
+      listHeight = []
+      const list = refs.listGroup
       let height = 0
-      this.listHeight.push(height)
+      listHeight.push(height)
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
         height += item.clientHeight
-        this.listHeight.push(height)
+        listHeight.push(height)
       }
+    }
+
+    return {
+      state,
+      listenScroll,
+      probeType,
+      shortcutList,
+      fixedTitle,
+      scroll,
+      refresh,
+      selectItem,
+      onShortcutTouchStart,
+      onShortcutTouchMove
     }
   }
 }

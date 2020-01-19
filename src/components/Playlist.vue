@@ -1,6 +1,6 @@
 <template>
   <transition name="list-fade">
-    <div class="playlist" v-show="isShowFlag" @click="hide">
+    <div class="playlist" v-show="state.isShowFlag" @click="hide">
       <!-- click.stop 阻止点击冒泡-->
       <div class="list-wrapper" @click.stop>
         <!-- 列表头部 -->
@@ -18,7 +18,7 @@
           class="list-content"
           :data="sequenceList"
           ref="listContent"
-          :refreshDelay="refreshDelay"
+          :refreshDelay="state.refreshDelay"
         >
           <!-- 列表过渡动画 子元素需要加 key -->
           <transition-group name="list" tag="ul" ref="list">
@@ -66,128 +66,133 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
+import { reactive, computed, watch } from '@vue/composition-api'
 import Scroll from '@/components/Scroll'
 import AddSong from '@/components/AddSong'
 import Confirm from '@/components/Confirm'
-
 import { playMode } from '@/utils/config'
-import { playerMixin } from '@/utils/mixin'
+import { usePlayer, useActions } from '@/hooks'
 
 export default {
-  mixins: [playerMixin],
   components: {
     Scroll,
     Confirm,
     AddSong
   },
-  data() {
-    return {
+  setup(props, { root, refs }) {
+    const deleteSong = useActions(root, 'deleteSong')
+    const deleteSongList = useActions(root, 'deleteSongList')
+
+    const state = reactive({
       isShowFlag: false,
-      refreshDelay: 120 // scroll 延迟刷新时间
-    }
-  },
-  computed: {
-    // 播放模式文本
-    modeText() {
-      return this.mode === playMode.sequence
+      refreshDelay: 120
+    })
+
+    const {
+      sequenceList,
+      currentSong,
+      playlist,
+      mode,
+      iconMode,
+      getFavoriteIcon,
+      changeMode,
+      setPlayingState,
+      setCurrentIndex,
+      toggleFavorite
+    } = usePlayer(root)
+
+    const modeText = computed(() => {
+      return mode.value === playMode.sequence
         ? '顺序播放'
-        : this.mode === playMode.random
+        : mode.value === playMode.random
         ? '随机播放'
         : '单曲循环'
-    }
-  },
-  watch: {
-    // 监听当前歌曲，滚动到新歌曲位置
-    currentSong(newSong, oldSong) {
-      if (!this.isShowFlag || newSong.id === oldSong.id) {
-        return
+    })
+
+    watch(
+      () => currentSong,
+      (newSong, oldSong) => {
+        if (!state.isShowFlag || newSong.id === oldSong.id) return
+        setTimeout(() => {
+          scrollToCurrent(newSong)
+        }, 20)
       }
+    )
+
+    function show() {
+      state.isShowFlag = true
       setTimeout(() => {
-        this.scrollToCurrent(newSong)
+        refs.listContent.refresh()
+        scrollToCurrent(currentSong)
       }, 20)
     }
-  },
-  methods: {
-    // 显示
-    show() {
-      this.isShowFlag = true
-      setTimeout(() => {
-        this.$refs.listContent.refresh()
-        this.scrollToCurrent(this.currentSong)
-      }, 20)
-    },
 
-    // 隐藏
-    hide() {
-      this.isShowFlag = false
-    },
+    function hide() {
+      state.isShowFlag = false
+    }
 
-    // 当前播放的歌曲前面显示播放图标
-    getCurrentIcon(item) {
-      if (this.currentSong.id === item.id) {
+    function getCurrentIcon(item) {
+      if (currentSong.id === item.id) {
         return 'icon-play'
       } else {
         return ''
       }
-    },
+    }
 
-    // 选中歌曲，设置为当前索引，并且播放
-    selectItem(item, index) {
-      // 随机播放需要找到歌曲索引
-      if (this.mode === playMode.random) {
-        index = this.playlist.findIndex(song => song.id === item.id)
+    function selectItem(item, index) {
+      if (mode === playMode.random) {
+        index = playlist.findIndex(song => song.id === item.id)
       }
-      this.setCurrentIndex(index)
-      this.setPlayingState(true)
-    },
+      setCurrentIndex(index)
+      setPlayingState(true)
+    }
 
-    // 滚动到当前歌曲（播放歌曲）
-    scrollToCurrent(currentSong) {
-      const index = this.sequenceList.findIndex(
-        song => currentSong.id === song.id
-      )
-      this.$refs.listContent.scrollToElement(
-        this.$refs.list.$el.children[index],
-        300
-      )
-    },
+    function scrollToCurrent(currentSong) {
+      const index = sequenceList.findIndex(song => currentSong.id === song.id)
+      refs.listContent.scrollToElement(refs.list.$el.children[index], 300)
+    }
 
-    // 删除歌曲
-    deleteOne(item) {
-      if (item.deleting) {
-        return
-      }
+    function deleteOne(item) {
+      if (item.deleting) return
       item.deleting = true
-      this.deleteSong(item)
-
-      // 如果此时播放列表已经没有歌曲，隐藏列表
-      if (!this.playlist.length) {
-        this.hide()
+      deleteSong(item)
+      if (!playlist.length) {
+        hide()
       }
       setTimeout(() => {
         item.deleting = false
       }, 300)
-    },
+    }
 
-    // 显示清除确认窗口
-    showConfirm() {
-      this.$refs.confirm.show()
-    },
+    function showConfirm() {
+      refs.confirm.show()
+    }
 
-    // 清空播放列表
-    confirmClear() {
-      this.deleteSongList()
-      this.hide()
-    },
+    function confirmClear() {
+      deleteSongList()
+      hide()
+    }
 
-    // 显示增加歌曲界面
-    addSong() {
-      this.$refs.addSong.show()
-    },
+    function addSong() {
+      refs.addSong.show()
+    }
 
-    ...mapActions(['deleteSong', 'deleteSongList'])
+    return {
+      state,
+      sequenceList,
+      modeText,
+      iconMode,
+      hide,
+      changeMode,
+      showConfirm,
+      selectItem,
+      getCurrentIcon,
+      toggleFavorite,
+      getFavoriteIcon,
+      deleteOne,
+      addSong,
+      confirmClear
+    }
   }
 }
 </script>

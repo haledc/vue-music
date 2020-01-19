@@ -2,9 +2,9 @@
   <!-- 滚动组件 -->
   <Scroll
     class="suggest"
-    :data="result"
-    :pullup="pullup"
-    :beforeScroll="beforeScroll"
+    :data="state.result"
+    :pullup="state.pullup"
+    :beforeScroll="state.beforeScroll"
     ref="suggest"
     @beforeScroll="listScroll"
     @scrollToEnd="searchMore"
@@ -14,7 +14,7 @@
       <li
         class="suggest-item"
         @click="selectItem(item)"
-        v-for="(item, index) in result"
+        v-for="(item, index) in state.result"
         :key="index"
       >
         <div class="icon">
@@ -25,26 +25,28 @@
         </div>
       </li>
       <!-- 上拉刷新时加载图标，出现在最下面 -->
-      <Loading v-show="hasMore" title="" />
+      <Loading v-show="state.hasMore" title="" />
     </ul>
     <!-- 无搜索结果情况-无结果组件 -->
-    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+    <div
+      class="no-result-wrapper"
+      v-show="!state.hasMore && !state.result.length"
+    >
       <NoResult title="抱歉，暂无搜索结果" />
     </div>
   </Scroll>
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex'
-
+import { reactive, watch } from '@vue/composition-api'
 import Scroll from '@/components/Scroll'
 import Loading from '@/components/Loading'
 import NoResult from '@/components/NoResult'
-
 import Singer from '@/utils/singer'
 import { genResult, checkMore } from '@/utils/search'
 import { search } from '@/request/search'
 import { ERR_OK } from '@/request/config'
+import { useMutations, useActions } from '@/hooks'
 
 const TYPE_SINGER = 'singer'
 const PER_PAGE = 20
@@ -60,108 +62,101 @@ export default {
       type: String,
       default: ''
     },
-
-    // 是否搜索歌手（是否直达）
     showSinger: {
       type: Boolean,
       default: true
     }
   },
-  data() {
-    return {
+  setup(props, { root, refs, emit }) {
+    const setSinger = useMutations(root, 'SET_SINGER')
+    const insertSong = useActions(root, 'insertSong')
+
+    const state = reactive({
       page: 1,
       result: [],
-      // 上拉加载更多
       pullup: true,
       hasMore: true,
       beforeScroll: true
-    }
-  },
-  watch: {
-    // 监听 query 变化，执行搜索方法，获取搜索结果
-    query(newQuery) {
-      if (!newQuery) {
-        return
+    })
+
+    watch(
+      () => props.query,
+      newVal => {
+        if (!newVal) return
+        _search()
       }
-      this._search()
-    }
-  },
-  methods: {
-    // 搜索方法，获取搜索结果
-    _search() {
-      this.page = 1
-      this.hasMore = true
-      this.$refs.suggest.scrollTo(0, 0)
-      search(this.query, this.page, this.showSinger, PER_PAGE).then(res => {
+    )
+
+    function _search() {
+      state.page = 1
+      state.hasMore = true
+      refs.suggest.scrollTo(0, 0)
+      search(props.query, state.page, props.showSinger, PER_PAGE).then(res => {
         if (res.code === ERR_OK) {
-          genResult(res.data, this.page).then(result => {
-            this.result = result
-            this.hasMore = checkMore(res.data)
+          genResult(res.data, state.page).then(result => {
+            state.result = result
+            state.hasMore = checkMore(res.data)
           })
         }
       })
-    },
+    }
 
-    // 搜索更多
-    // 上拉刷新，加载更多的搜索数据
-    searchMore() {
-      if (!this.hasMore) {
-        return
-      }
-      this.page++
-      search(this.query, this.page, this.showSinger, PER_PAGE).then(res => {
+    function searchMore() {
+      if (!state.hasMore) return
+      state.page++
+      search(props.query, state.page, props.showSinger, PER_PAGE).then(res => {
         if (res.code === ERR_OK) {
-          genResult(res.data, this.page).then(result => {
-            this.result = this.result.concat(result)
-            this.hasMore = checkMore(res.data)
+          genResult(res.data, state.page).then(result => {
+            state.result = state.result.concat(result)
+            state.hasMore = checkMore(res.data)
           })
         }
       })
-    },
+    }
 
-    // 根据 type 切换 icon 图标样式
-    getIconCls(item) {
+    function getIconCls(item) {
       return item.type === TYPE_SINGER ? 'icon-mine' : 'icon-music'
-    },
+    }
 
-    // 根据 type 切换歌手和歌曲的显示名称
-    getDisplayName(item) {
+    function getDisplayName(item) {
       return item.type === TYPE_SINGER
         ? item.singername
         : `${item.name}-${item.singer}`
-    },
+    }
 
-    // 选中歌手或者歌曲
-    selectItem(item) {
+    function selectItem(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,
           name: item.singername
         })
-        this.$router.push({
+        root.$router.push({
           path: `/search/${singer.id}`
         })
-        this.setSinger(singer)
+        setSinger(singer)
       } else {
-        this.insertSong(item)
+        insertSong(item)
       }
-      this.$emit('select')
-    },
+      emit('select')
+    }
 
-    // 监听 beforeScroll 事件，用于滚动前隐藏手机端输入键盘
-    listScroll() {
-      this.$emit('listScroll')
-    },
+    function listScroll() {
+      emit('listScroll')
+    }
 
-    refresh() {
-      this.$refs.suggest.refresh()
-    },
+    function refresh() {
+      refs.suggest.refresh()
+    }
 
-    ...mapMutations({
-      setSinger: 'SET_SINGER'
-    }),
-
-    ...mapActions(['insertSong'])
+    return {
+      state,
+      refresh,
+      listScroll,
+      searchMore,
+      selectItem,
+      getIconCls,
+      getDisplayName
+    }
   }
 }
 </script>

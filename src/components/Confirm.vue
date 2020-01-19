@@ -19,52 +19,48 @@
 </template>
 
 <script>
+import { ref } from '@vue/composition-api'
+
 export default {
   props: {
-    // 弹窗信息
     text: {
       type: String,
       default: ''
     },
-
-    // 确认按钮文本
     confirmBtnText: {
       type: String,
       default: '确定'
     },
-
-    // 取消按钮文本
     cancelBtnText: {
       type: String,
       default: '取消'
     }
   },
-  data() {
-    return {
-      isShowFlag: false
+  setup(props, { emit }) {
+    const isShowFlag = ref(false)
+
+    function show() {
+      isShowFlag.value = true
     }
-  },
-  methods: {
-    // 显示
-    show() {
-      this.isShowFlag = true
-    },
 
-    // 隐藏
-    hide() {
-      this.isShowFlag = false
-    },
+    function hide() {
+      isShowFlag.value = false
+    }
 
-    // 取消选项
-    cancel() {
-      this.hide()
-      this.$emit('cancel')
-    },
+    function cancel() {
+      hide()
+      emit('cancel')
+    }
 
-    // 确认选项
-    confirm() {
-      this.hide()
-      this.$emit('confirm')
+    function confirm() {
+      hide()
+      emit('confirm')
+    }
+
+    return {
+      isShowFlag,
+      cancel,
+      confirm
     }
   }
 }

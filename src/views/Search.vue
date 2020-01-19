@@ -5,12 +5,12 @@
       <SearchBox ref="searchBox" @query="onQueryChange" />
     </div>
     <!-- 搜索主体部分-滚动组件 -->
-    <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
+    <div class="shortcut-wrapper" v-show="!_state.query" ref="shortcutWrapper">
       <Scroll
         class="shortcut"
         :data="shortcut"
-        ref="shortcut"
-        :refreshDelay="refreshDelay"
+        ref="shortcutRef"
+        :refreshDelay="_state.refreshDelay"
       >
         <div>
           <!-- 热门搜索 -->
@@ -46,12 +46,12 @@
       </Scroll>
     </div>
     <!-- 搜索结果-suggest组件 -->
-    <div class="search-result" v-show="query" ref="searchResult">
+    <div class="search-result" v-show="_state.query" ref="searchResult">
       <Suggest
-        :query="query"
+        :query="_state.query"
         @listScroll="blurInput"
         @select="saveSearch"
-        ref="suggest"
+        ref="suggestRef"
       />
     </div>
     <!-- 弹窗确认组件 -->
@@ -67,20 +67,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
+import { ref, computed, watch } from '@vue/composition-api'
 import SearchBox from '@/components/SearchBox'
 import Suggest from '@/components/Suggest'
 import SearchList from '@/components/SearchList'
 import Confirm from '@/components/Confirm'
 import Scroll from '@/components/Scroll'
-
 import { getHotKey } from '@/request/search'
 import { ERR_OK } from '@/request/config'
-import { playlistMixin, searchMixin } from '@/utils/mixin'
+import { usePlaylist, useSearch, useActions } from '@/hooks'
 
 export default {
-  mixins: [playlistMixin, searchMixin],
   components: {
     SearchBox,
     Suggest,
@@ -88,53 +85,70 @@ export default {
     Confirm,
     Scroll
   },
-  data() {
-    return {
-      hotKey: []
-    }
-  },
-  computed: {
-    shortcut() {
-      return this.hotKey.concat(this.searchHistory)
-    }
-  },
-  created() {
-    this._getHotKey()
-  },
-  watch: {
-    // 监听 query 变化
-    query(newQuery) {
-      if (!newQuery) {
-        setTimeout(() => {
-          this.$refs.shortcut.refresh()
-        }, 20)
+  setup(props, { root, refs }) {
+    const clearSearchHistory = useActions(root, 'clearSearchHistory')
+
+    const hotKey = ref([])
+
+    const {
+      _state,
+      searchHistory,
+      onQueryChange,
+      addQuery,
+      deleteSearchHistory,
+      blurInput,
+      saveSearch
+    } = useSearch(root, refs)
+
+    watch(
+      () => _state.query,
+      newVal => {
+        if (!newVal) {
+          setTimeout(() => {
+            refs.shortcutRef.refresh()
+          }, 20)
+        }
       }
-    }
-  },
-  methods: {
-    handlePlaylist(playlist) {
+    )
+
+    const shortcut = computed(() => hotKey.value.concat(searchHistory))
+
+    function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : 0
-      this.$refs.shortcutWrapper.style.bottom = bottom
-      this.$refs.shortcut.refresh()
-      this.$refs.searchResult.style.bottom = bottom
-      this.$refs.suggest.refresh()
-    },
+      refs.shortcutWrapper.style.bottom = bottom
+      refs.shortcutRef.refresh()
+      refs.searchResult.style.bottom = bottom
+      refs.suggestRef.refresh()
+    }
 
-    // 显示确认窗口
-    showConfirm() {
-      this.$refs.confirm.show()
-    },
+    usePlaylist(root, handlePlaylist)
 
-    // 获取搜索关键词
-    _getHotKey() {
+    function _getHotKey() {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
-          this.hotKey = res.data.hotkey.slice(0, 10)
+          hotKey.value = res.data.hotkey.slice(0, 10)
         }
       })
-    },
+    }
+    _getHotKey()
 
-    ...mapActions(['clearSearchHistory'])
+    function showConfirm() {
+      refs.confirm.show()
+    }
+
+    return {
+      hotKey,
+      _state,
+      searchHistory,
+      shortcut,
+      onQueryChange,
+      addQuery,
+      showConfirm,
+      deleteSearchHistory,
+      blurInput,
+      saveSearch,
+      clearSearchHistory
+    }
   }
 }
 </script>

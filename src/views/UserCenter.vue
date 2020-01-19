@@ -24,7 +24,7 @@
           class="list-scroll"
           v-if="currentIndex === 0"
           :data="favoriteList"
-          ref="favoriteList"
+          ref="favoriteListRef"
         >
           <div class="list-inner">
             <SongList :songs="favoriteList" @select="selectSong" />
@@ -51,85 +51,77 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-
+import { ref, computed } from '@vue/composition-api'
 import Switches from '@/components/Switches'
 import NoResult from '@/components/NoResult'
 import Scroll from '@/components/Scroll'
 import SongList from '@/components/SongList'
-
-import { playlistMixin } from '@/utils/mixin'
+import { usePlaylist, useActions } from '@/hooks'
 
 export default {
-  mixins: [playlistMixin],
   components: {
     Switches,
     Scroll,
     SongList,
     NoResult
   },
-  data() {
-    return {
-      currentIndex: 0,
-      switches: [{ name: '我喜欢的' }, { name: '最近听的' }]
-    }
-  },
-  computed: {
-    // 没有数据时显示的条件
-    noResult() {
-      if (this.currentIndex === 0) {
-        return !this.favoriteList.length
-      } else {
-        return !this.playHistory.length
-      }
-    },
+  setup(props, { root, refs }) {
+    const insertSong = useActions(root, 'insertSong')
+    const randomPlay = useActions(root, 'randomPlay')
 
-    // 没有数据时显示的文本
-    noResultDesc() {
-      if (this.currentIndex === 0) {
-        return '暂无收藏歌曲'
-      } else {
-        return '你还没有听过歌曲'
-      }
-    },
+    const currentIndex = ref(0)
 
-    ...mapGetters(['favoriteList', 'playHistory'])
-  },
-  methods: {
-    handlePlaylist(playlist) {
+    const favoriteList = computed(() => root.$store.getters.favoriteList)
+    const playHistory = computed(() => root.$store.getters.playHistory)
+    const noResult = computed(() =>
+      currentIndex.value === 0
+        ? !favoriteList.value.length
+        : !playHistory.value.length
+    )
+    const noResultDesc = computed(() =>
+      currentIndex.value === 0 ? '暂无收藏歌曲' : '你还没有听过歌曲'
+    )
+
+    function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.listWrapper.style.bottom = bottom
-      this.$refs.favoriteList && this.$refs.favoriteList.refresh()
-      this.$refs.playlist && this.$refs.playlist.refresh()
-    },
+      refs.listWrapper.style.bottom = bottom
+      refs.favoriteListRef && refs.favoriteListRef.refresh()
+      refs.playlist && refs.playlist.refresh()
+    }
 
-    // 切换开关
-    switchItem(index) {
-      this.currentIndex = index
-    },
+    usePlaylist(root, handlePlaylist)
 
-    // 选中歌曲
-    selectSong(song) {
-      this.insertSong(song)
-    },
+    function switchItem(index) {
+      currentIndex.value = index
+    }
 
-    // 返回
-    back() {
-      this.$router.back()
-    },
+    function selectSong(song) {
+      insertSong(song)
+    }
 
-    // 随机播放全部
-    random() {
-      let list = this.currentIndex === 0 ? this.favoriteList : this.playHistory
-      if (list.length === 0) {
-        return
-      }
-      this.randomPlay({
-        list
-      })
-    },
+    function back() {
+      root.$router.back()
+    }
 
-    ...mapActions(['insertSong', 'randomPlay'])
+    function random() {
+      let list =
+        currentIndex.value === 0 ? favoriteList.value : playHistory.value
+      if (list.length === 0) return
+      randomPlay({ list })
+    }
+
+    return {
+      currentIndex,
+      switches: [{ name: '我喜欢的' }, { name: '最近听的' }],
+      noResult,
+      noResultDesc,
+      back,
+      switchItem,
+      random,
+      favoriteList,
+      selectSong,
+      playHistory
+    }
   }
 }
 </script>

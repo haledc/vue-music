@@ -1,51 +1,49 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" v-model="query" :placeholder="placeholder" ref="query" />
+    <input class="box" v-model="query" :placeholder="placeholder" ref="input" />
     <i @click="clear" class="icon-dismiss" v-show="query"></i>
   </div>
 </template>
 
 <script>
+import { ref, watch } from '@vue/composition-api'
 import { debounce } from '@/utils/util'
 
 export default {
   props: {
-    // 占位符
     placeholder: {
       type: String,
       default: '搜索歌曲、歌手'
     }
   },
-  data() {
-    return {
-      query: ''
-    }
-  },
-  created() {
-    // 监听 query 变化时
-    this.$watch(
-      'query',
-      debounce(newQuery => {
-        this.$emit('query', newQuery)
-      }, 200)
+  setup(props, { emit, refs }) {
+    const query = ref('')
+
+    watch(
+      () => query,
+      newVal => {
+        debounce(emit('query', newVal), 200)
+      }
     )
-  },
-  methods: {
-    // 清空搜索栏
-    clear() {
-      this.query = ''
-    },
 
-    // 设置搜索栏
-    setQuery(query) {
-      this.query = query
-    },
+    function clear() {
+      query.value = ''
+    }
 
-    // 在滚动之前，隐藏手机端的输入键盘
-    // 只有在手机端才有效
-    blur() {
-      this.$refs.query.blur()
+    function setQuery(val) {
+      query.value = val
+    }
+
+    function blur() {
+      refs.input.blur()
+    }
+
+    return {
+      query,
+      clear,
+      setQuery,
+      blur
     }
   }
 }

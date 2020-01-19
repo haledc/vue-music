@@ -1,9 +1,9 @@
-// 获取两个数之间的随机数（偏上限）
+import BScroll from 'better-scroll'
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-// 洗牌数组
 export function shuffle(arr) {
   const ret = arr.slice()
   for (let i = 0; i < arr.length; i++) {
@@ -13,7 +13,6 @@ export function shuffle(arr) {
   return ret
 }
 
-// 防抖函数
 export function debounce(func, delay) {
   let timer
   return function(...args) {

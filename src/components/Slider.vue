@@ -9,185 +9,169 @@
     <div class="dots">
       <span
         class="dot"
-        v-for="(item, index) in dots"
+        v-for="(item, index) in state.dots"
         :key="index"
-        :class="{ active: currentPageIndex === index }"
+        :class="{ active: state.currentPageIndex === index }"
       ></span>
     </div>
   </div>
 </template>
 
 <script>
+import {
+  reactive,
+  onMounted,
+  onUnmounted,
+  onActivated,
+  onDeactivated
+} from '@vue/composition-api'
 import BScroll from 'better-scroll'
 import { addClass } from '@/utils/dom'
 
 export default {
   props: {
-    // 是否循环
     loop: {
       type: Boolean,
       default: true
     },
-
-    // 是否自动播放
     autoPlay: {
       type: Boolean,
       default: true
     },
-
-    // 自动播放时间间隔
     interval: {
       type: Number,
       default: 2000
     }
   },
-  data() {
-    return {
+  setup(props, { refs }) {
+    const state = reactive({
       dots: [],
       currentPageIndex: 0
-    }
-  },
-  mounted() {
-    setTimeout(() => {
-      this._setSliderWidth()
-      this._initDots()
-      this._initSlider()
+    })
 
-      if (this.autoPlay) {
-        this._play()
+    let slider, timer, resizeTimer, sliderChildren
+
+    onMounted(() => {
+      setTimeout(() => {
+        _setSliderWidth()
+        _initDots()
+        _initSlider()
+
+        if (props.autoPlay) {
+          _play()
+        }
+      }, 20)
+
+      window.addEventListener('resize', onResize)
+    })
+
+    onUnmounted(() => {
+      slider.disable()
+      clearTimeout(timer)
+      window.removeEventListener('resize', onResize)
+    })
+
+    onActivated(() => {
+      if (!slider) return
+      slider.enable()
+      let pageIndex = slider.getCurrentPage().pageX
+      slider.goToPage(pageIndex, 0, 0)
+      state.currentPageIndex = pageIndex
+      if (props.autoPlay) {
+        _play()
       }
-      // 浏览器刷新时间一般为 16ms
-    }, 20)
+    })
 
-    // 监听窗口尺寸变化，改变 slider 宽度
-    window.addEventListener('resize', this.onResize)
-  },
+    onDeactivated(() => {
+      slider.disable()
+      clearTimeout(timer)
+    })
 
-  activated() {
-    if (!this.slider) {
-      return
-    }
-    this.slider.enable()
-    let pageIndex = this.slider.getCurrentPage().pageX
-    this.slider.goToPage(pageIndex, 0, 0)
-    this.currentPageIndex = pageIndex
-    if (this.autoPlay) {
-      this._play()
-    }
-  },
-
-  deactivated() {
-    this.slider.disable()
-    clearTimeout(this.timer)
-  },
-
-  beforeDestroy() {
-    this.slider.disable()
-    clearTimeout(this.timer)
-    window.removeEventListener('resize', this.onResize)
-  },
-
-  methods: {
-    // 刷新方法
-    refresh() {
-      if (this.slider) {
-        this._setSliderWidth(true)
-        this.slider.refresh()
+    function refresh() {
+      if (slider) {
+        _setSliderWidth(true)
+        slider.refresh()
       }
-    },
+    }
 
-    // 初始化圆点
-    _initDots() {
-      this.dots = new Array(this.children.length)
-    },
+    function _initDots() {
+      state.dots = new Array(sliderChildren.length)
+    }
 
-    // 设置轮播图总长度
-    _setSliderWidth(isResize) {
-      this.children = this.$refs.sliderGroup.children
+    function _setSliderWidth(isResize) {
+      sliderChildren = refs.sliderGroup.children
 
       let width = 0
-      let sliderWidth = this.$refs.slider.clientWidth
-      for (let i = 0; i < this.children.length; i++) {
-        let child = this.children[i]
-        // 每个子元素设置 class
+      let sliderWidth = refs.slider.clientWidth
+      for (let i = 0; i < sliderChildren.length; i++) {
+        let child = sliderChildren[i]
         addClass(child, 'slider-item')
-
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-      // 如果设置了循环播放且窗口尺寸没变，需要再加上首尾 2 个图片的宽度
-      // BScroll 会在首尾克隆 2 个 DOM 保证循环播放
-      if (this.loop && !isResize) {
+      if (props.loop && !isResize) {
         width += 2 * sliderWidth
       }
-      this.$refs.sliderGroup.style.width = width + 'px'
-    },
+      refs.sliderGroup.style.width = width + 'px'
+    }
 
-    // 初始化轮播图
-    _initSlider() {
-      this.slider = new BScroll(this.$refs.slider, {
+    function _initSlider() {
+      slider = new BScroll(refs.slider, {
         scrollX: true,
         scrollY: false,
-        momentum: false, // 滚动动画
-        // 循环设置
+        momentum: false,
         snap: {
-          loop: this.loop,
+          loop: props.loop,
           threshold: 0.3,
           speed: 400
         }
       })
-
-      // 监听滚动完成事件
-      this.slider.on('scrollEnd', this._getCurrentPageIndex)
-
-      // 监听触摸结束事件
-      this.slider.on('touchEnd', () => {
-        if (this.autoPlay) {
-          this._play()
+      slider.on('scrollEnd', _getCurrentPageIndex)
+      slider.on('touchEnd', () => {
+        if (props.autoPlay) {
+          _play()
         }
       })
-
-      // 监听滚动开始之前事件
-      this.slider.on('beforeScrollStart', () => {
-        if (this.autoPlay) {
-          clearTimeout(this.timer)
+      slider.on('beforeScrollStart', () => {
+        if (props.autoPlay) {
+          clearTimeout(timer)
         }
       })
-    },
+    }
 
-    // 获取当前轮播图页面索引
-    _getCurrentPageIndex() {
-      let pageIndex = this.slider.getCurrentPage().pageX
-      this.currentPageIndex = pageIndex
-      if (this.autoPlay) {
-        this._play()
+    function _getCurrentPageIndex() {
+      let pageIndex = slider.getCurrentPage().pageX
+      state.currentPageIndex = pageIndex
+      if (props.autoPlay) {
+        _play()
       }
-    },
+    }
 
-    // 自动播放轮播图方法
-    _play() {
-      clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
-        this.slider.next()
-      }, this.interval)
-    },
+    function _play() {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        slider.next()
+      }, props.interval)
+    }
 
-    // 监听 resize
-    onResize() {
-      if (!this.slider || !this.slider.enabled) {
-        return
-      }
-      clearTimeout(this.resizeTimer)
-      this.resizeTimer = setTimeout(() => {
-        if (this.slider.isInTransition) {
-          this._getCurrentPageIndex()
+    function onResize() {
+      if (!slider || !slider.enabled) return
+
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        if (slider.isInTransition) {
+          _getCurrentPageIndex()
         } else {
-          if (this.autoPlay) {
-            this._play()
+          if (props.autoPlay) {
+            _play()
           }
         }
-        this.refresh()
+        refresh()
       }, 60)
+    }
+
+    return {
+      state
     }
   }
 }

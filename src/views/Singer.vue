@@ -6,68 +6,53 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-
+import { ref } from '@vue/composition-api'
 import ListView from '@/components/ListView'
-
 import Singer from '@/utils/singer'
-import { playlistMixin } from '@/utils/mixin'
 import { getSingerList } from '@/request/singer'
 import { ERR_OK } from '@/request/config'
+import { usePlaylist, useMutations } from '@/hooks'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 
 export default {
-  mixins: [playlistMixin],
   components: {
     ListView
   },
-  data() {
-    return {
-      singers: []
-    }
-  },
-  created() {
-    this._getSingerList()
-  },
-  methods: {
-    handlePlaylist(playlist) {
+  setup(props, { root, refs }) {
+    const setSinger = useMutations(root, 'SET_SINGER')
+
+    const singers = ref([])
+
+    function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.singer.style.bottom = bottom
-      this.$refs.list.refresh()
-    },
+      refs.singer.style.bottom = bottom
+      refs.list.refresh()
+    }
 
-    // 跳转到歌手详情页面
-    selectSinger(singer) {
-      this.$router.push({
-        path: `/singer/${singer.id}`
-      })
-      this.setSinger(singer)
-    },
+    usePlaylist(root, handlePlaylist)
 
-    // 获取歌手列表数据
-    _getSingerList() {
+    function _getSingerList() {
       getSingerList().then(res => {
         if (res.code === ERR_OK) {
-          this.singers = this._normalizeSinger(res.data.list)
+          singers.value = _normalizeSinger(res.data.list)
         }
       })
-    },
+    }
+    _getSingerList()
 
-    // 处理歌手列表数据
-    _normalizeSinger(list) {
-      // 新建歌手列表对象，其中包含一个 hot 类别对象
+    function _normalizeSinger(list) {
       let map = {
         hot: {
           title: HOT_NAME,
           items: []
         }
       }
-      // 遍历歌手列表
+
       list.forEach((item, index) => {
         if (index < HOT_SINGER_LEN) {
-          // 取出前十位歌手，放入到 hot 类别中
+          // 热门
           map.hot.items.push(
             new Singer({
               id: item.Fsinger_mid,
@@ -76,17 +61,16 @@ export default {
           )
         }
 
-        // 定义 key 键，key为 [A-Z]
+        // key 为 [A-Z]
         const key = item.Findex
 
-        // 如果对象中的 [A-Z] 不存在（目前只有一个 key 为 hot），先创建一个对象，key为 [A-Z] ，其中的值暂为一个空数组
         if (!map[key]) {
           map[key] = {
             title: key,
             items: []
           }
         }
-        // 把歌手放入前面的空数组中 ★
+
         map[key].items.push(
           new Singer({
             id: item.Fsinger_mid,
@@ -94,7 +78,8 @@ export default {
           })
         )
       })
-      // 为了得到有序列表，我们需要处理 map
+
+      // 排序
       let hot = []
       let ret = []
       for (let key in map) {
@@ -105,16 +90,23 @@ export default {
           hot.push(val)
         }
       }
-      // 按照歌手的 title 的首字母升序排序
       ret.sort((a, b) => {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
-    },
+    }
 
-    ...mapMutations({
-      setSinger: 'SET_SINGER'
-    })
+    function selectSinger(singer) {
+      root.$router.push({
+        path: `/singer/${singer.id}`
+      })
+      setSinger(singer)
+    }
+
+    return {
+      singers,
+      selectSinger
+    }
   }
 }
 </script>

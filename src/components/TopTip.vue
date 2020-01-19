@@ -7,38 +7,38 @@
 </template>
 
 <script>
+import { ref, onBeforeUnmount } from '@vue/composition-api'
+
 export default {
   props: {
-    // 显示持续时间
     delay: {
       type: Number,
       default: 2000
     }
   },
-  data() {
-    return {
-      isShowFlag: false
-    }
-  },
-  beforeDestroy() {
-    if (this.timer) {
-      clearTimeout(this.timer)
-    }
-  },
-  methods: {
-    // 显示窗口，然后一段时间后关闭
-    show() {
-      this.isShowFlag = true
-      // 先清理定时器
-      clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
-        this.hide()
-      }, this.delay)
-    },
+  setup(props) {
+    const isShowFlag = ref(false)
+    let timer
 
-    // 隐藏
-    hide() {
-      this.isShowFlag = false
+    function show(params) {
+      isShowFlag.value = true
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        hide()
+      }, props.delay)
+    }
+
+    function hide(params) {
+      isShowFlag.value = false
+    }
+
+    onBeforeUnmount(() => {
+      timer && clearTimeout(timer)
+    })
+
+    return {
+      isShowFlag,
+      hide
     }
   }
 }

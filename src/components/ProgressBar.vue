@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { watch } from '@vue/composition-api'
 import { prefixStyle } from '@/utils/dom'
 
 // 按钮宽度（直径）
@@ -26,91 +27,71 @@ const transform = prefixStyle('transform')
 
 export default {
   props: {
-    // 歌曲播放时间和总时长的百分比
     percent: {
       type: Number,
       default: 0
     }
   },
-  created() {
-    this.touch = {}
-  },
-  watch: {
-    // 监听百分比变化，根据百分比变化设置进度条实时宽度 -> 移动按钮
-    percent(newPercent) {
-      this.setProgressOffset(newPercent)
+  setup(props, { refs, emit }) {
+    const touch = {}
+    watch(() => props.percent, newVal => setProgressOffset(newVal))
+
+    function progressTouchStart(event) {
+      touch.initiated = true
+      touch.startX = event.touches[0].pageX
+      touch.left = refs.progress.clientWidth
     }
-  },
-  methods: {
-    // 监听 touchStart 事件，记录初始数值
-    progressTouchStart(e) {
-      this.touch.initiated = true
-      this.touch.startX = e.touches[0].pageX
-      this.touch.left = this.$refs.progress.clientWidth
-    },
 
-    // 监听 touchMove 事件，记录数值变化
-    progressTouchMove(e) {
-      if (!this.touch.initiated) {
-        return
-      }
-      // X 轴偏移数值
-      const deltaX = e.touches[0].pageX - this.touch.startX
-      // X 轴偏移宽度
+    function progressTouchMove(event) {
+      if (!touch.initiated) return
+      const deltaX = event.touches[0].pageX - touch.startX
       const offsetWidth = Math.min(
-        this.$refs.progressBar.clientWidth - PROGRESSBTNWIDTH,
-        Math.max(0, this.touch.left + deltaX)
+        refs.progressBar.clientWidth - PROGRESSBTNWIDTH,
+        Math.max(0, touch.left + deltaX)
       )
-      // 设置按钮偏移到指定位置
-      this._offset(offsetWidth)
-      this.$emit('percentChanging', this._getPercent())
-    },
+      _offset(offsetWidth)
+      emit('percentChanging', _getPercent())
+    }
 
-    // 监听 touchEnd 事件, 重置为未初始化，派发事件
-    progressTouchEnd() {
-      this.touch.initiated = false
-      this._triggerPercent()
-    },
+    function progressTouchEnd() {
+      touch.initiated = false
+      _triggerPercent()
+    }
 
-    // 监听进度条点击事件，获取点击的偏移位置，并派发事件
-    progressClick(e) {
-      // 获取进度条在屏幕的位置
-      const rect = this.$refs.progressBar.getBoundingClientRect()
-      // 偏移位置
-      const offsetWidth = e.pageX - rect.left
-      this._offset(offsetWidth)
-      this._triggerPercent()
-    },
+    function progressClick(event) {
+      const rect = refs.progressBar.getBoundingClientRect()
+      const offsetWidth = event.pageX - rect.left
+      _offset(offsetWidth)
+      _triggerPercent()
+    }
 
-    // 设置进度条的实时宽度和按钮的偏移
-    setProgressOffset(percent) {
-      // 在初始化为 false 时才能设置，不会和监听 touchMove 事件的方法冲突
-      if (percent >= 0 && !this.touch.initiated) {
-        // 进度条总长度
-        const barWidth = this.$refs.progressBar.clientWidth - PROGRESSBTNWIDTH
-        // 进度条的当前位置
+    function setProgressOffset(percent) {
+      if (percent >= 0 && !touch.initiated) {
+        const barWidth = refs.progressBar.clientWidth - PROGRESSBTNWIDTH
         const offsetWidth = percent * barWidth
-        this._offset(offsetWidth)
+        _offset(offsetWidth)
       }
-    },
+    }
 
-    // 派发实时的进度条百分比
-    _triggerPercent() {
-      this.$emit('percentChange', this._getPercent())
-    },
+    function _triggerPercent() {
+      emit('percentChange', _getPercent())
+    }
 
-    // 进度条实时宽度和按钮的偏移操作方法
-    _offset(offsetWidth) {
-      this.$refs.progress.style.width = `${offsetWidth}px`
-      this.$refs.progressBtn.style[
-        transform
-      ] = `translate3d(${offsetWidth}px, 0, 0)`
-    },
+    function _offset(offsetWidth) {
+      refs.progress.style.width = `${offsetWidth}px`
+      refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+    }
 
-    // 获取实时的进度条百分比
-    _getPercent() {
-      const barWidth = this.$refs.progressBar.clientWidth - PROGRESSBTNWIDTH
-      return this.$refs.progress.clientWidth / barWidth
+    function _getPercent() {
+      const barWidth = refs.progressBar.clientWidth - PROGRESSBTNWIDTH
+      return refs.progress.clientWidth / barWidth
+    }
+
+    return {
+      progressTouchStart,
+      progressTouchMove,
+      progressTouchEnd,
+      progressClick
     }
   }
 }

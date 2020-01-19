@@ -46,14 +46,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
+import { ref, computed, onMounted, watch } from '@vue/composition-api'
 import Scroll from '@/components/Scroll'
 import SongList from '@/components/SongList'
 import Loading from '@/components/Loading'
-
 import { prefixStyle } from '@/utils/dom'
-import { playlistMixin } from '@/utils/mixin'
+import { usePlaylist, useActions } from '@/hooks'
 
 // 顶部预留 40px（标题高度）常量不被滚动
 const RESERVED_HEIGHT = 40
@@ -61,135 +59,125 @@ const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 
 export default {
-  mixins: [playlistMixin],
   components: {
     Scroll,
     SongList,
     Loading
   },
   props: {
-    // 背景图片
     bgImage: {
       type: String,
       default: ''
     },
-
-    // 歌曲列表
     songs: {
       type: Array,
       default: () => []
     },
-
-    // 歌曲列表名称
     title: {
       type: String,
       default: ''
     },
-
-    // 是否是排行榜
     rank: {
       type: Boolean,
       default: false
     }
   },
-  data() {
-    return {
-      scrollY: 0
-    }
-  },
-  computed: {
-    // 背景图片样式
-    bgStyle() {
-      return `background-image:url(${this.bgImage})`
-    }
-  },
-  created() {
-    this.probeType = 3
-    this.listenScroll = true
-  },
-  mounted() {
-    // 背景图片高度
-    this.imageHeight = this.$refs.bgImage.clientHeight
+  setup(props, { root, refs }) {
+    const selectPlay = useActions(root, 'selectPlay')
+    const randomPlay = useActions(root, 'randomPlay')
 
-    // 最大滚动的距离（预留40px） 向上滚动为负值
-    this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
+    const probeType = 3
+    const listenScroll = true
+    let imageHeight, minTranslateY
 
-    // 设置歌曲列表的top值为背景图片的高度
-    this.$refs.list.$el.style.top = `${this.imageHeight}px`
-  },
-  watch: {
-    // 监听 scrollY 值，设置 bgLayer 滚动值
-    scrollY(newY) {
-      // layer滚动值范围
-      const translateY = Math.max(this.minTranslateY, newY)
-      let zIndex = 0
-      let scale = 1
-      let blur = 0
-      const percent = Math.abs(newY / this.imageHeight)
-      // newY > 0 向下滚动
-      if (newY > 0) {
-        scale = 1 + percent
-        zIndex = 10 // zIndex需比歌曲列表层大，图片才会有放大的效果
-        // 向上滚动
-      } else {
-        blur = Math.min(20, percent * 20) // 模糊效果最大为20
+    const scrollY = ref(0)
+
+    const bgStyle = computed(() => `background-image:url(${props.bgImage})`)
+
+    onMounted(() => {
+      imageHeight = refs.bgImage.clientHeight
+      minTranslateY = -imageHeight + RESERVED_HEIGHT
+      refs.list.$el.style.top = `${imageHeight}px`
+    })
+
+    usePlaylist(root, handlePlaylist)
+
+    watch(
+      () => scrollY.value,
+      newY => {
+        const translateY = Math.max(minTranslateY, newY)
+        let zIndex = 0
+        let scale = 1
+        let blur = 0
+        const percent = Math.abs(newY / imageHeight)
+        // newY > 0 向下滚动
+        if (newY > 0) {
+          scale = 1 + percent
+          zIndex = 10
+        } else {
+          blur = Math.min(20, percent * 20) // 模糊效果最大为20
+        }
+        // layer层跟着一起往上滚动
+        refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+        // 高斯模糊效果
+        refs.filter.style[backdrop] = `blur(${blur}px)`
+        // 当滚动的新值比最远的滚动距离小时，即滚动到顶部
+        if (newY < minTranslateY) {
+          zIndex = 10
+          refs.bgImage.style.paddingTop = 0
+          refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+          refs.playBtn.style.display = 'none'
+          // 当滚动的新值比最远的滚动距离大时，即还没有滚到顶部
+          // 需要重置图片的高度，不然下拉的时候会把最上面80px的背景图片遮住
+        } else {
+          refs.bgImage.style.paddingTop = '70%'
+          refs.bgImage.style.height = 0
+          refs.playBtn.style.display = ''
+        }
+        refs.bgImage.style[transform] = `scale(${scale})`
+        refs.bgImage.style.zIndex = zIndex
+      },
+      {
+        lazy: true
       }
-      // layer层跟着一起往上滚动
-      this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
-      // 高斯模糊效果
-      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
-      // 当滚动的新值比最远的滚动距离小时，即滚动到顶部
-      if (newY < this.minTranslateY) {
-        zIndex = 10
-        this.$refs.bgImage.style.paddingTop = 0
-        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
-        this.$refs.playBtn.style.display = 'none'
-        // 当滚动的新值比最远的滚动距离大时，即还没有滚到顶部
-        // 需要重置图片的高度，不然下拉的时候会把最上面80px的背景图片遮住
-      } else {
-        this.$refs.bgImage.style.paddingTop = '70%'
-        this.$refs.bgImage.style.height = 0
-        this.$refs.playBtn.style.display = ''
-      }
-      // 图片比例变化
-      this.$refs.bgImage.style[transform] = `scale(${scale})`
-      // 图片显示设置
-      this.$refs.bgImage.style.zIndex = zIndex
-    }
-  },
-  methods: {
-    // 列表新增 bottom=60px，使得 mini 播放器 (高度60px) 不会覆盖住播放列表底部
-    handlePlaylist(playlist) {
+    )
+
+    function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.list.$el.style.bottom = bottom
-      this.$refs.list.refresh()
-    },
+      refs.list.$el.style.bottom = bottom
+      refs.list.refresh()
+    }
 
-    // 监听 scroll 事件
-    scroll(pos) {
-      this.scrollY = pos.y
-    },
+    function scroll(pos) {
+      scrollY.value = pos.y
+    }
 
-    // 返回
-    back() {
-      this.$router.back()
-    },
+    function back() {
+      root.$router.back()
+    }
 
-    // 选中歌曲并播放
-    selectItem(item, index) {
-      this.selectPlay({
-        list: this.songs,
+    function selectItem(item, index) {
+      selectPlay({
+        list: props.songs,
         index
       })
-    },
+    }
 
-    // 随机播放
-    random() {
-      this.randomPlay({
-        list: this.songs
+    function random() {
+      randomPlay({
+        list: props.songs
       })
-    },
-    ...mapActions(['selectPlay', 'randomPlay'])
+    }
+
+    return {
+      probeType,
+      listenScroll,
+      back,
+      bgStyle,
+      random,
+      scroll,
+      selectItem
+    }
   }
 }
 </script>

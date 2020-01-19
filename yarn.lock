@@ -1538,6 +1538,13 @@
     source-map "~0.6.1"
     vue-template-es2015-compiler "^1.9.0"
 
+"@vue/composition-api@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.npm.taobao.org/@vue/composition-api/download/@vue/composition-api-0.3.4.tgz?cache=0&sync_timestamp=1575253665783&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40vue%2Fcomposition-api%2Fdownload%2F%40vue%2Fcomposition-api-0.3.4.tgz#43d2c3377173cfe1d02e51e3342bcf0fbde9c4b6"
+  integrity sha1-Q9LDN3Fzz+HQLlHjNCvPD73pxLY=
+  dependencies:
+    tslib "^1.9.3"
+
 "@vue/eslint-config-prettier@^6.0.0":
   version "6.0.0"
   resolved "https://registry.npm.taobao.org/@vue/eslint-config-prettier/download/@vue/eslint-config-prettier-6.0.0.tgz#ad5912b308f4ae468458e02a2b05db0b9d246700"
@@ -10338,6 +10345,11 @@ tslib@^1.9.0:
   version "1.9.3"
   resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.9.3.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
   integrity sha1-1+TdeSRdhUKMTX5IIqeZF5VMooY=
+
+tslib@^1.9.3:
+  version "1.10.0"
+  resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+  integrity sha1-w8GflZc/sKYpc/sJ2Q2WHuQ+XIo=
 
 tty-browserify@0.0.0:
   version "0.0.0"
