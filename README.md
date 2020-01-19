@@ -18,6 +18,8 @@ node prod.server.js
 
 ### 版本信息
 
+- [Vue2 + Composition-API 版本](https://github.com/haledc/vue-music/tree/vue2-composition-api)
+
 - [Vue2 版本](https://github.com/haledc/vue-music/tree/vue2)
 
 - [Vue2 + Typescript 版本](https://github.com/haledc/vue-music/tree/vue2-ts)
