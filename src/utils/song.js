@@ -87,7 +87,11 @@ export function processSongsUrl(songs) {
       if (purl) {
         song.url =
           purl.indexOf('http') === -1
+<<<<<<< HEAD
             ? `http://dl.stream.qqmusic.qq.com/${purl}`
+=======
+            ? `http://dl.stream.qqmusic.com/${purl}`
+>>>>>>> 82802b7 (fix: fix music request bug)
             : purl
         return true
       }
