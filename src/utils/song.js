@@ -18,16 +18,14 @@ export default class Song {
 
   // 获取歌词
   getLyric() {
-    // 如果已经有歌词，直接返回 Promise.resolve 值
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
 
-    // 用 promise 封装返回值
     return new Promise((resolve, reject) => {
       getLyric(this.mid).then(res => {
         if (res.retcode === ERR_OK) {
-          this.lyric = Base64.decode(res.lyric) // 歌词 Base64 解码
+          this.lyric = Base64.decode(res.lyric)
           resolve(this.lyric)
         } else {
           reject('no lyric')
@@ -61,7 +59,7 @@ export function createSong(musicData) {
   })
 }
 
-// 处理歌手
+// 处理歌手信息
 export function filterSinger(singer) {
   if (!singer) {
     return ''
@@ -89,7 +87,7 @@ export function processSongsUrl(songs) {
       if (purl) {
         song.url =
           purl.indexOf('http') === -1
-            ? `http://d1.stream.qqmusic.com/${purl}`
+            ? `http://dl.stream.qqmusic.qq.com/${purl}`
             : purl
         return true
       }
@@ -99,9 +97,19 @@ export function processSongsUrl(songs) {
   })
 }
 
+// 规划化歌曲列表
 export function normalizeSongs(list) {
-  return list.map(item => {
-    item = item.musicData ? item.musicData : item.data ? item.data : item
-    return isValidMusic(item) && createSong(item)
-  })
+  let ret = []
+  for (const item of list) {
+    const musicData = item.musicData
+      ? item.musicData
+      : item.data
+      ? item.data
+      : item
+    if (isValidMusic(musicData)) {
+      ret.push(createSong(musicData))
+    }
+  }
+
+  return ret
 }

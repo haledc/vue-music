@@ -28,6 +28,7 @@ export function getLyric(mid) {
 // 获取歌曲链接
 export function getSongsUrl(songs) {
   const url = debug ? '/api/getPurlUrl' : 'http://127.0.0.1:9095/api/getPurlUrl'
+
   let mids = []
   let types = []
 
@@ -58,10 +59,10 @@ export function getSongsUrl(songs) {
         .then(response => {
           const res = response.data
           if (res.code === ERR_OK) {
-            const uMid = res.req_0
-            if (uMid && uMid.code === ERR_OK) {
+            let urlMid = res.req_0
+            if (urlMid && urlMid.code === ERR_OK) {
               const purlMap = {}
-              uMid.data.midurlinfo.forEach(item => {
+              urlMid.data.midurlinfo.forEach(item => {
                 if (item.purl) {
                   purlMap[item.songmid] = item.purl
                 }

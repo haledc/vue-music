@@ -1,4 +1,4 @@
-let uid = 0
+let uid = ''
 
 export function getUid() {
   if (uid) {
