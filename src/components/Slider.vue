@@ -1,7 +1,7 @@
 <template>
-  <div class="slider" ref="slider">
+  <div class="slider" ref="sliderRef">
     <!-- 滚动图片 -->
-    <div class="slider-group" ref="sliderGroup">
+    <div class="slider-group" ref="sliderGroupRef">
       <!-- 图片插槽 -->
       <slot />
     </div>
@@ -99,10 +99,10 @@ export default {
     }
 
     function _setSliderWidth(isResize) {
-      sliderChildren = refs.sliderGroup.children
+      sliderChildren = refs.sliderGroupRef.children
 
       let width = 0
-      let sliderWidth = refs.slider.clientWidth
+      let sliderWidth = refs.sliderRef.clientWidth
       for (let i = 0; i < sliderChildren.length; i++) {
         let child = sliderChildren[i]
         addClass(child, 'slider-item')
@@ -112,11 +112,11 @@ export default {
       if (props.loop && !isResize) {
         width += 2 * sliderWidth
       }
-      refs.sliderGroup.style.width = width + 'px'
+      refs.sliderGroupRef.style.width = width + 'px'
     }
 
     function _initSlider() {
-      slider = new BScroll(refs.slider, {
+      slider = new BScroll(refs.sliderRef, {
         scrollX: true,
         scrollY: false,
         momentum: false,
@@ -171,7 +171,8 @@ export default {
     }
 
     return {
-      state
+      state,
+      refresh
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper">
+  <div ref="wrapperRef">
     <slot />
   </div>
 </template>
@@ -56,8 +56,8 @@ export default {
     })
 
     function _initScroll() {
-      if (!refs.wrapper) return
-      scroll = new BScroll(refs.wrapper, {
+      if (!refs.wrapperRef) return
+      scroll = new BScroll(refs.wrapperRef, {
         probeType: props.probeType,
         click: props.click,
         eventPassthrough:

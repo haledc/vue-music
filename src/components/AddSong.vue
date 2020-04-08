@@ -13,7 +13,7 @@
         <SearchBox
           @query="onQueryChange"
           placeholder="搜索歌曲"
-          ref="searchBox"
+          ref="searchBoxRef"
         />
       </div>
       <!-- 快捷方式 -->
@@ -30,7 +30,7 @@
             class="list-scroll"
             v-if="state.currentIndex === 0"
             :data="playHistory"
-            ref="songList"
+            ref="songListRef"
           >
             <div class="list-inner">
               <SongList :songs="playHistory" @select="selectSong" />
@@ -42,7 +42,7 @@
             v-if="state.currentIndex === 1"
             :refreshDelay="_state.refreshDelay"
             :data="searchHistory"
-            ref="searchList"
+            ref="searchListRef"
           >
             <div class="list-inner">
               <SearchList
@@ -64,7 +64,7 @@
         />
       </div>
       <!-- 提示组件 -->
-      <TopTip ref="topTip" :delay="state.delay">
+      <TopTip ref="topTipRef" :delay="state.delay">
         <div class="tip-title">
           <i class="icon-ok"></i>
           <span class="text">1首歌曲已经添加到播放队列</span>
@@ -123,9 +123,9 @@ export default {
       state.isShowFlag = true
       setTimeout(() => {
         if (state.currentSwitchIndex === 0) {
-          refs.songList.refresh()
+          refs.songListRef.refresh()
         } else {
-          refs.searchLisr.refresh()
+          refs.searchLisrRef.refresh()
         }
       }, 20)
     }
@@ -151,7 +151,7 @@ export default {
     }
 
     function showTip() {
-      refs.topTip.show()
+      refs.topTipRef.show()
     }
 
     return {

@@ -1,7 +1,12 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" v-model="query" :placeholder="placeholder" ref="input" />
+    <input
+      class="box"
+      v-model="query"
+      :placeholder="placeholder"
+      ref="inputRef"
+    />
     <i @click="clear" class="icon-dismiss" v-show="query"></i>
   </div>
 </template>
@@ -21,7 +26,7 @@ export default {
     const query = ref('')
 
     watch(
-      () => query,
+      () => query.value,
       newVal => {
         debounce(emit('query', newVal), 200)
       }
@@ -36,7 +41,7 @@ export default {
     }
 
     function blur() {
-      refs.input.blur()
+      refs.inputRef.blur()
     }
 
     return {

@@ -1,12 +1,12 @@
 <template>
-  <div class="progress-bar" ref="progressBar" @click="progressClick">
+  <div class="progress-bar" ref="progressBarRef" @click="progressClick">
     <div class="bar-inner">
       <!-- 进度条 -->
-      <div class="progress" ref="progress"></div>
+      <div class="progress" ref="progressRef"></div>
       <!-- 进度条按钮 -->
       <div
         class="progress-btn-wrapper"
-        ref="progressBtn"
+        ref="progressBtnRef"
         @touchstart.prevent="progressTouchStart"
         @touchmove.prevent="progressTouchMove"
         @touchend="progressTouchEnd"
@@ -34,19 +34,22 @@ export default {
   },
   setup(props, { refs, emit }) {
     const touch = {}
-    watch(() => props.percent, newVal => setProgressOffset(newVal))
+    watch(
+      () => props.percent,
+      newVal => setProgressOffset(newVal)
+    )
 
     function progressTouchStart(event) {
       touch.initiated = true
       touch.startX = event.touches[0].pageX
-      touch.left = refs.progress.clientWidth
+      touch.left = refs.progressRef.clientWidth
     }
 
     function progressTouchMove(event) {
       if (!touch.initiated) return
       const deltaX = event.touches[0].pageX - touch.startX
       const offsetWidth = Math.min(
-        refs.progressBar.clientWidth - PROGRESSBTNWIDTH,
+        refs.progressBarRef.clientWidth - PROGRESSBTNWIDTH,
         Math.max(0, touch.left + deltaX)
       )
       _offset(offsetWidth)
@@ -59,7 +62,7 @@ export default {
     }
 
     function progressClick(event) {
-      const rect = refs.progressBar.getBoundingClientRect()
+      const rect = refs.progressBarRef.getBoundingClientRect()
       const offsetWidth = event.pageX - rect.left
       _offset(offsetWidth)
       _triggerPercent()
@@ -67,7 +70,7 @@ export default {
 
     function setProgressOffset(percent) {
       if (percent >= 0 && !touch.initiated) {
-        const barWidth = refs.progressBar.clientWidth - PROGRESSBTNWIDTH
+        const barWidth = refs.progressBarRef.clientWidth - PROGRESSBTNWIDTH
         const offsetWidth = percent * barWidth
         _offset(offsetWidth)
       }
@@ -78,20 +81,23 @@ export default {
     }
 
     function _offset(offsetWidth) {
-      refs.progress.style.width = `${offsetWidth}px`
-      refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      refs.progressRef.style.width = `${offsetWidth}px`
+      refs.progressBtnRef.style[
+        transform
+      ] = `translate3d(${offsetWidth}px, 0, 0)`
     }
 
     function _getPercent() {
-      const barWidth = refs.progressBar.clientWidth - PROGRESSBTNWIDTH
-      return refs.progress.clientWidth / barWidth
+      const barWidth = refs.progressBarRef.clientWidth - PROGRESSBTNWIDTH
+      return refs.progressRef.clientWidth / barWidth
     }
 
     return {
       progressTouchStart,
       progressTouchMove,
       progressTouchEnd,
-      progressClick
+      progressClick,
+      setProgressOffset
     }
   }
 }

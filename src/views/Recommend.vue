@@ -1,12 +1,12 @@
 <template>
-  <div class="recommend" ref="recommend">
+  <div class="recommend" ref="recommendRef">
     <!-- 滚动组件 -->
-    <Scroll ref="scroll" class="recommend-content" :data="state.discList">
+    <Scroll ref="scrollRef" class="recommend-content" :data="state.discList">
       <div>
         <!-- 轮播图 -->
         <div v-if="state.sliderList.length" class="slider-wrapper">
           <!--轮播图组件-->
-          <Slider ref="slider">
+          <Slider ref="sliderRef">
             <div v-for="item in state.sliderList" :key="item.picUrl">
               <a :href="item.linkUrl">
                 <!-- needsclick是fastclick内置可点击class配置 -->
@@ -74,14 +74,14 @@ export default {
 
     onActivated(() => {
       setTimeout(() => {
-        refs.slider && refs.slider.refresh()
+        refs.sliderRef && refs.sliderRef.refresh()
       }, 20)
     })
 
     function handlePlaylist(playlist) {
       const bottom = playlist.value.length > 0 ? '60px' : ''
-      refs.recommend.style.bottom = bottom
-      refs.scroll.refresh()
+      refs.recommendRef.style.bottom = bottom
+      refs.scrollRef.refresh()
     }
 
     usePlaylist(root, handlePlaylist)
@@ -113,7 +113,7 @@ export default {
 
     function loadImage() {
       if (!checkLoaded) {
-        refs.scroll.refresh()
+        refs.scrollRef.refresh()
         checkLoaded = true
       }
     }

@@ -2,7 +2,7 @@
   <Scroll
     class="listview"
     :data="data"
-    ref="listview"
+    ref="listviewRef"
     :listenScroll="listenScroll"
     :probeType="probeType"
     @scroll="scroll"
@@ -12,7 +12,7 @@
       <li
         v-for="group in data"
         class="list-group"
-        ref="listGroup"
+        ref="listGroupRef"
         :key="group.title"
       >
         <h2 class="list-group-title">{{ group.title }}</h2>
@@ -49,7 +49,7 @@
       </ul>
     </div>
     <!-- 歌手组固定标题栏 -->
-    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+    <div class="list-fixed" v-show="fixedTitle" ref="fixedRef">
       <h1 class="fixed-title">{{ fixedTitle }}</h1>
     </div>
     <div class="loading-container" v-show="!data.length">
@@ -143,7 +143,7 @@ export default {
           newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
         if (fixedTop === fixedTopVal) return
         fixedTop = fixedTopVal
-        refs.fixed.style.transform = `translate3d(0, ${fixedTopVal}px, 0)`
+        refs.fixedRef.style.transform = `translate3d(0, ${fixedTopVal}px, 0)`
       }
     )
 
@@ -164,7 +164,7 @@ export default {
     }
 
     function refresh() {
-      refs.listview.refresh()
+      refs.listviewRef.refresh()
     }
 
     function scroll(pos) {
@@ -183,12 +183,12 @@ export default {
         index = listHeight.length - 2
       }
       state.scrollY = -listHeight[index]
-      refs.listview.scrollToElement(refs.listGroup[index], 0)
+      refs.listviewRef.scrollToElement(refs.listGroupRef[index], 0)
     }
 
     function _calculateHeight() {
       listHeight = []
-      const list = refs.listGroup
+      const list = refs.listGroupRef
       let height = 0
       listHeight.push(height)
       for (let i = 0; i < list.length; i++) {

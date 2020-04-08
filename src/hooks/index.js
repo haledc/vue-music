@@ -19,7 +19,11 @@ export function usePlaylist(vm, handlePlaylist) {
     handlePlaylist(playlist)
   })
 
-  watch(() => playlist, newVal => handlePlaylist(newVal), { lazy: true })
+  watch(
+    () => playlist,
+    newVal => handlePlaylist(newVal),
+    { lazy: true }
+  )
 
   return {}
 }
@@ -120,11 +124,11 @@ export function useSearch(vm, refs) {
   const searchHistory = computed(() => vm.$store.getters.searchHistory)
 
   function addQuery(query) {
-    refs.searchBox.setQuery(query)
+    refs.searchBoxRef.setQuery(query)
   }
 
   function blurInput() {
-    refs.searchBox.blur()
+    refs.searchBoxRef.blur()
   }
 
   function saveSearch() {
@@ -132,8 +136,7 @@ export function useSearch(vm, refs) {
   }
 
   function onQueryChange(query) {
-    console.log(query.value)
-    _state.query = query.value.trim()
+    _state.query = query.trim()
   }
 
   return {
