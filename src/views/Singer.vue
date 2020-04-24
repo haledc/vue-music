@@ -1,6 +1,6 @@
 <template>
-  <div class="singer" ref="singer">
-    <ListView @select="selectSinger" :data="singers" ref="list" />
+  <div class="singer" ref="singerRef">
+    <ListView @select="selectSinger" :data="singers" ref="listRef" />
     <router-view />
   </div>
 </template>
@@ -27,8 +27,8 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      refs.singer.style.bottom = bottom
-      refs.list.refresh()
+      refs.singerRef.style.bottom = bottom
+      refs.listRef.refresh()
     }
 
     usePlaylist(root, handlePlaylist)

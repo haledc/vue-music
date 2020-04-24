@@ -1,7 +1,7 @@
 <template>
-  <div class="rank" ref="rank">
+  <div class="rank" ref="rankRef">
     <!-- 排行榜列表-滚动组件 -->
-    <Scroll :data="topList" class="toplist" ref="scroll">
+    <Scroll :data="topList" class="toplist" ref="scrollRef">
       <ul>
         <li
           class="item"
@@ -55,8 +55,8 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      refs.rank.style.bottom = bottom
-      refs.scroll.refresh()
+      refs.rankRef.style.bottom = bottom
+      refs.scrollRef.refresh()
     }
 
     function _getTopList() {

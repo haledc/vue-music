@@ -7,12 +7,12 @@
     <!-- 标题-歌手名字 -->
     <h1 class="title" v-html="title"></h1>
     <!-- 背景-歌手图片 -->
-    <div class="bg-image" :style="bgStyle" ref="bgImage">
+    <div class="bg-image" :style="bgStyle" ref="bgImageRef">
       <div class="play-wrapper">
         <div
           class="play"
           v-show="songs.length > 0"
-          ref="playBtn"
+          ref="playBtnRef"
           @click="random"
         >
           <i class="icon-play"></i>
@@ -20,10 +20,10 @@
         </div>
       </div>
       <!-- 作高斯模糊图层 -->
-      <div class="filter" ref="filter"></div>
+      <div class="filter" ref="filterRef"></div>
     </div>
     <!-- 背景覆盖层 可以移动遮住图片 -->
-    <div class="bg-layer" ref="layer"></div>
+    <div class="bg-layer" ref="layerRef"></div>
     <!-- 滚动组件 -->
     <Scroll
       @scroll="scroll"
@@ -31,7 +31,7 @@
       :listen-scroll="listenScroll"
       :data="songs"
       class="list"
-      ref="list"
+      ref="listRef"
     >
       <div class="song-list-wrapper">
         <!-- 歌曲列表组件 -->
@@ -95,9 +95,9 @@ export default {
     const bgStyle = computed(() => `background-image:url(${props.bgImage})`)
 
     onMounted(() => {
-      imageHeight = refs.bgImage.clientHeight
+      imageHeight = refs.bgImageRef.clientHeight
       minTranslateY = -imageHeight + RESERVED_HEIGHT
-      refs.list.$el.style.top = `${imageHeight}px`
+      refs.listRef.$el.style.top = `${imageHeight}px`
     })
 
     usePlaylist(root, handlePlaylist)
@@ -118,24 +118,24 @@ export default {
           blur = Math.min(20, percent * 20) // 模糊效果最大为20
         }
         // layer层跟着一起往上滚动
-        refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+        refs.layerRef.style[transform] = `translate3d(0, ${translateY}px, 0)`
         // 高斯模糊效果
-        refs.filter.style[backdrop] = `blur(${blur}px)`
+        refs.filterRef.style[backdrop] = `blur(${blur}px)`
         // 当滚动的新值比最远的滚动距离小时，即滚动到顶部
         if (newY < minTranslateY) {
           zIndex = 10
-          refs.bgImage.style.paddingTop = 0
-          refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
-          refs.playBtn.style.display = 'none'
+          refs.bgImageRef.style.paddingTop = 0
+          refs.bgImageRef.style.height = `${RESERVED_HEIGHT}px`
+          refs.playBtnRef.style.display = 'none'
           // 当滚动的新值比最远的滚动距离大时，即还没有滚到顶部
           // 需要重置图片的高度，不然下拉的时候会把最上面80px的背景图片遮住
         } else {
-          refs.bgImage.style.paddingTop = '70%'
-          refs.bgImage.style.height = 0
-          refs.playBtn.style.display = ''
+          refs.bgImageRef.style.paddingTop = '70%'
+          refs.bgImageRef.style.height = 0
+          refs.playBtnRef.style.display = ''
         }
-        refs.bgImage.style[transform] = `scale(${scale})`
-        refs.bgImage.style.zIndex = zIndex
+        refs.bgImageRef.style[transform] = `scale(${scale})`
+        refs.bgImageRef.style.zIndex = zIndex
       },
       {
         lazy: true
@@ -144,8 +144,8 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      refs.list.$el.style.bottom = bottom
-      refs.list.refresh()
+      refs.listRef.$el.style.bottom = bottom
+      refs.listRef.refresh()
     }
 
     function scroll(pos) {

@@ -14,11 +14,11 @@
         />
       </div>
       <!-- 随机播放全部 -->
-      <div class="play-btn" ref="playBtn" @click="random">
+      <div class="play-btn" ref="playBtnRef" @click="random">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
-      <div class="list-wrapper" ref="listWrapper">
+      <div class="list-wrapper" ref="listWrapperRef">
         <!-- 我喜欢的 -->
         <Scroll
           class="list-scroll"
@@ -35,7 +35,7 @@
           class="list-scroll"
           v-if="currentIndex === 1"
           :data="playHistory"
-          ref="playList"
+          ref="playListRef"
         >
           <div class="list-inner">
             <SongList :songs="playHistory" @select="selectSong" />
@@ -84,9 +84,9 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      refs.listWrapper.style.bottom = bottom
+      refs.listWrapperRef.style.bottom = bottom
       refs.favoriteListRef && refs.favoriteListRef.refresh()
-      refs.playlist && refs.playlist.refresh()
+      refs.playlistRef && refs.playlistRef.refresh()
     }
 
     usePlaylist(root, handlePlaylist)

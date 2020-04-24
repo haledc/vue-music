@@ -5,7 +5,7 @@
     :data="state.result"
     :pullup="state.pullup"
     :beforeScroll="state.beforeScroll"
-    ref="suggest"
+    ref="suggestRef"
     @beforeScroll="listScroll"
     @scrollToEnd="searchMore"
   >
@@ -90,7 +90,7 @@ export default {
     function _search() {
       state.page = 1
       state.hasMore = true
-      refs.suggest.scrollTo(0, 0)
+      refs.suggestRef.scrollTo(0, 0)
       search(props.query, state.page, props.showSinger, PER_PAGE).then(res => {
         if (res.code === ERR_OK) {
           genResult(res.data, state.page).then(result => {
@@ -145,7 +145,7 @@ export default {
     }
 
     function refresh() {
-      refs.suggest.refresh()
+      refs.suggestRef.refresh()
     }
 
     return {

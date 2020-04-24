@@ -2,10 +2,14 @@
   <div class="search">
     <!-- 搜索栏组件 -->
     <div class="search-box-wrapper">
-      <SearchBox ref="searchBox" @query="onQueryChange" />
+      <SearchBox ref="searchBoxRef" @query="onQueryChange" />
     </div>
     <!-- 搜索主体部分-滚动组件 -->
-    <div class="shortcut-wrapper" v-show="!_state.query" ref="shortcutWrapper">
+    <div
+      class="shortcut-wrapper"
+      v-show="!_state.query"
+      ref="shortcutWrapperRef"
+    >
       <Scroll
         class="shortcut"
         :data="shortcut"
@@ -46,7 +50,7 @@
       </Scroll>
     </div>
     <!-- 搜索结果-suggest组件 -->
-    <div class="search-result" v-show="_state.query" ref="searchResult">
+    <div class="search-result" v-show="_state.query" ref="searchResultRef">
       <Suggest
         :query="_state.query"
         @listScroll="blurInput"
@@ -56,7 +60,7 @@
     </div>
     <!-- 弹窗确认组件 -->
     <Confirm
-      ref="confirm"
+      ref="confirmRef"
       text="是否清空所有搜索历史"
       confirmBtnText="清空"
       @confirm="clearSearchHistory"
@@ -115,9 +119,9 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : 0
-      refs.shortcutWrapper.style.bottom = bottom
+      refs.shortcutWrapperRef.style.bottom = bottom
       refs.shortcutRef.refresh()
-      refs.searchResult.style.bottom = bottom
+      refs.searchResultRef.style.bottom = bottom
       refs.suggestRef.refresh()
     }
 
@@ -133,7 +137,7 @@ export default {
     _getHotKey()
 
     function showConfirm() {
-      refs.confirm.show()
+      refs.confirmRef.show()
     }
 
     return {

@@ -28,15 +28,15 @@
           @touchend="middleTouchEnd"
         >
           <!-- 播放器中间左边-CD页面 -->
-          <div class="middle-l" ref="middleL">
+          <div class="middle-l" ref="middleLRef">
             <!-- cd图片 -->
-            <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd" ref="imageWrapper">
+            <div class="cd-wrapper" ref="cdWrapperRef">
+              <div class="cd" ref="imageWrapperRef">
                 <img
                   class="image"
                   :class="cdCls"
                   :src="currentSong.image"
-                  ref="image"
+                  ref="imageRef"
                 />
               </div>
             </div>
@@ -54,7 +54,7 @@
             <div class="lyric-wrapper">
               <div v-if="state.currentLyric">
                 <p
-                  ref="lyricLine"
+                  ref="lyricLineRef"
                   class="text"
                   :class="{ current: state.currentLineNum === index }"
                   v-for="(line, index) in state.currentLyric.lines"
@@ -89,7 +89,7 @@
             <div class="progress-bar-wrapper">
               <!-- 进度条组件 -->
               <ProgressBar
-                ref="progressBar"
+                ref="progressBarRef"
                 :percent="percent"
                 @percentChange="onProgressBarChange"
                 @percentChanging="onProgressBarChanging"
@@ -131,9 +131,9 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <div class="imgWrapper" ref="miniWrapper">
+          <div class="imgWrapper" ref="miniWrapperRef">
             <img
-              ref="miniImage"
+              ref="miniImageRef"
               :class="cdCls"
               width="40"
               height="40"
@@ -163,7 +163,7 @@
     <Playlist ref="playlistRef" />
     <!-- 多媒体标签播放音乐 -->
     <audio
-      ref="audio"
+      ref="audioRef"
       @playing="ready"
       @error="error"
       @timeupdate="updateTime"
@@ -257,8 +257,8 @@ export default {
           state.playingLyric = ''
           state.currentLineNum = 0
         }
-        refs.audio.src = newSong.url
-        refs.audio.play()
+        refs.audioRef.src = newSong.url
+        refs.audioRef.play()
         clearTimeout(timer)
         // 歌曲变化后，定时 5 秒，把 songReady 状态设置为 true
         timer = setTimeout(() => {
@@ -272,7 +272,7 @@ export default {
       () => playing.value,
       newVal => {
         if (!state.songReady) return
-        const audio = refs.audio
+        const audio = refs.audioRef
         root.$nextTick(() => {
           newVal ? audio.play() : audio.pause()
         })
@@ -291,8 +291,8 @@ export default {
       newVal => {
         if (newVal) {
           setTimeout(() => {
-            lyricList.refresh()
-            progressBar.setProgressOffset(percent.value)
+            refs.lyricListRef.refresh()
+            refs.progressBarRef.setProgressOffset(percent.value)
           }, 20)
         }
       }
@@ -327,30 +327,30 @@ export default {
           easing: 'linear'
         }
       })
-      animations.runAnimation(refs.cdWrapper, 'move', done)
+      animations.runAnimation(refs.cdWrapperRef, 'move', done)
     }
 
     function afterEnter() {
       animations.unregisterAnimation('move')
-      refs.cdWrapper.style.animation = ''
+      refs.cdWrapperRef.style.animation = ''
     }
 
     function leave(el, done) {
-      refs.cdWrapper.style.transition = 'all 0.4s'
+      refs.cdWrapperRef.style.transition = 'all 0.4s'
       const { x, y, scale } = _getPosAndScale()
-      refs.cdWrapper.style[
+      refs.cdWrapperRef.style[
         transform
       ] = `translate3d(${x}px,${y}px,0) scale(${scale})`
       const timer = setTimeout(done, 4000)
-      refs.cdWrapper.addEventListener('transitionend', () => {
+      refs.cdWrapperRef.addEventListener('transitionend', () => {
         clearTimeout(timer)
         done()
       })
     }
 
     function afterLeave() {
-      refs.cdWrapper.style.transition = ''
-      refs.cdWrapper.style[transform] = ''
+      refs.cdWrapperRef.style.transition = ''
+      refs.cdWrapperRef.style[transform] = ''
     }
 
     function togglePlaying() {
@@ -371,8 +371,8 @@ export default {
     }
 
     function loop() {
-      refs.audio.currentTime = 0
-      refs.audio.play()
+      refs.audioRef.currentTime = 0
+      refs.audioRef.play()
       setPlayingState(true)
       if (state.currentLyric) {
         state.currentLyric.seek(0)
@@ -453,7 +453,7 @@ export default {
 
     function onProgressBarChange(percent) {
       const currentTime = currentSong.value.duration * percent
-      state.currentTime = refs.audio.currentTime = currentTime
+      state.currentTime = refs.audioRef.currentTime = currentTime
       if (state.currentLyric) {
         state.currentLyric.seek(currentTime * 1000)
       }
@@ -488,10 +488,10 @@ export default {
     }
 
     function handleLyric({ lineNum, txt }) {
-      if (!refs.lyricLine) return
+      if (!refs.lyricLineRef) return
       state.currentLineNum = lineNum
       if (lineNum > 5) {
-        let lineEl = refs.lyricLine[lineNum - 5]
+        let lineEl = refs.lyricLineRef[lineNum - 5]
         refs.lyricListRef.scrollToElement(lineEl, 1000)
       } else {
         refs.lyricListRef.scrollTo(0, 0, 1000)
@@ -506,9 +506,9 @@ export default {
     function middleTouchStart(event) {
       touch.initiated = true
       touch.moved = false
-      const touch = event.touches[0]
-      touch.startX = touch.pageX
-      touch.startY = touch.pageY
+      const curTouch = event.touches[0]
+      touch.startX = curTouch.pageX
+      touch.startY = curTouch.pageY
     }
 
     function middleTouchMove(event) {
@@ -528,8 +528,8 @@ export default {
         transform
       ] = `translate3d(${offsetWidth}px, 0, 0)`
       refs.lyricListRef.$el.style[transitionDuration] = 0
-      refs.middleL.style.opacity = 1 - touch.percent
-      refs.middleL.style[transitionDuration] = 0
+      refs.middleLRef.style.opacity = 1 - touch.percent
+      refs.middleLRef.style[transitionDuration] = 0
     }
 
     function middleTouchEnd() {
@@ -559,8 +559,8 @@ export default {
         transform
       ] = `translate3d(${offsetWidth}px,0,0)`
       refs.lyricListRef.$el.style[transitionDuration] = `${time}ms`
-      refs.middleL.style.opacity = opacity
-      refs.middleL.style[transitionDuration] = `${time}ms`
+      refs.middleLRef.style.opacity = opacity
+      refs.middleLRef.style[transitionDuration] = `${time}ms`
       touch.initiated = false
     }
 

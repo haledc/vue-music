@@ -17,17 +17,17 @@
         <Scroll
           class="list-content"
           :data="sequenceList"
-          ref="listContent"
+          ref="listContentRef"
           :refreshDelay="state.refreshDelay"
         >
           <!-- 列表过渡动画 子元素需要加 key -->
-          <transition-group name="list" tag="ul" ref="list">
+          <transition-group name="list" tag="ul" ref="listRefRef">
             <li
               :key="item.id"
               class="item"
               v-for="(item, index) in sequenceList"
               @click="selectItem(item, index)"
-              ref="listItem"
+              ref="listItemRef"
             >
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{ item.name }}</span>
@@ -54,13 +54,13 @@
       </div>
       <!-- 清除确认弹窗组件 -->
       <Confirm
-        ref="confirm"
+        ref="confirmRef"
         text="是否清空播放列表"
         confirmBtnText="清空"
         @confirm="confirmClear"
       />
       <!--增加歌曲组件-->
-      <AddSong ref="addSong" />
+      <AddSong ref="addSongRef" />
     </div>
   </transition>
 </template>
@@ -122,7 +122,7 @@ export default {
     function show() {
       state.isShowFlag = true
       setTimeout(() => {
-        refs.listContent.refresh()
+        refs.listContentRef.refresh()
         scrollToCurrent(currentSong)
       }, 20)
     }
@@ -149,7 +149,7 @@ export default {
 
     function scrollToCurrent(currentSong) {
       const index = sequenceList.findIndex(song => currentSong.id === song.id)
-      refs.listContent.scrollToElement(refs.list.$el.children[index], 300)
+      refs.listContentRef.scrollToElement(refs.listRef.$el.children[index], 300)
     }
 
     function deleteOne(item) {
@@ -165,7 +165,7 @@ export default {
     }
 
     function showConfirm() {
-      refs.confirm.show()
+      refs.confirmRef.show()
     }
 
     function confirmClear() {
@@ -174,7 +174,7 @@ export default {
     }
 
     function addSong() {
-      refs.addSong.show()
+      refs.addSongRef.show()
     }
 
     return {
