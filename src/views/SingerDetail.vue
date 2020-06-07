@@ -5,46 +5,50 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
-import MusicList from '@/components/MusicList'
-import { getSingerDetail } from '@/request/singer'
-import { ERR_OK } from '@/request/config'
-import { processSongsUrl, normalizeSongs } from '@/utils/song'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import MusicList from "@/components/MusicList";
+import { getSingerDetail } from "@/request/singer";
+import { ERR_OK } from "@/request/config";
+import { processSongsUrl, normalizeSongs } from "@/utils/song";
 
 export default {
   components: {
-    MusicList
+    MusicList,
   },
-  setup(props, { root }) {
-    const songs = ref([])
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const songs = ref([]);
 
-    const singer = computed(() => root.$store.getters.singer)
-    const title = computed(() => singer.value.name)
-    const bgImage = computed(() => singer.value.avatar)
+    const singer = computed(() => store.getters.singer);
+    const title = computed(() => singer.value.name);
+    const bgImage = computed(() => singer.value.avatar);
 
     function _getDetail() {
       if (!singer.value.id) {
-        root.$router.push('/singer')
-        return
+        router.push("/singer");
+        return;
       }
-      getSingerDetail(singer.value.id).then(res => {
+      getSingerDetail(singer.value.id).then((res) => {
         if (res.code === ERR_OK) {
-          processSongsUrl(normalizeSongs(res.data.list)).then(val => {
-            songs.value = val
-          })
+          processSongsUrl(normalizeSongs(res.data.list)).then((val) => {
+            songs.value = val;
+          });
         }
-      })
+      });
     }
 
-    _getDetail()
+    _getDetail();
 
     return {
       songs,
       title,
-      bgImage
-    }
-  }
-}
+      bgImage,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">

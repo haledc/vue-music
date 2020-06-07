@@ -7,45 +7,45 @@
 </template>
 
 <script>
-import { ref, onBeforeUnmount } from '@vue/composition-api'
+import { ref, onBeforeUnmount } from "vue";
 
 export default {
   props: {
     delay: {
       type: Number,
-      default: 2000
-    }
+      default: 2000,
+    },
   },
   setup(props) {
-    const isShowFlag = ref(false)
-    let timer
+    const isShowFlag = ref(false);
+    let timer;
 
     function show(params) {
-      isShowFlag.value = true
-      clearTimeout(timer)
+      isShowFlag.value = true;
+      clearTimeout(timer);
       timer = setTimeout(() => {
-        hide()
-      }, props.delay)
+        hide();
+      }, props.delay);
     }
 
     function hide(params) {
-      isShowFlag.value = false
+      isShowFlag.value = false;
     }
 
     onBeforeUnmount(() => {
-      timer && clearTimeout(timer)
-    })
+      timer && clearTimeout(timer);
+    });
 
     return {
       isShowFlag,
-      hide
-    }
-  }
-}
+      hide,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .top-tip {
   position: fixed;

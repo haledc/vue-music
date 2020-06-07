@@ -12,50 +12,52 @@
 </template>
 
 <script>
-import { ref, watch } from '@vue/composition-api'
-import { debounce } from '@/utils/util'
+import { ref, watch } from "vue";
+import { debounce } from "@/utils/util";
 
 export default {
   props: {
     placeholder: {
       type: String,
-      default: '搜索歌曲、歌手'
-    }
+      default: "搜索歌曲、歌手",
+    },
   },
-  setup(props, { emit, refs }) {
-    const query = ref('')
+  setup(props, { emit }) {
+    const query = ref("");
+
+    const inputRef = ref(null);
 
     watch(
       () => query.value,
-      newVal => {
-        debounce(emit('query', newVal), 200)
+      (newVal) => {
+        debounce(emit("query", newVal), 200);
       }
-    )
+    );
 
     function clear() {
-      query.value = ''
+      query.value = "";
     }
 
     function setQuery(val) {
-      query.value = val
+      query.value = val;
     }
 
     function blur() {
-      refs.inputRef.blur()
+      inputRef.value.blur();
     }
 
     return {
       query,
       clear,
       setQuery,
-      blur
-    }
-  }
-}
+      blur,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .search-box {
   display: flex;

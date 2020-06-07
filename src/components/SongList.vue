@@ -26,29 +26,29 @@ export default {
   props: {
     songs: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     rank: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { emit }) {
     function selectItem(item, index) {
-      emit('select', item, index)
+      emit("select", item, index);
     }
 
     function getDesc(song) {
-      return `${song.singer} - ${song.album}`
+      return `${song.singer} - ${song.album}`;
     }
 
     function getRankCls(index) {
-      return index <= 2 ? `icon icon${index}` : 'text'
+      return index <= 2 ? `icon icon${index}` : "text";
     }
 
     function getRankText(index) {
       if (index > 2) {
-        return index + 1
+        return index + 1;
       }
     }
 
@@ -56,15 +56,15 @@ export default {
       selectItem,
       getDesc,
       getRankCls,
-      getRankText
-    }
-  }
-}
+      getRankText,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .song-list {
   .item {
@@ -87,15 +87,15 @@ export default {
         background-size: 25px 24px;
 
         &.icon0 {
-          @include bg-image('first');
+          @include bg-image("first");
         }
 
         &.icon1 {
-          @include bg-image('second');
+          @include bg-image("second");
         }
 
         &.icon2 {
-          @include bg-image('third');
+          @include bg-image("third");
         }
       }
 

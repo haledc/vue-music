@@ -174,32 +174,34 @@
 </template>
 
 <script>
-import { reactive, computed, watch } from '@vue/composition-api'
-import animations from 'create-keyframe-animation' // 动画第三方库，方便js编程
-import Lyric from 'lyric-parser' // 歌词解析库，方便歌词操作
-import ProgressBar from '@/components/ProgressBar'
-import ProgressCircle from '@/components/ProgressCircle'
-import Scroll from '@/components/Scroll'
-import Playlist from '@/components/Playlist'
-import { playMode } from '@/utils/config'
-import { prefixStyle } from '@/utils/dom'
-import { usePlayer, useMutations, useActions } from '@/hooks'
+import { ref, reactive, computed, watch, nextTick } from "vue";
+import { useStore } from "vuex";
+import animations from "create-keyframe-animation"; // 动画第三方库，方便js编程
+import Lyric from "lyric-parser"; // 歌词解析库，方便歌词操作
+import ProgressBar from "@/components/ProgressBar";
+import ProgressCircle from "@/components/ProgressCircle";
+import Scroll from "@/components/Scroll";
+import Playlist from "@/components/Playlist";
+import { playMode } from "@/utils/config";
+import { prefixStyle } from "@/utils/dom";
+import { usePlayer } from "@/hooks";
 
-const transform = prefixStyle('transform')
-const transitionDuration = prefixStyle('transitionDuration')
+const transform = prefixStyle("transform");
+const transitionDuration = prefixStyle("transitionDuration");
 
-const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g
+const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g;
 
 export default {
   components: {
     ProgressBar,
     ProgressCircle,
     Scroll,
-    Playlist
+    Playlist,
   },
-  setup(props, { root, refs }) {
-    const setFullScreen = useMutations(root, 'SET_FULL_SCREEN')
-    const savePlayHistory = useActions(root, 'savePlayHistory')
+  setup(props) {
+    const store = useStore();
+    const setFullScreen = (flag) => store.commit("SET_FULL_SCREEN", flag);
+    const savePlayHistory = (song) => store.dispatch("savePlayHistory", song);
 
     const state = reactive({
       songReady: false,
@@ -207,15 +209,28 @@ export default {
       radius: 32,
       currentLyric: null,
       currentLineNum: 0,
-      currentShow: 'cd',
-      playingLyric: '',
+      currentShow: "cd",
+      playingLyric: "",
       isPureMusic: false,
-      pureMusicLyric: '',
-      canLyricPlay: false
-    })
-    let touch = {},
-      timer,
-      lyricList
+      pureMusicLyric: "",
+      canLyricPlay: false,
+    });
+
+    let touch = {};
+    let timer;
+    let lyricList;
+
+    const middleLRef = ref(null);
+    const cdWrapperRef = ref(null);
+    const imageWrapperRef = ref(null);
+    const imageRef = ref(null);
+    const lyricListRef = ref(null);
+    const lyricLineRef = ref(null);
+    const progressBarRef = ref(null);
+    const miniWrapperRef = ref(null);
+    const miniImageRef = ref(null);
+    const playlistRef = ref(null);
+    const audioRef = ref(null);
 
     const {
       mode,
@@ -226,384 +241,396 @@ export default {
       iconMode,
       favoriteIcon,
       changeMode,
-      toggleFavorite
-    } = usePlayer(root)
+      toggleFavorite,
+    } = usePlayer();
 
-    const fullScreen = computed(() => root.$store.getters.fullScreen)
-    const playing = computed(() => root.$store.getters.playing)
-    const currentIndex = computed(() => root.$store.getters.currentIndex)
-    const cdCls = computed(() => (playing.value ? 'play' : ''))
+    const fullScreen = computed(() => store.getters.fullScreen);
+    const playing = computed(() => store.getters.playing);
+    const currentIndex = computed(() => store.getters.currentIndex);
+    const cdCls = computed(() => (playing.value ? "play" : ""));
     const playIcon = computed(() =>
-      playing.value ? 'icon-pause' : 'icon-play'
-    )
+      playing.value ? "icon-pause" : "icon-play"
+    );
     const miniIcon = computed(() =>
-      playing.value ? 'icon-pause-mini' : 'icon-play-mini'
-    )
-    const disableCls = computed(() => (state.songReady ? '' : 'disable'))
+      playing.value ? "icon-pause-mini" : "icon-play-mini"
+    );
+    const disableCls = computed(() => (state.songReady ? "" : "disable"));
     const percent = computed(
       () => state.currentTime / currentSong.value.duration
-    )
+    );
 
     watch(
       () => currentSong.value,
       (newSong, oldSong) => {
-        if (!newSong.id || !newSong.url || newSong.id === oldSong.id) return
-        state.songReady = false
-        state.canLyricPlay = false
+        if (!newSong.id || !newSong.url || newSong.id === oldSong.id) return;
+        state.songReady = false;
+        state.canLyricPlay = false;
         if (state.currentLyric) {
-          state.currentLyric.stop()
-          state.currentLyric = null
-          state.currentTime = 0
-          state.playingLyric = ''
-          state.currentLineNum = 0
+          state.currentLyric.stop();
+          state.currentLyric = null;
+          state.currentTime = 0;
+          state.playingLyric = "";
+          state.currentLineNum = 0;
         }
-        refs.audioRef.src = newSong.url
-        refs.audioRef.play()
-        clearTimeout(timer)
+        audioRef.value.src = newSong.url;
+        audioRef.value.play();
+        clearTimeout(timer);
         // 歌曲变化后，定时 5 秒，把 songReady 状态设置为 true
         timer = setTimeout(() => {
-          state.songReady = true
-        }, 5000)
-        getLyric()
+          state.songReady = true;
+        }, 5000);
+        getLyric();
       }
-    )
+    );
 
     watch(
       () => playing.value,
-      newVal => {
-        if (!state.songReady) return
-        const audio = refs.audioRef
-        root.$nextTick(() => {
-          newVal ? audio.play() : audio.pause()
-        })
+      (newVal) => {
+        if (!state.songReady) return;
+        const audio = audioRef.value;
+        nextTick(() => {
+          newVal ? audio.play() : audio.pause();
+        });
         if (!newVal) {
           if (fullScreen.value) {
-            syncWrapperTransform('imageWrapper', 'image')
+            syncWrapperTransform(imageWrapperRef, imageRef);
           } else {
-            syncWrapperTransform('miniWrapper', 'miniImage')
+            syncWrapperTransform(miniWrapperRef, miniImageRef);
           }
         }
       }
-    )
+    );
 
     watch(
       () => fullScreen.value,
-      newVal => {
+      (newVal) => {
         if (newVal) {
           setTimeout(() => {
-            refs.lyricListRef.refresh()
-            refs.progressBarRef.setProgressOffset(percent.value)
-          }, 20)
+            lyricListRef.value.refresh();
+            progressBarRef.value.setProgressOffset(percent.value);
+            progressBarRef.value.setProgressOffset(percent.value);
+          }, 20);
         }
       }
-    )
+    );
 
     function back() {
-      setFullScreen(false)
+      setFullScreen(false);
     }
 
     function open() {
-      setFullScreen(true)
+      setFullScreen(true);
     }
 
     function enter(el, done) {
-      const { x, y, scale } = _getPosAndScale()
+      const { x, y, scale } = _getPosAndScale();
       let animation = {
         0: {
-          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`,
         },
         60: {
-          transform: `translate3d(0,0,0) scale(1.1)`
+          transform: `translate3d(0,0,0) scale(1.1)`,
         },
         100: {
-          transform: `translate3d(0,0,0) scale(1)`
-        }
-      }
+          transform: `translate3d(0,0,0) scale(1)`,
+        },
+      };
       animations.registerAnimation({
-        name: 'move',
+        name: "move",
         animation,
         presets: {
           duration: 400,
-          easing: 'linear'
-        }
-      })
-      animations.runAnimation(refs.cdWrapperRef, 'move', done)
+          easing: "linear",
+        },
+      });
+      animations.runAnimation(cdWrapperRef.value, "move", done);
     }
 
     function afterEnter() {
-      animations.unregisterAnimation('move')
-      refs.cdWrapperRef.style.animation = ''
+      animations.unregisterAnimation("move");
+      cdWrapperRef.value.style.animation = "";
     }
 
     function leave(el, done) {
-      refs.cdWrapperRef.style.transition = 'all 0.4s'
-      const { x, y, scale } = _getPosAndScale()
-      refs.cdWrapperRef.style[
+      cdWrapperRef.value.style.transition = "all 0.4s";
+      const { x, y, scale } = _getPosAndScale();
+      cdWrapperRef.value.style[
         transform
-      ] = `translate3d(${x}px,${y}px,0) scale(${scale})`
-      const timer = setTimeout(done, 4000)
-      refs.cdWrapperRef.addEventListener('transitionend', () => {
-        clearTimeout(timer)
-        done()
-      })
+      ] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+      const timer = setTimeout(done, 4000);
+      cdWrapperRef.value.addEventListener("transitionend", () => {
+        clearTimeout(timer);
+        done();
+      });
     }
 
     function afterLeave() {
-      refs.cdWrapperRef.style.transition = ''
-      refs.cdWrapperRef.style[transform] = ''
+      cdWrapperRef.value.style.transition = "";
+      cdWrapperRef.value.style[transform] = "";
     }
 
     function togglePlaying() {
-      if (!state.songReady) return
-      setPlayingState(!playing.value)
+      if (!state.songReady) return;
+      setPlayingState(!playing.value);
       if (state.currentLyric) {
-        state.currentLyric.togglePlay()
+        state.currentLyric.togglePlay();
       }
     }
 
     function end() {
-      state.currentTime = 0
+      state.currentTime = 0;
       if (mode.value === playMode.loop) {
-        loop()
+        loop();
       } else {
-        next()
+        next();
       }
     }
 
     function loop() {
-      refs.audioRef.currentTime = 0
-      refs.audioRef.play()
-      setPlayingState(true)
+      audioRef.value.currentTime = 0;
+      audioRef.value.play();
+      setPlayingState(true);
       if (state.currentLyric) {
-        state.currentLyric.seek(0)
+        state.currentLyric.seek(0);
       }
     }
 
     function next() {
-      if (!state.songReady) return
+      if (!state.songReady) return;
       if (playlist.value.length === 1) {
-        loop()
+        loop();
       } else {
-        let index = currentIndex.value + 1
+        let index = currentIndex.value + 1;
         if (index === playlist.value.length) {
-          index = 0
+          index = 0;
         }
-        setCurrentIndex(index)
+        setCurrentIndex(index);
         if (!playing.value) {
-          togglePlaying()
+          togglePlaying();
         }
       }
     }
 
     function prev() {
-      if (!state.songReady) return
+      if (!state.songReady) return;
       if (playlist.value.length === 1) {
-        loop()
+        loop();
       } else {
-        let index = currentIndex.value - 1
+        let index = currentIndex.value - 1;
         if (index === -1) {
-          index = playlist.value.length - 1
+          index = playlist.value.length - 1;
         }
-        setCurrentIndex(index)
+        setCurrentIndex(index);
         if (!playing.vaule) {
-          togglePlaying()
+          togglePlaying();
         }
       }
     }
 
     function ready() {
-      clearTimeout(timer)
-      state.songReady = true
-      state.canLyricPlay = true
-      savePlayHistory(currentSong.value)
+      clearTimeout(timer);
+      state.songReady = true;
+      state.canLyricPlay = true;
+      savePlayHistory(currentSong.value);
       if (state.currentLyric && !state.isPureMusic) {
-        state.currentLyric.seek(state.currentTime * 1000)
+        state.currentLyric.seek(state.currentTime * 1000);
       }
     }
 
     function paused() {
-      setPlayingState(false)
+      setPlayingState(false);
       if (state.currentLyric) {
-        state.currentLyric.stop()
+        state.currentLyric.stop();
       }
     }
 
     function error() {
-      clearTimeout(timer)
-      state.songReady = true
+      clearTimeout(timer);
+      state.songReady = true;
     }
 
     function updateTime(event) {
-      state.currentTime = event.target.currentTime
+      state.currentTime = event.target.currentTime;
     }
 
     function format(interval) {
-      interval = interval | 0
-      const minute = (interval / 60) | 0
-      const second = _pad(interval % 60)
-      return `${minute}:${second}`
+      interval = interval | 0;
+      const minute = (interval / 60) | 0;
+      const second = _pad(interval % 60);
+      return `${minute}:${second}`;
     }
 
     function onProgressBarChanging(percent) {
-      state.currentTime = currentSong.value.duration * percent
+      state.currentTime = currentSong.value.duration * percent;
       if (state.currentLyric) {
-        state.currentLyric.seek(state.currentTime * 1000)
+        state.currentLyric.seek(state.currentTime * 1000);
       }
     }
 
     function onProgressBarChange(percent) {
-      const currentTime = currentSong.value.duration * percent
-      state.currentTime = refs.audioRef.currentTime = currentTime
+      const currentTime = currentSong.value.duration * percent;
+      state.currentTime = audioRef.value.currentTime = currentTime;
       if (state.currentLyric) {
-        state.currentLyric.seek(currentTime * 1000)
+        state.currentLyric.seek(currentTime * 1000);
       }
       if (!playing.value) {
-        togglePlaying()
+        togglePlaying();
       }
     }
 
     function getLyric() {
       currentSong.value
         .getLyric()
-        .then(lyric => {
-          if (currentSong.value.lyric !== lyric) return
-          state.currentLyric = new Lyric(lyric, handleLyric)
-          state.isPureMusic = !state.currentLyric.lines.length
+        .then((lyric) => {
+          if (currentSong.value.lyric !== lyric) return;
+          state.currentLyric = new Lyric(lyric, handleLyric);
+          state.isPureMusic = !state.currentLyric.lines.length;
           if (state.isPureMusic) {
             state.pureMusicLyric = state.currentLyric.lrc
-              .replace(timeExp, '')
-              .trim()
-            state.playingLyric = state.pureMusicLyric
+              .replace(timeExp, "")
+              .trim();
+            state.playingLyric = state.pureMusicLyric;
           } else {
             if (playing.value && state.canLyricPlay) {
-              state.currentLyric.seek(state.currentTime * 1000)
+              state.currentLyric.seek(state.currentTime * 1000);
             }
           }
         })
         .catch(() => {
-          state.currentLyric = null
-          state.playingLyric = ''
-          state.currentLineNum = 0
-        })
+          state.currentLyric = null;
+          state.playingLyric = "";
+          state.currentLineNum = 0;
+        });
     }
 
     function handleLyric({ lineNum, txt }) {
-      if (!refs.lyricLineRef) return
-      state.currentLineNum = lineNum
+      if (!lyricLineRef.value) return;
+      state.currentLineNum = lineNum;
       if (lineNum > 5) {
-        let lineEl = refs.lyricLineRef[lineNum - 5]
-        refs.lyricListRef.scrollToElement(lineEl, 1000)
+        let lineEl = lyricLineRef.value[lineNum - 5];
+        lyricListRef.value.scrollToElement(lineEl, 1000);
       } else {
-        refs.lyricListRef.scrollTo(0, 0, 1000)
+        lyricListRef.value.scrollTo(0, 0, 1000);
       }
-      state.playingLyric = txt
+      state.playingLyric = txt;
     }
 
     function showPlaylist() {
-      refs.playlistRef.show()
+      playlistRef.value.show();
     }
 
     function middleTouchStart(event) {
-      touch.initiated = true
-      touch.moved = false
-      const curTouch = event.touches[0]
-      touch.startX = curTouch.pageX
-      touch.startY = curTouch.pageY
+      touch.initiated = true;
+      touch.moved = false;
+      const curTouch = event.touches[0];
+      touch.startX = curTouch.pageX;
+      touch.startY = curTouch.pageY;
     }
 
     function middleTouchMove(event) {
-      if (!touch.initiated) return
-      const currentTouch = event.touches[0]
-      const deltaX = currentTouch.pageX - touch.startX
-      const deltaY = currentTouch.pageY - touch.startY
-      if (Math.abs(deltaY) > Math.abs(deltaX)) return
-      if (!touch.moved) touch.moved = true
-      const left = state.currentShow === 'cd' ? 0 : -window.innerWidth
+      if (!touch.initiated) return;
+      const currentTouch = event.touches[0];
+      const deltaX = currentTouch.pageX - touch.startX;
+      const deltaY = currentTouch.pageY - touch.startY;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+      if (!touch.moved) touch.moved = true;
+      const left = state.currentShow === "cd" ? 0 : -window.innerWidth;
       const offsetWidth = Math.min(
         0,
         Math.max(-window.innerWidth, left + deltaX)
-      )
-      touch.percent = Math.abs(offsetWidth / window.innerWidth)
-      refs.lyricListRef.$el.style[
+      );
+      touch.percent = Math.abs(offsetWidth / window.innerWidth);
+      lyricListRef.value.$el.style[
         transform
-      ] = `translate3d(${offsetWidth}px, 0, 0)`
-      refs.lyricListRef.$el.style[transitionDuration] = 0
-      refs.middleLRef.style.opacity = 1 - touch.percent
-      refs.middleLRef.style[transitionDuration] = 0
+      ] = `translate3d(${offsetWidth}px, 0, 0)`;
+      lyricListRef.value.$el.style[transitionDuration] = 0;
+      middleLRef.value.style.opacity = 1 - touch.percent;
+      middleLRef.value.style[transitionDuration] = 0;
     }
 
     function middleTouchEnd() {
-      if (!touch.moved) return
-      let offsetWidth, opacity
-      if (state.currentShow === 'cd') {
+      if (!touch.moved) return;
+      let offsetWidth, opacity;
+      if (state.currentShow === "cd") {
         if (touch.percent > 0.1) {
-          offsetWidth = -window.innerWidth
-          opacity = 0
-          state.currentShow = 'lyric'
+          offsetWidth = -window.innerWidth;
+          opacity = 0;
+          state.currentShow = "lyric";
         } else {
-          offsetWidth = 0
-          opacity = 1
+          offsetWidth = 0;
+          opacity = 1;
         }
       } else {
         if (touch.percent < 0.9) {
-          offsetWidth = 0
-          state.currentShow = 'cd'
-          opacity = 1
+          offsetWidth = 0;
+          state.currentShow = "cd";
+          opacity = 1;
         } else {
-          offsetWidth = -window.innerWidth
-          opacity = 0
+          offsetWidth = -window.innerWidth;
+          opacity = 0;
         }
       }
-      const time = 300
-      refs.lyricListRef.$el.style[
+      const time = 300;
+      lyricListRef.value.$el.style[
         transform
-      ] = `translate3d(${offsetWidth}px,0,0)`
-      refs.lyricListRef.$el.style[transitionDuration] = `${time}ms`
-      refs.middleLRef.style.opacity = opacity
-      refs.middleLRef.style[transitionDuration] = `${time}ms`
-      touch.initiated = false
+      ] = `translate3d(${offsetWidth}px,0,0)`;
+      lyricListRef.value.$el.style[transitionDuration] = `${time}ms`;
+      middleLRef.value.style.opacity = opacity;
+      middleLRef.style[transitionDuration] = `${time}ms`;
+      touch.initiated = false;
     }
 
     function _pad(num, n = 2) {
-      let len = num.toString().length
+      let len = num.toString().length;
       while (len < n) {
-        num = '0' + num
-        len++
+        num = "0" + num;
+        len++;
       }
-      return num
+      return num;
     }
 
     function _getPosAndScale() {
       // 小圆图片
-      const targetWidth = 100
-      const paddingLeft = 40
-      const paddingBottom = 30
+      const targetWidth = 100;
+      const paddingLeft = 40;
+      const paddingBottom = 30;
       // 大圆图片
-      const paddingTop = 80
-      const width = window.innerWidth * 0.8
+      const paddingTop = 80;
+      const width = window.innerWidth * 0.8;
 
-      const scale = targetWidth / width
-      const x = -(window.innerWidth / 2 - paddingLeft)
-      const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+      const scale = targetWidth / width;
+      const x = -(window.innerWidth / 2 - paddingLeft);
+      const y = window.innerHeight - paddingTop - width / 2 - paddingBottom;
       return {
         x,
         y,
-        scale
-      }
+        scale,
+      };
     }
 
     function syncWrapperTransform(wrapper, inner) {
-      if (!refs[wrapper]) return
-      let imageWrapper = refs[wrapper]
-      let image = refs[inner]
-      let wTransform = getComputedStyle(imageWrapper)[transform]
-      let iTransform = getComputedStyle(image)[transform]
+      if (!wrapper.value) return;
+      let imageWrapper = wrapper.value;
+      let image = inner.value;
+      let wTransform = getComputedStyle(imageWrapper)[transform];
+      let iTransform = getComputedStyle(image)[transform];
       imageWrapper.style[transform] =
-        wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform)
+        wTransform === "none" ? iTransform : iTransform.concat(" ", wTransform);
     }
 
     return {
       state,
+      middleLRef,
+      cdWrapperRef,
+      imageWrapperRef,
+      imageRef,
+      lyricListRef,
+      lyricLineRef,
+      progressBarRef,
+      miniWrapperRef,
+      miniImageRef,
+      playlistRef,
+      audioRef,
       radius: 32,
       cdCls,
       iconMode,
@@ -613,11 +640,9 @@ export default {
       favoriteIcon,
       disableCls,
       percent,
-      fullScreen,
       currentSong,
       playlist,
       enter,
-      disableCls,
       changeMode,
       afterEnter,
       leave,
@@ -639,15 +664,15 @@ export default {
       error,
       updateTime,
       end,
-      paused
-    }
-  }
-}
+      paused,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .player {
   .normal-player {

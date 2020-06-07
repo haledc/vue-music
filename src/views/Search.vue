@@ -71,7 +71,8 @@
 </template>
 
 <script>
-import { ref, computed, watch } from "@vue/composition-api";
+import { ref, computed, watch } from "vue";
+import { useStore } from "vuex";
 import SearchBox from "@/components/SearchBox";
 import Suggest from "@/components/Suggest";
 import SearchList from "@/components/SearchList";
@@ -79,7 +80,7 @@ import Confirm from "@/components/Confirm";
 import Scroll from "@/components/Scroll";
 import { getHotKey } from "@/request/search";
 import { ERR_OK } from "@/request/config";
-import { usePlaylist, useSearch, useActions } from "@/hooks";
+import { usePlaylist, useSearch } from "@/hooks";
 
 export default {
   components: {
@@ -89,10 +90,19 @@ export default {
     Confirm,
     Scroll,
   },
-  setup(props, { root, refs }) {
-    const clearSearchHistory = useActions(root, "clearSearchHistory");
+  setup(props) {
+    const store = useStore();
+    const clearSearchHistory = (history) =>
+      store.dispatch("clearSearchHistory", history);
 
     const hotKey = ref([]);
+
+    const searchBoxRef = ref(null);
+    const shortcutWrapperRef = ref(null);
+    const shortcutRef = ref(null);
+    const searchResultRef = ref(null);
+    const suggestRef = ref(null);
+    const confirmRef = ref(null);
 
     const {
       searchState,
@@ -102,14 +112,14 @@ export default {
       deleteSearchHistory,
       blurInput,
       saveSearch,
-    } = useSearch(root, refs);
+    } = useSearch();
 
     watch(
       () => searchState.query,
       (newVal) => {
         if (!newVal) {
           setTimeout(() => {
-            refs.shortcutRef.refresh();
+            shortcutRef.value.refresh();
           }, 20);
         }
       }
@@ -119,13 +129,13 @@ export default {
 
     function handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? "60px" : 0;
-      refs.shortcutWrapperRef.style.bottom = bottom;
-      refs.shortcutRef.refresh();
-      refs.searchResultRef.style.bottom = bottom;
-      refs.suggestRef.refresh();
+      shortcutWrapperRef.value.style.bottom = bottom;
+      shortcutRef.value.refresh();
+      searchResultRef.value.style.bottom = bottom;
+      suggestRef.value.refresh();
     }
 
-    usePlaylist(root, handlePlaylist);
+    usePlaylist(handlePlaylist);
 
     function _getHotKey() {
       getHotKey().then((res) => {
@@ -134,13 +144,20 @@ export default {
         }
       });
     }
+
     _getHotKey();
 
     function showConfirm() {
-      refs.confirmRef.show();
+      confirmRef.value.show();
     }
 
     return {
+      searchBoxRef,
+      shortcutWrapperRef,
+      shortcutRef,
+      searchResultRef,
+      suggestRef,
+      confirmRef,
       hotKey,
       searchState,
       searchHistory,

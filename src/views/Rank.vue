@@ -36,58 +36,68 @@
 </template>
 
 <script>
-import { ref } from '@vue/composition-api'
-import Scroll from '@/components/Scroll'
-import Loading from '@/components/Loading'
-import { getTopList } from '@/request/rank'
-import { ERR_OK } from '@/request/config'
-import { usePlaylist, useMutations } from '@/hooks'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Scroll from "@/components/Scroll";
+import Loading from "@/components/Loading";
+import { getTopList } from "@/request/rank";
+import { ERR_OK } from "@/request/config";
+import { usePlaylist, useMutations } from "@/hooks";
 
 export default {
   components: {
     Scroll,
-    Loading
+    Loading,
   },
-  setup(props, { root, refs }) {
-    const setTopList = useMutations(root, 'SET_TOP_LIST')
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const setTopList = (list) => store.commit("SET_TOP_LIST", list);
 
-    const topList = ref([])
+    const topList = ref([]);
+
+    const rankRef = ref(null);
+    const scrollRef = ref(null);
 
     function handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      refs.rankRef.style.bottom = bottom
-      refs.scrollRef.refresh()
+      const bottom = playlist.length > 0 ? "60px" : "";
+      rankRef.value.style.bottom = bottom;
+      scrollRef.value.refresh();
     }
 
     function _getTopList() {
-      getTopList().then(res => {
+      getTopList().then((res) => {
         if (res.code === ERR_OK) {
-          topList.value = res.data.topList
+          topList.value = res.data.topList;
         }
-      })
+      });
     }
-    _getTopList()
 
-    usePlaylist(root, handlePlaylist)
+    _getTopList();
+
+    usePlaylist(handlePlaylist);
 
     function selectItem(item) {
-      root.$router.push({
-        path: `/rank/${item.id}`
-      })
-      setTopList(item)
+      router.push({
+        path: `/rank/${item.id}`,
+      });
+      setTopList(item);
     }
 
     return {
+      rankRef,
+      scrollRef,
       topList,
-      selectItem
-    }
-  }
-}
+      selectItem,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .rank {
   position: fixed;

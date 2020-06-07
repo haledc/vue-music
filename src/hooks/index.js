@@ -5,7 +5,7 @@ import { shuffle } from "../utils/util";
 
 export function usePlaylist(handlePlaylist) {
   const store = useStore();
-  const playlist = computed(() => tore.getters.playlist);
+  const playlist = computed(() => store.getters.playlist);
 
   onMounted(() => {
     handlePlaylist(playlist);

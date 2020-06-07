@@ -19,167 +19,173 @@
 
 <script>
 import {
+  ref,
   reactive,
   onMounted,
   onUnmounted,
   onActivated,
-  onDeactivated
-} from '@vue/composition-api'
-import BScroll from 'better-scroll'
-import { addClass } from '@/utils/dom'
+  onDeactivated,
+} from "vue";
+import BScroll from "better-scroll";
+import { addClass } from "@/utils/dom";
 
 export default {
   props: {
     loop: {
       type: Boolean,
-      default: true
+      default: true,
     },
     autoPlay: {
       type: Boolean,
-      default: true
+      default: true,
     },
     interval: {
       type: Number,
-      default: 2000
-    }
+      default: 2000,
+    },
   },
-  setup(props, { refs }) {
+  setup(props) {
     const state = reactive({
       dots: [],
-      currentPageIndex: 0
-    })
+      currentPageIndex: 0,
+    });
 
-    let slider, timer, resizeTimer, sliderChildren
+    const sliderRef = ref(null);
+    const sliderGroupRef = ref(null);
+
+    let slider, timer, resizeTimer, sliderChildren;
 
     onMounted(() => {
       setTimeout(() => {
-        _setSliderWidth()
-        _initDots()
-        _initSlider()
+        _setSliderWidth();
+        _initDots();
+        _initSlider();
 
         if (props.autoPlay) {
-          _play()
+          _play();
         }
-      }, 20)
+      }, 20);
 
-      window.addEventListener('resize', onResize)
-    })
+      window.addEventListener("resize", onResize);
+    });
 
     onUnmounted(() => {
-      slider.disable()
-      clearTimeout(timer)
-      window.removeEventListener('resize', onResize)
-    })
+      slider.disable();
+      clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    });
 
     onActivated(() => {
-      if (!slider) return
-      slider.enable()
-      let pageIndex = slider.getCurrentPage().pageX
-      slider.goToPage(pageIndex, 0, 0)
-      state.currentPageIndex = pageIndex
+      if (!slider) return;
+      slider.enable();
+      let pageIndex = slider.getCurrentPage().pageX;
+      slider.goToPage(pageIndex, 0, 0);
+      state.currentPageIndex = pageIndex;
       if (props.autoPlay) {
-        _play()
+        _play();
       }
-    })
+    });
 
     onDeactivated(() => {
-      slider.disable()
-      clearTimeout(timer)
-    })
+      slider.disable();
+      clearTimeout(timer);
+    });
 
     function refresh() {
       if (slider) {
-        _setSliderWidth(true)
-        slider.refresh()
+        _setSliderWidth(true);
+        slider.refresh();
       }
     }
 
     function _initDots() {
-      state.dots = new Array(sliderChildren.length)
+      state.dots = new Array(sliderChildren.length);
     }
 
     function _setSliderWidth(isResize) {
-      sliderChildren = refs.sliderGroupRef.children
+      sliderChildren = sliderGroupRef.value.children;
 
-      let width = 0
-      let sliderWidth = refs.sliderRef.clientWidth
+      let width = 0;
+      let sliderWidth = sliderRef.value.clientWidth;
       for (let i = 0; i < sliderChildren.length; i++) {
-        let child = sliderChildren[i]
-        addClass(child, 'slider-item')
-        child.style.width = sliderWidth + 'px'
-        width += sliderWidth
+        let child = sliderChildren[i];
+        addClass(child, "slider-item");
+        child.style.width = sliderWidth + "px";
+        width += sliderWidth;
       }
       if (props.loop && !isResize) {
-        width += 2 * sliderWidth
+        width += 2 * sliderWidth;
       }
-      refs.sliderGroupRef.style.width = width + 'px'
+      sliderGroupRef.value.style.width = width + "px";
     }
 
     function _initSlider() {
-      slider = new BScroll(refs.sliderRef, {
+      slider = new BScroll(sliderRef.value, {
         scrollX: true,
         scrollY: false,
         momentum: false,
         snap: {
           loop: props.loop,
           threshold: 0.3,
-          speed: 400
-        }
-      })
-      slider.on('scrollEnd', _getCurrentPageIndex)
-      slider.on('touchEnd', () => {
+          speed: 400,
+        },
+      });
+      slider.on("scrollEnd", _getCurrentPageIndex);
+      slider.on("touchEnd", () => {
         if (props.autoPlay) {
-          _play()
+          _play();
         }
-      })
-      slider.on('beforeScrollStart', () => {
+      });
+      slider.on("beforeScrollStart", () => {
         if (props.autoPlay) {
-          clearTimeout(timer)
+          clearTimeout(timer);
         }
-      })
+      });
     }
 
     function _getCurrentPageIndex() {
-      let pageIndex = slider.getCurrentPage().pageX
-      state.currentPageIndex = pageIndex
+      let pageIndex = slider.getCurrentPage().pageX;
+      state.currentPageIndex = pageIndex;
       if (props.autoPlay) {
-        _play()
+        _play();
       }
     }
 
     function _play() {
-      clearTimeout(timer)
+      clearTimeout(timer);
       timer = setTimeout(() => {
-        slider.next()
-      }, props.interval)
+        slider.next();
+      }, props.interval);
     }
 
     function onResize() {
-      if (!slider || !slider.enabled) return
+      if (!slider || !slider.enabled) return;
 
-      clearTimeout(resizeTimer)
+      clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         if (slider.isInTransition) {
-          _getCurrentPageIndex()
+          _getCurrentPageIndex();
         } else {
           if (props.autoPlay) {
-            _play()
+            _play();
           }
         }
-        refresh()
-      }, 60)
+        refresh();
+      }, 60);
     }
 
     return {
       state,
-      refresh
-    }
-  }
-}
+      sliderRef,
+      sliderGroupRef,
+      refresh,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .slider {
   min-height: 1px;

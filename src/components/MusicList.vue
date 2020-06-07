@@ -86,7 +86,9 @@ export default {
     const router = useRouter();
     const store = useStore();
     const selectPlay = (payload) => store.dispatch("selectPlay", payload);
-    const randomPlay = (payload) => store.dispatch("randomPlay", payload);
+    const randomPlay = (list) => store.dispatch("randomPlay", list);
+
+    const scrollY = ref(0);
 
     const bgImageRef = ref(null);
     const playBtnRef = ref(null);
@@ -97,8 +99,6 @@ export default {
     const probeType = 3;
     const listenScroll = true;
     let imageHeight, minTranslateY;
-
-    const scrollY = ref(0);
 
     const bgStyle = computed(() => `background-image:url(${props.bgImage})`);
 
@@ -172,9 +172,7 @@ export default {
     }
 
     function random() {
-      randomPlay({
-        list: props.songs,
-      });
+      randomPlay(props.songs);
     }
 
     return {

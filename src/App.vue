@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import Header from '@/components/Header'
-import Tab from '@/components/Tab'
-import Player from '@/views/Player'
+import Header from "@/components/Header";
+import Tab from "@/components/Tab";
+import Player from "@/views/Player";
 
 export default {
   components: {
     Header,
     Tab,
-    Player
-  }
-}
+    Player,
+  },
+};
 </script>

@@ -51,68 +51,81 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
-import Switches from '@/components/Switches'
-import NoResult from '@/components/NoResult'
-import Scroll from '@/components/Scroll'
-import SongList from '@/components/SongList'
-import { usePlaylist, useActions } from '@/hooks'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Switches from "@/components/Switches";
+import NoResult from "@/components/NoResult";
+import Scroll from "@/components/Scroll";
+import SongList from "@/components/SongList";
+import { usePlaylist } from "@/hooks";
 
 export default {
   components: {
     Switches,
     Scroll,
     SongList,
-    NoResult
+    NoResult,
   },
-  setup(props, { root, refs }) {
-    const insertSong = useActions(root, 'insertSong')
-    const randomPlay = useActions(root, 'randomPlay')
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const insertSong = (song) => store.dispatch("insertSong", song);
+    const randomPlay = (list) => store.dispatch("randomPlay", list);
 
-    const currentIndex = ref(0)
+    const currentIndex = ref(0);
 
-    const favoriteList = computed(() => root.$store.getters.favoriteList)
-    const playHistory = computed(() => root.$store.getters.playHistory)
+    const playBtnRef = ref(null);
+    const listWrapperRef = ref(null);
+    const favoriteListRef = ref(null);
+    const playListRef = ref(null);
+
+    const favoriteList = computed(() => store.getters.favoriteList);
+    const playHistory = computed(() => store.getters.playHistory);
     const noResult = computed(() =>
       currentIndex.value === 0
         ? !favoriteList.value.length
         : !playHistory.value.length
-    )
+    );
     const noResultDesc = computed(() =>
-      currentIndex.value === 0 ? '暂无收藏歌曲' : '你还没有听过歌曲'
-    )
+      currentIndex.value === 0 ? "暂无收藏歌曲" : "你还没有听过歌曲"
+    );
 
     function handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      refs.listWrapperRef.style.bottom = bottom
-      refs.favoriteListRef && refs.favoriteListRef.refresh()
-      refs.playlistRef && refs.playlistRef.refresh()
+      const bottom = playlist.length > 0 ? "60px" : "";
+      listWrapperRef.value.style.bottom = bottom;
+      favoriteListRef.value && favoriteListRef.value.refresh();
+      playlistRef.value && playlistRef.value.refresh();
     }
 
-    usePlaylist(root, handlePlaylist)
+    usePlaylist(handlePlaylist);
 
     function switchItem(index) {
-      currentIndex.value = index
+      currentIndex.value = index;
     }
 
     function selectSong(song) {
-      insertSong(song)
+      insertSong(song);
     }
 
     function back() {
-      root.$router.back()
+      router.back();
     }
 
     function random() {
       let list =
-        currentIndex.value === 0 ? favoriteList.value : playHistory.value
-      if (list.length === 0) return
-      randomPlay({ list })
+        currentIndex.value === 0 ? favoriteList.value : playHistory.value;
+      if (list.length === 0) return;
+      randomPlay(list);
     }
 
     return {
+      playBtnRef,
+      listWrapperRef,
+      favoriteListRef,
+      playlistRef,
       currentIndex,
-      switches: [{ name: '我喜欢的' }, { name: '最近听的' }],
+      switches: [{ name: "我喜欢的" }, { name: "最近听的" }],
       noResult,
       noResultDesc,
       back,
@@ -120,14 +133,14 @@ export default {
       random,
       favoriteList,
       selectSong,
-      playHistory
-    }
-  }
-}
+      playHistory,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .user-center {
   position: fixed;

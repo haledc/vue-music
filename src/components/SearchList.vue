@@ -21,29 +21,29 @@ export default {
   props: {
     searches: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   setup(props, { emit }) {
     function selectItem(item) {
-      emit('select', item)
+      emit("select", item);
     }
 
     function deleteOne(item) {
-      emit('delete', item)
+      emit("delete", item);
     }
 
     return {
       selectItem,
-      deleteOne
-    }
-  }
-}
+      deleteOne,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .search-list {
   .search-item {

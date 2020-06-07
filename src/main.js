@@ -1,6 +1,5 @@
 import { createApp } from "vue";
-import VueLazyLoad from "vue-lazyload";
-import VueCompositionApi from "@vue/composition-api";
+import VueLazyLoad from "vue3-lazy";
 
 import App from "./App";
 import router from "./router";

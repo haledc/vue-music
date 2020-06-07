@@ -14,23 +14,23 @@
 
 <script>
 const routers = [
-  { to: '/recommend', text: '推荐' },
-  { to: '/singer', text: '歌手' },
-  { to: '/rank', text: '排行' },
-  { to: '/search', text: '搜索' }
-]
+  { to: "/recommend", text: "推荐" },
+  { to: "/singer", text: "歌手" },
+  { to: "/rank", text: "排行" },
+  { to: "/search", text: "搜索" },
+];
 
 export default {
   setup() {
     return {
-      routers
-    }
-  }
-}
+      routers,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .tab {
   display: flex;

@@ -67,11 +67,12 @@
 
 <script>
 import { reactive, computed, watch, ref } from "vue";
+import { useStore } from "vuex";
 import Scroll from "@/components/Scroll";
 import AddSong from "@/components/AddSong";
 import Confirm from "@/components/Confirm";
 import { playMode } from "@/utils/config";
-import { usePlayer, useActions } from "@/hooks";
+import { usePlayer } from "@/hooks";
 
 export default {
   components: {
@@ -79,14 +80,21 @@ export default {
     Confirm,
     AddSong,
   },
-  setup(props, { root, refs }) {
-    const deleteSong = useActions(root, "deleteSong");
-    const deleteSongList = useActions(root, "deleteSongList");
+  setup(props) {
+    const store = useStore();
+    const deleteSong = (song) => store.dispatch("deleteSong", song);
+    const deleteSongList = () => store.dispatch("deleteSongList");
 
     const state = reactive({
       isShowFlag: false,
       refreshDelay: 120,
     });
+
+    const listContentRef = ref(null);
+    const listRefRef = ref(null);
+    const listItemRef = ref(null);
+    const confirmRef = ref(null);
+    const addSongRef = ref(null);
 
     const {
       sequenceList,
@@ -99,7 +107,7 @@ export default {
       setPlayingState,
       setCurrentIndex,
       toggleFavorite,
-    } = usePlayer(root);
+    } = usePlayer();
 
     const modeText = computed(() => {
       return mode.value === playMode.sequence
@@ -122,7 +130,7 @@ export default {
     function show() {
       state.isShowFlag = true;
       setTimeout(() => {
-        refs.listContentRef.refresh();
+        listContentRef.value.refresh();
         scrollToCurrent(currentSong);
       }, 20);
     }
@@ -151,8 +159,8 @@ export default {
       const index = sequenceList.findIndex(
         (song) => currentSong.id === song.id
       );
-      refs.listContentRef.scrollToElement(
-        refs.listRef.$el.children[index],
+      listContentRef.value.scrollToElement(
+        listRef.value.$el.children[index],
         300
       );
     }
@@ -170,7 +178,7 @@ export default {
     }
 
     function showConfirm() {
-      refs.confirmRef.show();
+      confirmRef.value.show();
     }
 
     function confirmClear() {
@@ -179,11 +187,16 @@ export default {
     }
 
     function addSong() {
-      refs.addSongRef.show();
+      addSongRef.value.show();
     }
 
     return {
       state,
+      listContentRef,
+      listRefRef,
+      listItemRef,
+      confirmRef,
+      addSongRef,
       sequenceList,
       modeText,
       iconMode,

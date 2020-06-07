@@ -38,132 +38,142 @@
 </template>
 
 <script>
-import { reactive, watch } from '@vue/composition-api'
-import Scroll from '@/components/Scroll'
-import Loading from '@/components/Loading'
-import NoResult from '@/components/NoResult'
-import Singer from '@/utils/singer'
-import { genResult, checkMore } from '@/utils/search'
-import { search } from '@/request/search'
-import { ERR_OK } from '@/request/config'
-import { useMutations, useActions } from '@/hooks'
+import { reactive, watch, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Scroll from "@/components/Scroll";
+import Loading from "@/components/Loading";
+import NoResult from "@/components/NoResult";
+import Singer from "@/utils/singer";
+import { genResult, checkMore } from "@/utils/search";
+import { search } from "@/request/search";
+import { ERR_OK } from "@/request/config";
 
-const TYPE_SINGER = 'singer'
-const PER_PAGE = 20
+const TYPE_SINGER = "singer";
+const PER_PAGE = 20;
 
 export default {
   components: {
     Scroll,
     Loading,
-    NoResult
+    NoResult,
   },
   props: {
     query: {
       type: String,
-      default: ''
+      default: "",
     },
     showSinger: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
-  setup(props, { root, refs, emit }) {
-    const setSinger = useMutations(root, 'SET_SINGER')
-    const insertSong = useActions(root, 'insertSong')
+  setup(props, { emit }) {
+    const router = useRouter();
+    const store = useStore();
+    const setSinger = (singer) => store.commit("SET_SINGER", singer);
+    const insertSong = (song) => store.dispatch("insertSong", song);
 
     const state = reactive({
       page: 1,
       result: [],
       pullup: true,
       hasMore: true,
-      beforeScroll: true
-    })
+      beforeScroll: true,
+    });
+
+    const suggestRef = ref(null);
 
     watch(
       () => props.query,
-      newVal => {
-        if (!newVal) return
-        _search()
+      (newVal) => {
+        if (!newVal) return;
+        _search();
       }
-    )
+    );
 
     function _search() {
-      state.page = 1
-      state.hasMore = true
-      refs.suggestRef.scrollTo(0, 0)
-      search(props.query, state.page, props.showSinger, PER_PAGE).then(res => {
-        if (res.code === ERR_OK) {
-          genResult(res.data, state.page).then(result => {
-            state.result = result
-            state.hasMore = checkMore(res.data)
-          })
+      state.page = 1;
+      state.hasMore = true;
+      suggestRef.value.scrollTo(0, 0);
+      search(props.query, state.page, props.showSinger, PER_PAGE).then(
+        (res) => {
+          if (res.code === ERR_OK) {
+            genResult(res.data, state.page).then((result) => {
+              state.result = result;
+              state.hasMore = checkMore(res.data);
+            });
+          }
         }
-      })
+      );
     }
 
     function searchMore() {
-      if (!state.hasMore) return
-      state.page++
-      search(props.query, state.page, props.showSinger, PER_PAGE).then(res => {
-        if (res.code === ERR_OK) {
-          genResult(res.data, state.page).then(result => {
-            state.result = state.result.concat(result)
-            state.hasMore = checkMore(res.data)
-          })
+      if (!state.hasMore) return;
+      state.page++;
+      search(props.query, state.page, props.showSinger, PER_PAGE).then(
+        (res) => {
+          if (res.code === ERR_OK) {
+            genResult(res.data, state.page).then((result) => {
+              state.result = state.result.concat(result);
+              state.hasMore = checkMore(res.data);
+            });
+          }
         }
-      })
+      );
     }
 
     function getIconCls(item) {
-      return item.type === TYPE_SINGER ? 'icon-mine' : 'icon-music'
+      return item.type === TYPE_SINGER ? "icon-mine" : "icon-music";
     }
 
     function getDisplayName(item) {
       return item.type === TYPE_SINGER
         ? item.singername
-        : `${item.name}-${item.singer}`
+        : `${item.name}-${item.singer}`;
     }
 
     function selectItem(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,
-          name: item.singername
-        })
-        root.$router.push({
-          path: `/search/${singer.id}`
-        })
-        setSinger(singer)
+          name: item.singername,
+        });
+        router.push({
+          path: `/search/${singer.id}`,
+        });
+        setSinger(singer);
       } else {
-        insertSong(item)
+        insertSong(item);
       }
-      emit('select')
+      emit("select");
     }
 
     function listScroll() {
-      emit('listScroll')
+      emit("listScroll");
     }
 
     function refresh() {
-      refs.suggestRef.refresh()
+      suggestRef.value.refresh();
     }
 
     return {
       state,
+      suggestRef,
       refresh,
       listScroll,
       searchMore,
       selectItem,
       getIconCls,
-      getDisplayName
-    }
-  }
-}
+      getDisplayName,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .suggest {
   height: 100%;
@@ -182,7 +192,7 @@ export default {
       flex: 0 0 30px;
       width: 30px;
 
-      [class^='icon-'] {
+      [class^="icon-"] {
         font-size: 14px;
         color: $color-text-d;
       }

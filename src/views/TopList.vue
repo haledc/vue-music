@@ -5,48 +5,53 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
-import MusicList from '@/components/MusicList'
-import { getMusicList } from '@/request/rank'
-import { ERR_OK } from '@/request/config'
-import { processSongsUrl, normalizeSongs } from '@/utils/song'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import MusicList from "@/components/MusicList";
+import { getMusicList } from "@/request/rank";
+import { ERR_OK } from "@/request/config";
+import { processSongsUrl, normalizeSongs } from "@/utils/song";
 
 export default {
   components: {
-    MusicList
+    MusicList,
   },
-  setup(props, { root }) {
-    const songs = ref([])
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const songs = ref([]);
 
-    const topList = computed(() => root.$store.getters.topList)
-    const title = computed(() => topList.value.topTitle)
+    const topList = computed(() => store.getters.topList);
+    const title = computed(() => topList.value.topTitle);
     const bgImage = computed(() =>
-      songs.value.length > 0 ? songs.value[0].image : ''
-    )
+      songs.value.length > 0 ? songs.value[0].image : ""
+    );
 
     function _getMusicList() {
       if (!topList.value.id) {
-        root.$router.push('/rank')
-        return
+        router.push("/rank");
+        return;
       }
-      getMusicList(topList.value.id).then(res => {
+      getMusicList(topList.value.id).then((res) => {
         if (res.code === ERR_OK) {
-          processSongsUrl(normalizeSongs(res.songlist)).then(val => {
-            songs.value = val
-          })
+          processSongsUrl(normalizeSongs(res.songlist)).then((val) => {
+            songs.value = val;
+          });
         }
-      })
+      });
     }
-    _getMusicList()
+
+    _getMusicList();
 
     return {
       songs,
       rank: true,
       title,
-      bgImage
-    }
-  }
-}
+      bgImage,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">

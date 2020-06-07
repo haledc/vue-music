@@ -32,7 +32,7 @@ export const selectPlay = ({ commit, state }, { list, index }) => {
 };
 
 // 随机播放
-export const randomPlay = ({ commit }, { list }) => {
+export const randomPlay = ({ commit }, list) => {
   commit(types.SET_PLAY_MODE, playMode.random);
   commit(types.SET_SEQUENCE_LIST, list);
   const randomList = shuffle(list);

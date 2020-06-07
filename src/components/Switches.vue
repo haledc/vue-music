@@ -17,26 +17,26 @@ export default {
   props: {
     switches: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     currentIndex: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   setup(props, { emit }) {
     function selectItem(index) {
-      emit('switch', index)
+      emit("switch", index);
     }
     return {
-      selectItem
-    }
-  }
-}
+      selectItem,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .switches {
   display: flex;

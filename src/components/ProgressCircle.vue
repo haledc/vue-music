@@ -31,32 +31,32 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
+import { ref, computed } from "vue";
 
 export default {
   props: {
     radius: {
       type: Number,
-      default: 32
+      default: 32,
     },
     percent: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   setup(props) {
-    const dashArray = ref(Math.PI * 100)
-    const dashOffset = computed(() => (1 - props.percent) * dashArray.value)
+    const dashArray = ref(Math.PI * 100);
+    const dashOffset = computed(() => (1 - props.percent) * dashArray.value);
     return {
       dashArray,
-      dashOffset
-    }
-  }
-}
+      dashOffset,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .progress-circle {
   position: relative;

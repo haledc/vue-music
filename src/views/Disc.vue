@@ -5,45 +5,49 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
-import MusicList from '@/components/MusicList'
-import { getSongList } from '@/request/recommend'
-import { ERR_OK } from '@/request/config'
-import { processSongsUrl, normalizeSongs } from '@/utils/song'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import MusicList from "@/components/MusicList";
+import { getSongList } from "@/request/recommend";
+import { ERR_OK } from "@/request/config";
+import { processSongsUrl, normalizeSongs } from "@/utils/song";
 
 export default {
   components: {
-    MusicList
+    MusicList,
   },
-  setup(props, { root }) {
-    const songs = ref([])
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const songs = ref([]);
 
-    const disc = computed(() => root.$store.getters.disc)
-    const title = computed(() => disc.value.dissname)
-    const bgImage = computed(() => disc.value.imgurl)
+    const disc = computed(() => store.getters.disc);
+    const title = computed(() => disc.value.dissname);
+    const bgImage = computed(() => disc.value.imgurl);
 
     function _getSongList() {
       if (!disc.value.dissid) {
-        root.$router.push('/recommend')
-        return
+        router.push("/recommend");
+        return;
       }
-      getSongList(disc.value.dissid).then(res => {
+      getSongList(disc.value.dissid).then((res) => {
         if (res.code === ERR_OK) {
           processSongsUrl(normalizeSongs(res.cdlist[0].songlist)).then(
-            val => (songs.value = val)
-          )
+            (val) => (songs.value = val)
+          );
         }
-      })
+      });
     }
-    _getSongList()
+    _getSongList();
 
     return {
       songs,
       title,
-      bgImage
-    }
-  }
-}
+      bgImage,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">

@@ -47,88 +47,99 @@
 </template>
 
 <script>
-import { reactive, onActivated } from '@vue/composition-api'
-import { mapMutations } from 'vuex'
-import Loading from '@/components/Loading'
-import Scroll from '@/components/Scroll'
-import Slider from '@/components/Slider'
-import { getSliderList, getDiscList } from '@/request/recommend'
-import { ERR_OK } from '@/request/config'
-import { usePlaylist, useMutations } from '@/hooks'
+import { ref, reactive, onActivated } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Loading from "@/components/Loading";
+import Scroll from "@/components/Scroll";
+import Slider from "@/components/Slider";
+import { getSliderList, getDiscList } from "@/request/recommend";
+import { ERR_OK } from "@/request/config";
+import { usePlaylist, useMutations } from "@/hooks";
 
 export default {
   components: {
     Slider,
     Scroll,
-    Loading
+    Loading,
   },
-  setup(props, { root, refs }) {
-    const setDisc = useMutations(root, 'SET_DISC')
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const setDisc = (dist) => store.commit("SET_DISC", dist);
 
     const state = reactive({
       sliderList: [],
-      discList: []
-    })
+      discList: [],
+    });
 
-    let checkLoaded = false
+    const recommendRef = ref(null);
+    const scrollRef = ref(null);
+    const sliderRef = ref(null);
+
+    // 只触发一次
+    let checkLoaded = false;
 
     onActivated(() => {
       setTimeout(() => {
-        refs.sliderRef && refs.sliderRef.refresh()
-      }, 20)
-    })
+        sliderRef.value && sliderRef.value.refresh();
+      }, 20);
+    });
 
     function handlePlaylist(playlist) {
-      const bottom = playlist.value.length > 0 ? '60px' : ''
-      refs.recommendRef.style.bottom = bottom
-      refs.scrollRef.refresh()
+      const bottom = playlist.value.length > 0 ? "60px" : "";
+      recommendRef.value.style.bottom = bottom;
+      scrollRef.value.refresh();
     }
 
-    usePlaylist(root, handlePlaylist)
+    usePlaylist(handlePlaylist);
 
     function selectItem(item) {
-      root.$router.push({
-        path: `/recommend/${item.dissid}`
-      })
-      setDisc(item)
+      router.push({
+        path: `/recommend/${item.dissid}`,
+      });
+      setDisc(item);
     }
 
     function _getSliderList() {
-      getSliderList().then(res => {
+      getSliderList().then((res) => {
         if (res.code === ERR_OK) {
-          state.sliderList = res.data.slider.slice(0, 5)
+          state.sliderList = res.data.slider.slice(0, 5);
         }
-      })
+      });
     }
-    _getSliderList()
+    _getSliderList();
 
     function _getDiscList() {
-      getDiscList().then(res => {
+      getDiscList().then((res) => {
         if (res.code === ERR_OK) {
-          state.discList = res.data.list
+          state.discList = res.data.list;
         }
-      })
+      });
     }
-    _getDiscList()
+    _getDiscList();
 
     function loadImage() {
       if (!checkLoaded) {
-        refs.scrollRef.refresh()
-        checkLoaded = true
+        scrollRef.value.refresh();
+        checkLoaded = true;
       }
     }
 
     return {
       state,
+      recommendRef,
+      scrollRef,
+      sliderRef,
       loadImage,
-      selectItem
-    }
-  }
-}
+      selectItem,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 // 父容器高度固定，子元素高度撑开高度，触发滚动
 .recommend {
