@@ -59,146 +59,152 @@
 </template>
 
 <script>
-import { reactive, computed, watch } from '@vue/composition-api'
-import Scroll from '@/components/Scroll'
-import Loading from '@/components/Loading'
-import { getData } from '@/utils/dom'
+import { reactive, computed, watch } from "vue";
+import Scroll from "@/components/Scroll";
+import Loading from "@/components/Loading";
+import { getData } from "@/utils/dom";
 
-const ANCHOR_HEIGHT = 18
-const TITLE_HEIGHT = 30
+const ANCHOR_HEIGHT = 18;
+const TITLE_HEIGHT = 30;
 
 export default {
   components: {
     Scroll,
-    Loading
+    Loading,
   },
   props: {
     data: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
-  setup(props, { emit, refs }) {
-    const touch = {}
-    const listenScroll = true
-    let listHeight = []
-    const probeType = 3
-    let fixedTop = 0
+  setup(props, { emit }) {
+    const touch = {};
+    const listenScroll = true;
+    let listHeight = [];
+    const probeType = 3;
+    let fixedTop = 0;
 
     const state = reactive({
       scrollY: -1,
       currentIndex: 0,
-      diff: -1
-    })
+      diff: -1,
+    });
+
+    const fixedRef = ref(null);
+    const listviewRef = ref(null);
+    const listGroupRef = ref(null);
 
     const shortcutList = computed(() =>
-      props.data.map(group => group.title.substr(0, 1))
-    )
+      props.data.map((group) => group.title.substr(0, 1))
+    );
 
     const fixedTitle = computed(() => {
       if (state.scrollY > 0) {
-        return
+        return;
       }
       return props.data[state.currentIndex]
         ? props.data[state.currentIndex].title
-        : ''
-    })
+        : "";
+    });
 
     watch(
       () => props.data,
       () => {
         setTimeout(() => {
-          _calculateHeight()
-        }, 20)
-      },
-      { lazy: true }
-    )
+          _calculateHeight();
+        }, 20);
+      }
+    );
 
     watch(
       () => state.scrollY,
-      newY => {
+      (newY) => {
         if (newY > 0) {
-          state.currentIndex = 0
-          return
+          state.currentIndex = 0;
+          return;
         }
 
         for (let i = 0; i < listHeight.length - 1; i++) {
-          let height1 = listHeight[i]
-          let height2 = listHeight[i + 1]
+          let height1 = listHeight[i];
+          let height2 = listHeight[i + 1];
           if (-newY >= height1 && -newY < height2) {
-            state.currentIndex = i
-            state.diff = height2 + newY
-            return
+            state.currentIndex = i;
+            state.diff = height2 + newY;
+            return;
           }
         }
 
-        state.currentIndex = listHeight.length - 2
+        state.currentIndex = listHeight.length - 2;
       }
-    )
+    );
 
     watch(
       () => state.diff,
-      newVal => {
+      (newVal) => {
         let fixedTopVal =
-          newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
-        if (fixedTop === fixedTopVal) return
-        fixedTop = fixedTopVal
-        refs.fixedRef.style.transform = `translate3d(0, ${fixedTopVal}px, 0)`
+          newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0;
+        if (fixedTop === fixedTopVal) return;
+        fixedTop = fixedTopVal;
+        fixedRef.value.style.transform = `translate3d(0, ${fixedTopVal}px, 0)`;
       }
-    )
+    );
 
     function onShortcutTouchStart(event) {
-      const anchorIndex = getData(event.target, 'index')
-      const firstTouch = event.touches[0]
-      touch.y1 = firstTouch.pageY
-      touch.anchorIndex = anchorIndex
-      _scrollTo(anchorIndex)
+      const anchorIndex = getData(event.target, "index");
+      const firstTouch = event.touches[0];
+      touch.y1 = firstTouch.pageY;
+      touch.anchorIndex = anchorIndex;
+      _scrollTo(anchorIndex);
     }
 
     function onShortcutTouchMove(event) {
-      const firstTouch = event.touches[0]
-      touch.y2 = firstTouch.pageY
-      const delta = ((touch.y2 - touch.y1) / ANCHOR_HEIGHT) | 0
-      const anchorIndex = parseInt(touch.anchorIndex) + delta
-      _scrollTo(anchorIndex)
+      const firstTouch = event.touches[0];
+      touch.y2 = firstTouch.pageY;
+      const delta = ((touch.y2 - touch.y1) / ANCHOR_HEIGHT) | 0;
+      const anchorIndex = parseInt(touch.anchorIndex) + delta;
+      _scrollTo(anchorIndex);
     }
 
     function refresh() {
-      refs.listviewRef.refresh()
+      listviewRef.value.refresh();
     }
 
     function scroll(pos) {
-      state.scrollY = pos.y
+      state.scrollY = pos.y;
     }
 
     function selectItem(item) {
-      emit('select', item)
+      emit("select", item);
     }
 
     function _scrollTo(index) {
-      if (!index && index !== 0) return
+      if (!index && index !== 0) return;
       if (index < 0) {
-        index = 0
+        index = 0;
       } else if (index > listHeight.length - 2) {
-        index = listHeight.length - 2
+        index = listHeight.length - 2;
       }
-      state.scrollY = -listHeight[index]
-      refs.listviewRef.scrollToElement(refs.listGroupRef[index], 0)
+      state.scrollY = -listHeight[index];
+      listviewRef.value.scrollToElement(listGroupRef[index], 0);
     }
 
     function _calculateHeight() {
-      listHeight = []
-      const list = refs.listGroupRef
-      let height = 0
-      listHeight.push(height)
+      listHeight = [];
+      const list = listGroupRef;
+      let height = 0;
+      listHeight.push(height);
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
-        height += item.clientHeight
-        listHeight.push(height)
+        let item = list[i];
+        height += item.clientHeight;
+        listHeight.push(height);
       }
     }
 
     return {
+      listviewRef,
+      listGroupRef,
+      fixedRef,
       state,
       listenScroll,
       probeType,
@@ -208,14 +214,14 @@ export default {
       refresh,
       selectItem,
       onShortcutTouchStart,
-      onShortcutTouchMove
-    }
-  }
-}
+      onShortcutTouchMove,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .listview {
   position: relative;

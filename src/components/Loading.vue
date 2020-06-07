@@ -10,14 +10,14 @@ export default {
   props: {
     title: {
       type: String,
-      default: '正在载入...'
-    }
-  }
-}
+      default: "正在载入...",
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .loading {
   width: 100%;

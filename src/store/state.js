@@ -1,5 +1,5 @@
-import { playMode } from '../utils/config'
-import { loadSearch } from '../utils/cache'
+import { playMode } from "../utils/config";
+import { loadSearch } from "../utils/cache";
 
 const state = {
   singer: {}, // 歌手信息
@@ -13,7 +13,7 @@ const state = {
   topList: {}, // 排行榜列表
   searchHistory: loadSearch(), // 搜索历史 【从本地缓存中获取】
   playHistory: [], // 播放历史
-  favoriteList: [] // 收藏歌曲列表
-}
+  favoriteList: [], // 收藏歌曲列表
+};
 
-export default state
+export default state;

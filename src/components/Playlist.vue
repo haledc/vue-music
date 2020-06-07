@@ -59,34 +59,34 @@
         confirmBtnText="清空"
         @confirm="confirmClear"
       />
-      <!--增加歌曲组件-->
+      <!-- 增加歌曲组件 -->
       <AddSong ref="addSongRef" />
     </div>
   </transition>
 </template>
 
 <script>
-import { reactive, computed, watch } from '@vue/composition-api'
-import Scroll from '@/components/Scroll'
-import AddSong from '@/components/AddSong'
-import Confirm from '@/components/Confirm'
-import { playMode } from '@/utils/config'
-import { usePlayer, useActions } from '@/hooks'
+import { reactive, computed, watch, ref } from "vue";
+import Scroll from "@/components/Scroll";
+import AddSong from "@/components/AddSong";
+import Confirm from "@/components/Confirm";
+import { playMode } from "@/utils/config";
+import { usePlayer, useActions } from "@/hooks";
 
 export default {
   components: {
     Scroll,
     Confirm,
-    AddSong
+    AddSong,
   },
   setup(props, { root, refs }) {
-    const deleteSong = useActions(root, 'deleteSong')
-    const deleteSongList = useActions(root, 'deleteSongList')
+    const deleteSong = useActions(root, "deleteSong");
+    const deleteSongList = useActions(root, "deleteSongList");
 
     const state = reactive({
       isShowFlag: false,
-      refreshDelay: 120
-    })
+      refreshDelay: 120,
+    });
 
     const {
       sequenceList,
@@ -98,83 +98,88 @@ export default {
       changeMode,
       setPlayingState,
       setCurrentIndex,
-      toggleFavorite
-    } = usePlayer(root)
+      toggleFavorite,
+    } = usePlayer(root);
 
     const modeText = computed(() => {
       return mode.value === playMode.sequence
-        ? '顺序播放'
+        ? "顺序播放"
         : mode.value === playMode.random
-        ? '随机播放'
-        : '单曲循环'
-    })
+        ? "随机播放"
+        : "单曲循环";
+    });
 
     watch(
       () => currentSong,
       (newSong, oldSong) => {
-        if (!state.isShowFlag || newSong.id === oldSong.id) return
+        if (!state.isShowFlag || newSong.id === oldSong.id) return;
         setTimeout(() => {
-          scrollToCurrent(newSong)
-        }, 20)
+          scrollToCurrent(newSong);
+        }, 20);
       }
-    )
+    );
 
     function show() {
-      state.isShowFlag = true
+      state.isShowFlag = true;
       setTimeout(() => {
-        refs.listContentRef.refresh()
-        scrollToCurrent(currentSong)
-      }, 20)
+        refs.listContentRef.refresh();
+        scrollToCurrent(currentSong);
+      }, 20);
     }
 
     function hide() {
-      state.isShowFlag = false
+      state.isShowFlag = false;
     }
 
     function getCurrentIcon(item) {
       if (currentSong.id === item.id) {
-        return 'icon-play'
+        return "icon-play";
       } else {
-        return ''
+        return "";
       }
     }
 
     function selectItem(item, index) {
       if (mode === playMode.random) {
-        index = playlist.findIndex(song => song.id === item.id)
+        index = playlist.findIndex((song) => song.id === item.id);
       }
-      setCurrentIndex(index)
-      setPlayingState(true)
+      setCurrentIndex(index);
+      setPlayingState(true);
     }
 
     function scrollToCurrent(currentSong) {
-      const index = sequenceList.findIndex(song => currentSong.id === song.id)
-      refs.listContentRef.scrollToElement(refs.listRef.$el.children[index], 300)
+      const index = sequenceList.findIndex(
+        (song) => currentSong.id === song.id
+      );
+      refs.listContentRef.scrollToElement(
+        refs.listRef.$el.children[index],
+        300
+      );
     }
 
     function deleteOne(item) {
-      if (item.deleting) return
-      item.deleting = true
-      deleteSong(item)
+      if (item.deleting) return;
+      item.deleting = true;
+      deleteSong(item);
       if (!playlist.length) {
-        hide()
+        hide();
       }
       setTimeout(() => {
-        item.deleting = false
-      }, 300)
+        item.deleting = false;
+      }, 300);
     }
 
     function showConfirm() {
-      refs.confirmRef.show()
+      refs.confirmRef.show();
     }
 
     function confirmClear() {
-      deleteSongList()
-      hide()
+      deleteSongList();
+      hide();
     }
 
     function addSong() {
-      refs.addSongRef.show()
+      refs.addSongRef.show();
     }
 
     return {
@@ -191,15 +196,15 @@ export default {
       getFavoriteIcon,
       deleteOne,
       addSong,
-      confirmClear
-    }
-  }
-}
+      confirmClear,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .playlist {
   position: fixed;

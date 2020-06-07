@@ -12,21 +12,21 @@
 </template>
 
 <script>
-import { ref } from '@vue/composition-api'
+import { ref } from "vue";
 
 export default {
   setup() {
-    const title = ref('Chicken Music')
+    const title = ref("Chicken Music");
     return {
-      title
-    }
-  }
-}
+      title,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .m-header {
   position: relative;
@@ -42,7 +42,7 @@ export default {
     width: 30px;
     height: 32px;
     margin-right: 9px;
-    @include bg-image('logo');
+    @include bg-image("logo");
     background-size: 30px 32px;
   }
 

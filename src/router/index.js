@@ -1,71 +1,69 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Recommend from '@/views/Recommend' // 首页不用懒加载
+import { createRouter, createWebHistory } from "vue-router";
+import Recommend from "@/views/Recommend"; // 首页不用懒加载
 
-Vue.use(Router)
-
-const router = new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
-      path: '/',
-      redirect: '/recommend'
+      path: "/",
+      redirect: "/recommend",
     },
     {
-      path: '/recommend',
+      path: "/recommend",
       component: Recommend,
       children: [
         {
-          path: ':id',
-          component: () => import(/* webpackChunkName: "Disc" */ '@/views/Disc')
-        }
-      ]
+          path: ":id",
+          component: () =>
+            import(/* webpackChunkName: "Disc" */ "@/views/Disc"),
+        },
+      ],
     },
     {
-      path: '/singer',
+      path: "/singer",
       component: () =>
-        import(/* webpackChunkName: "Singer" */ '@/views/Singer'),
+        import(/* webpackChunkName: "Singer" */ "@/views/Singer"),
       children: [
         {
-          path: ':id',
+          path: ":id",
           component: () =>
             import(
-              /* webpackChunkName: "SingerDetail" */ '@/views/SingerDetail'
-            )
-        }
-      ]
+              /* webpackChunkName: "SingerDetail" */ "@/views/SingerDetail"
+            ),
+        },
+      ],
     },
     {
-      path: '/rank',
-      component: () => import(/* webpackChunkName: "Rank" */ '@/views/Rank'),
+      path: "/rank",
+      component: () => import(/* webpackChunkName: "Rank" */ "@/views/Rank"),
       children: [
         {
-          path: ':id',
+          path: ":id",
           component: () =>
-            import(/* webpackChunkName: "TopList" */ '@/views/TopList')
-        }
-      ]
+            import(/* webpackChunkName: "TopList" */ "@/views/TopList"),
+        },
+      ],
     },
     {
-      path: '/search',
+      path: "/search",
       component: () =>
-        import(/* webpackChunkName: "Search" */ '@/views/Search'),
+        import(/* webpackChunkName: "Search" */ "@/views/Search"),
       children: [
         {
-          path: ':id',
+          path: ":id",
           component: () =>
             import(
-              /* webpackChunkName: "SingerDetail" */ '@/views/SingerDetail'
-            )
-        }
-      ]
+              /* webpackChunkName: "SingerDetail" */ "@/views/SingerDetail"
+            ),
+        },
+      ],
     },
     {
-      path: '/user',
+      path: "/user",
       component: () =>
-        import(/* webpackChunkName: "UserCenter" */ '@/views/UserCenter')
-    }
-  ]
-})
+        import(/* webpackChunkName: "UserCenter" */ "@/views/UserCenter"),
+    },
+  ],
+});
 
-export default router
+export default router;

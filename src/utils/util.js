@@ -1,24 +1,24 @@
-import BScroll from 'better-scroll'
+import BScroll from "better-scroll";
 
 function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function shuffle(arr) {
-  const ret = arr.slice()
+  const ret = arr.slice();
   for (let i = 0; i < arr.length; i++) {
-    const j = getRandomInt(0, i)
-    ;[ret[i], ret[j]] = [ret[j], ret[i]]
+    const j = getRandomInt(0, i);
+    [ret[i], ret[j]] = [ret[j], ret[i]];
   }
-  return ret
+  return ret;
 }
 
 export function debounce(func, delay) {
-  let timer
+  let timer;
   return function(...args) {
-    clearTimeout(timer)
+    clearTimeout(timer);
     timer = setTimeout(() => {
-      func.apply(this, args)
-    }, delay)
-  }
+      func.apply(this, args);
+    }, delay);
+  };
 }

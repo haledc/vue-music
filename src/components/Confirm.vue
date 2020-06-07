@@ -19,55 +19,55 @@
 </template>
 
 <script>
-import { ref } from '@vue/composition-api'
+import { ref } from "vue";
 
 export default {
   props: {
     text: {
       type: String,
-      default: ''
+      default: "",
     },
     confirmBtnText: {
       type: String,
-      default: '确定'
+      default: "确定",
     },
     cancelBtnText: {
       type: String,
-      default: '取消'
-    }
+      default: "取消",
+    },
   },
   setup(props, { emit }) {
-    const isShowFlag = ref(false)
+    const isShowFlag = ref(false);
 
     function show() {
-      isShowFlag.value = true
+      isShowFlag.value = true;
     }
 
     function hide() {
-      isShowFlag.value = false
+      isShowFlag.value = false;
     }
 
     function cancel() {
-      hide()
-      emit('cancel')
+      hide();
+      emit("cancel");
     }
 
     function confirm() {
-      hide()
-      emit('confirm')
+      hide();
+      emit("confirm");
     }
 
     return {
       isShowFlag,
       cancel,
-      confirm
-    }
-  }
-}
+      confirm,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .confirm {
   position: fixed;

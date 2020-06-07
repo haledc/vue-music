@@ -46,145 +46,158 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from '@vue/composition-api'
-import Scroll from '@/components/Scroll'
-import SongList from '@/components/SongList'
-import Loading from '@/components/Loading'
-import { prefixStyle } from '@/utils/dom'
-import { usePlaylist, useActions } from '@/hooks'
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import SongList from "@/components/SongList";
+import Loading from "@/components/Loading";
+import { prefixStyle } from "@/utils/dom";
 
 // 顶部预留 40px（标题高度）常量不被滚动
-const RESERVED_HEIGHT = 40
-const transform = prefixStyle('transform')
-const backdrop = prefixStyle('backdrop-filter')
+const RESERVED_HEIGHT = 40;
+const transform = prefixStyle("transform");
+const backdrop = prefixStyle("backdrop-filter");
 
 export default {
   components: {
     Scroll,
     SongList,
-    Loading
+    Loading,
   },
   props: {
     bgImage: {
       type: String,
-      default: ''
+      default: "",
     },
     songs: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     rank: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  setup(props, { root, refs }) {
-    const selectPlay = useActions(root, 'selectPlay')
-    const randomPlay = useActions(root, 'randomPlay')
+  setup(props) {
+    const router = useRouter();
+    const store = useStore();
+    const selectPlay = (payload) => store.dispatch("selectPlay", payload);
+    const randomPlay = (payload) => store.dispatch("randomPlay", payload);
 
-    const probeType = 3
-    const listenScroll = true
-    let imageHeight, minTranslateY
+    const bgImageRef = ref(null);
+    const playBtnRef = ref(null);
+    const filterRef = ref(null);
+    const layerRef = ref(null);
+    const listRef = ref(null);
 
-    const scrollY = ref(0)
+    const probeType = 3;
+    const listenScroll = true;
+    let imageHeight, minTranslateY;
 
-    const bgStyle = computed(() => `background-image:url(${props.bgImage})`)
+    const scrollY = ref(0);
+
+    const bgStyle = computed(() => `background-image:url(${props.bgImage})`);
 
     onMounted(() => {
-      imageHeight = refs.bgImageRef.clientHeight
-      minTranslateY = -imageHeight + RESERVED_HEIGHT
-      refs.listRef.$el.style.top = `${imageHeight}px`
-    })
+      imageHeight = bgImageRef.value.clientHeight;
+      minTranslateY = -imageHeight + RESERVED_HEIGHT;
+      listRef.value.$el.style.top = `${imageHeight}px`;
+    });
 
-    usePlaylist(root, handlePlaylist)
+    usePlaylist(handlePlaylist);
 
     watch(
       () => scrollY.value,
-      newY => {
-        const translateY = Math.max(minTranslateY, newY)
-        let zIndex = 0
-        let scale = 1
-        let blur = 0
-        const percent = Math.abs(newY / imageHeight)
+      (newY) => {
+        const translateY = Math.max(minTranslateY, newY);
+        let zIndex = 0;
+        let scale = 1;
+        let blur = 0;
+        const percent = Math.abs(newY / imageHeight);
         // newY > 0 向下滚动
         if (newY > 0) {
-          scale = 1 + percent
-          zIndex = 10
+          scale = 1 + percent;
+          zIndex = 10;
         } else {
-          blur = Math.min(20, percent * 20) // 模糊效果最大为20
+          blur = Math.min(20, percent * 20); // 模糊效果最大为20
         }
         // layer层跟着一起往上滚动
-        refs.layerRef.style[transform] = `translate3d(0, ${translateY}px, 0)`
+        layerRef.value.style[transform] = `translate3d(0, ${translateY}px, 0)`;
         // 高斯模糊效果
-        refs.filterRef.style[backdrop] = `blur(${blur}px)`
+        filterRef.value.style[backdrop] = `blur(${blur}px)`;
         // 当滚动的新值比最远的滚动距离小时，即滚动到顶部
         if (newY < minTranslateY) {
-          zIndex = 10
-          refs.bgImageRef.style.paddingTop = 0
-          refs.bgImageRef.style.height = `${RESERVED_HEIGHT}px`
-          refs.playBtnRef.style.display = 'none'
+          zIndex = 10;
+          bgImageRef.value.style.paddingTop = 0;
+          bgImageRef.value.style.height = `${RESERVED_HEIGHT}px`;
+          playBtnRef.style.display = "none";
           // 当滚动的新值比最远的滚动距离大时，即还没有滚到顶部
           // 需要重置图片的高度，不然下拉的时候会把最上面80px的背景图片遮住
         } else {
-          refs.bgImageRef.style.paddingTop = '70%'
-          refs.bgImageRef.style.height = 0
-          refs.playBtnRef.style.display = ''
+          bgImageRef.value.style.paddingTop = "70%";
+          bgImageRef.value.style.height = 0;
+          playBtnRef.value.style.display = "";
         }
-        refs.bgImageRef.style[transform] = `scale(${scale})`
-        refs.bgImageRef.style.zIndex = zIndex
+        bgImageRef.value.style[transform] = `scale(${scale})`;
+        bgImageRef.value.style.zIndex = zIndex;
       },
       {
-        lazy: true
+        lazy: true,
       }
-    )
+    );
 
     function handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : ''
-      refs.listRef.$el.style.bottom = bottom
-      refs.listRef.refresh()
+      const bottom = playlist.length > 0 ? "60px" : "";
+      listRef.value.$el.style.bottom = bottom;
+      listRef.value.refresh();
     }
 
     function scroll(pos) {
-      scrollY.value = pos.y
+      scrollY.value = pos.y;
     }
 
     function back() {
-      root.$router.back()
+      router.back();
     }
 
     function selectItem(item, index) {
       selectPlay({
         list: props.songs,
-        index
-      })
+        index,
+      });
     }
 
     function random() {
       randomPlay({
-        list: props.songs
-      })
+        list: props.songs,
+      });
     }
 
     return {
+      bgImageRef,
+      playBtnRef,
+      filterRef,
+      layerRef,
+      listRef,
       probeType,
       listenScroll,
       back,
       bgStyle,
       random,
       scroll,
-      selectItem
-    }
-  }
-}
+      selectItem,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .music-list {
   position: fixed;

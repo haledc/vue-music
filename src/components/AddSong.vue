@@ -17,7 +17,7 @@
         />
       </div>
       <!-- 快捷方式 -->
-      <div class="shortcut" v-show="!_state.query">
+      <div class="shortcut" v-show="!searchState.query">
         <!-- 开关组件 -->
         <Switches
           :currentIndex="state.currentIndex"
@@ -40,7 +40,7 @@
           <Scroll
             class="list-scroll"
             v-if="state.currentIndex === 1"
-            :refreshDelay="_state.refreshDelay"
+            :refreshDelay="searchState.refreshDelay"
             :data="searchHistory"
             ref="searchListRef"
           >
@@ -55,9 +55,9 @@
         </div>
       </div>
       <!-- 搜索结果 -->
-      <div class="search-result" v-show="_state.query">
+      <div class="search-result" v-show="searchState.query">
         <Suggest
-          :query="_state.query"
+          :query="searchState.query"
           :isShowSinger="state.isShowSinger"
           @select="selectSuggest"
           @listScroll="blurInput"
@@ -75,16 +75,17 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
-import SearchBox from '@/components/SearchBox'
-import Suggest from '@/components/Suggest'
-import Switches from '@/components/Switches'
-import Scroll from '@/components/Scroll'
-import SongList from '@/components/SongList'
-import SearchList from '@/components/SearchList'
-import TopTip from '@/components/TopTip'
-import Song from '@/utils/song'
-import { useSearch, useActions } from '@/hooks'
+import { reactive, computed, ref } from "vue";
+import { useStore } from "vuex";
+import SearchBox from "./SearchBox";
+import Suggest from "./Suggest";
+import Switches from "./Switches";
+import Scroll from "./Scroll";
+import SongList from "./SongList";
+import SearchList from "./SearchList";
+import TopTip from "./TopTip";
+import Song from "../utils/song";
+import { useSearch } from "../hooks";
 
 export default {
   components: {
@@ -94,69 +95,79 @@ export default {
     Switches,
     Scroll,
     SearchList,
-    TopTip
+    TopTip,
   },
-  setup(props, { root, refs }) {
-    const insertSong = useActions(root, 'insertSong')
+  setup(props) {
+    const store = useStore();
+    const insertSong = (song) => store.dispatch("insertSong", song);
 
     const state = reactive({
       isShowFlag: false,
       isShowSinger: false,
       currentSwitchIndex: 0,
-      switches: [{ name: '最近播放' }, { name: '搜索历史' }],
-      delay: 2000
-    })
+      switches: [{ name: "最近播放" }, { name: "搜索历史" }],
+      delay: 2000,
+    });
+
+    const songListRef = ref(null);
+    const searchLisrRef = ref(null);
+    const topTipRef = ref(null);
 
     const {
-      _state,
+      searchBoxRef,
+      searchState,
       searchHistory,
       addQuery,
       saveSearch,
       onQueryChange,
       deleteSearchHistory,
-      blurInput
-    } = useSearch(root, refs)
+      blurInput,
+    } = useSearch();
 
-    const playHistory = computed(() => root.$store.getters.playHistory)
+    const playHistory = computed(() => store.getters.playHistory);
 
     function show() {
-      state.isShowFlag = true
+      state.isShowFlag = true;
       setTimeout(() => {
         if (state.currentSwitchIndex === 0) {
-          refs.songListRef.refresh()
+          songListRef.value.refresh();
         } else {
-          refs.searchLisrRef.refresh()
+          searchLisrRef.value.refresh();
         }
-      }, 20)
+      }, 20);
     }
 
     function hide() {
-      state.isShowFlag = false
+      state.isShowFlag = false;
     }
 
     function selectSuggest() {
-      saveSearch()
-      showTip()
+      saveSearch();
+      showTip();
     }
 
     function switchItem(index) {
-      state.currentSwitchIndex = index
+      state.currentSwitchIndex = index;
     }
 
     function selectSong(song, index) {
       if (index !== 0) {
-        insertSong(new Song(song))
+        insertSong(new Song(song));
       }
-      showTip()
+      showTip();
     }
 
     function showTip() {
-      refs.topTipRef.show()
+      topTipRef.value.show();
     }
 
     return {
+      songListRef,
+      searchLisrRef,
+      topTipRef,
+      searchBoxRef,
       state,
-      _state,
+      searchState,
       playHistory,
       searchHistory,
       hide,
@@ -166,14 +177,14 @@ export default {
       addQuery,
       selectSuggest,
       blurInput,
-      onQueryChange
-    }
-  }
-}
+      onQueryChange,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
+@import "@/assets/styles/variable.scss";
 
 .add-song {
   position: fixed;

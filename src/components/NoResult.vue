@@ -10,15 +10,15 @@ export default {
   props: {
     title: {
       type: String,
-      default: ''
-    }
-  }
-}
+      default: "",
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .no-result {
   text-align: center;
@@ -27,7 +27,7 @@ export default {
     width: 86px;
     height: 90px;
     margin: 0 auto;
-    @include bg-image('no-result');
+    @include bg-image("no-result");
     background-size: 86px 90px;
   }
 

@@ -7,14 +7,14 @@
     <!-- 搜索主体部分-滚动组件 -->
     <div
       class="shortcut-wrapper"
-      v-show="!_state.query"
+      v-show="!searchState.query"
       ref="shortcutWrapperRef"
     >
       <Scroll
         class="shortcut"
         :data="shortcut"
         ref="shortcutRef"
-        :refreshDelay="_state.refreshDelay"
+        :refreshDelay="searchState.refreshDelay"
       >
         <div>
           <!-- 热门搜索 -->
@@ -50,9 +50,9 @@
       </Scroll>
     </div>
     <!-- 搜索结果-suggest组件 -->
-    <div class="search-result" v-show="_state.query" ref="searchResultRef">
+    <div class="search-result" v-show="searchState.query" ref="searchResultRef">
       <Suggest
-        :query="_state.query"
+        :query="searchState.query"
         @listScroll="blurInput"
         @select="saveSearch"
         ref="suggestRef"
@@ -71,15 +71,15 @@
 </template>
 
 <script>
-import { ref, computed, watch } from '@vue/composition-api'
-import SearchBox from '@/components/SearchBox'
-import Suggest from '@/components/Suggest'
-import SearchList from '@/components/SearchList'
-import Confirm from '@/components/Confirm'
-import Scroll from '@/components/Scroll'
-import { getHotKey } from '@/request/search'
-import { ERR_OK } from '@/request/config'
-import { usePlaylist, useSearch, useActions } from '@/hooks'
+import { ref, computed, watch } from "@vue/composition-api";
+import SearchBox from "@/components/SearchBox";
+import Suggest from "@/components/Suggest";
+import SearchList from "@/components/SearchList";
+import Confirm from "@/components/Confirm";
+import Scroll from "@/components/Scroll";
+import { getHotKey } from "@/request/search";
+import { ERR_OK } from "@/request/config";
+import { usePlaylist, useSearch, useActions } from "@/hooks";
 
 export default {
   components: {
@@ -87,62 +87,62 @@ export default {
     Suggest,
     SearchList,
     Confirm,
-    Scroll
+    Scroll,
   },
   setup(props, { root, refs }) {
-    const clearSearchHistory = useActions(root, 'clearSearchHistory')
+    const clearSearchHistory = useActions(root, "clearSearchHistory");
 
-    const hotKey = ref([])
+    const hotKey = ref([]);
 
     const {
-      _state,
+      searchState,
       searchHistory,
       onQueryChange,
       addQuery,
       deleteSearchHistory,
       blurInput,
-      saveSearch
-    } = useSearch(root, refs)
+      saveSearch,
+    } = useSearch(root, refs);
 
     watch(
-      () => _state.query,
-      newVal => {
+      () => searchState.query,
+      (newVal) => {
         if (!newVal) {
           setTimeout(() => {
-            refs.shortcutRef.refresh()
-          }, 20)
+            refs.shortcutRef.refresh();
+          }, 20);
         }
       }
-    )
+    );
 
-    const shortcut = computed(() => hotKey.value.concat(searchHistory))
+    const shortcut = computed(() => hotKey.value.concat(searchHistory));
 
     function handlePlaylist(playlist) {
-      const bottom = playlist.length > 0 ? '60px' : 0
-      refs.shortcutWrapperRef.style.bottom = bottom
-      refs.shortcutRef.refresh()
-      refs.searchResultRef.style.bottom = bottom
-      refs.suggestRef.refresh()
+      const bottom = playlist.length > 0 ? "60px" : 0;
+      refs.shortcutWrapperRef.style.bottom = bottom;
+      refs.shortcutRef.refresh();
+      refs.searchResultRef.style.bottom = bottom;
+      refs.suggestRef.refresh();
     }
 
-    usePlaylist(root, handlePlaylist)
+    usePlaylist(root, handlePlaylist);
 
     function _getHotKey() {
-      getHotKey().then(res => {
+      getHotKey().then((res) => {
         if (res.code === ERR_OK) {
-          hotKey.value = res.data.hotkey.slice(0, 10)
+          hotKey.value = res.data.hotkey.slice(0, 10);
         }
-      })
+      });
     }
-    _getHotKey()
+    _getHotKey();
 
     function showConfirm() {
-      refs.confirmRef.show()
+      refs.confirmRef.show();
     }
 
     return {
       hotKey,
-      _state,
+      searchState,
       searchHistory,
       shortcut,
       onQueryChange,
@@ -151,15 +151,15 @@ export default {
       deleteSearchHistory,
       blurInput,
       saveSearch,
-      clearSearchHistory
-    }
-  }
-}
+      clearSearchHistory,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variable.scss';
-@import '@/assets/styles/mixin.scss';
+@import "@/assets/styles/variable.scss";
+@import "@/assets/styles/mixin.scss";
 
 .search {
   .search-box-wrapper {
